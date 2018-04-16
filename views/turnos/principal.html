@@ -1,0 +1,29 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+%>
+<h2 class="ui header">Control Turnos</h2>
+<form class="ui form">
+  <div class="ui buttons">
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+  <button class="ui button" formaction="edicion.html" formmethod="GET">Ingresar</button>
+  </div>
+
+    <div class="field">
+        <label>Fecha</label>
+        <input type="date" name="id">
+    </div>
+    <div class="field">
+        <label>Turno</label>
+        <select name="turno">
+          <option value="1">06:00am - 02:00pm</option>
+          <option value="2">02:00pm - 10:00pm</option>
+          <option value="3">10:00pm - 06:00am</option>
+
+        </select>
+    </div>
+
+</div>

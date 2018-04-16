@@ -1,0 +1,19 @@
+import utils, imghdr, StringIO, uuid
+from bottle import request, response
+
+equipo = request.params.get('id')
+
+db = utils.ConnectDB()
+db.execute('SELECT foto FROM equipos WHERE equipo = %s',(equipo,))
+
+data = db.fetchone()['foto']
+
+output = None
+content_type = None
+
+if data != None:
+
+    filetype = imghdr.what('', data)
+    content_type = filetype
+
+    raw_output = StringIO.StringIO(data)

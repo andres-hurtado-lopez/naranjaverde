@@ -1,0 +1,75 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+%>
+<h2 class="ui header">Terceros</h2>
+<div class="ui buttons">
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+  <a class="ui button" href="edicion.html">Crear Tercero</a>
+</div>
+<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
+    <div class="two fields">
+        <div class="field">
+            <label>Selecci&oacute;n Archivo Plano</label>
+            <input type="file" name="archivo_plano">
+        </div>
+        <div class="field">
+            <label>&nbsp;</label>
+            <button class="ui button fluid">Cargar Archivo</button>
+        </div>
+    </div>
+</form>
+<table class="ui table">
+    <thead>
+        <th>id</th>
+        <th>Nombre</th>
+        <th>Salario</th>
+        <th>notas</th>
+        <th>tipo</th>
+        <th>Acci&oacute;n</th>
+    </thead>
+    <tbody>
+        <% db.execute("SELECT * FROM terceros")
+           for row in db:
+        %>
+        <tr>
+            <td>{{row['idtercero']}}</td>
+            <td>{{row['nombre']}}</td>
+            <td>{{row['salario']}}</td>
+            <td>{{row['notas']}}</td>
+            <td>{{row['tipo']}}</td>
+            <td>
+                <div class="ui buttons">
+                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idtercero']}}')">
+                      <div class="hidden content">Eliminar</div>
+                      <div class="visible content">
+                        <i class="remove icon"></i>
+                      </div>
+                    </a>
+                    <a class="ui vertical animated button" href="edicion.html?id={{row['idtercero']}}">
+                      <div class="hidden content">Editar</div>
+                      <div class="visible content">
+                        <i class="edit icon"></i>
+                      </div>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        %end
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar.html?id='+id;
+        }
+    };
+
+</script>

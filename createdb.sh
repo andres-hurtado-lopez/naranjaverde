@@ -1,0 +1,2 @@
+ CREATE DATABASE `naranjaverde` /*!40100 DEFAULT CHARACTER SET utf8 */
+

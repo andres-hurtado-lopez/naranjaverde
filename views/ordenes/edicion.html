@@ -1,0 +1,115 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.GET.id
+
+if id:
+    db.execute("""SELECT a.orden, 
+                         a.cliente, 
+                         a.idmat,
+                         a.cantidad_kg,
+                         a.pedido_cliente,
+                         DATE_FORMAT(a.fecha_inicio, "%%Y-%%m-%%dT%%T") as fecha_inicio,
+                         DATE_FORMAT(a.fecha_fin, "%%Y-%%m-%%dT%%T") as fecha_fin,
+                         a.precio_venta,
+                         a.p_uso_hornos,
+                         b.descripcion as mattext, c.nombre as tertext FROM ordenes as a 
+                  LEFT OUTER JOIN materiales as b
+                  ON a.idmat = b.idmat
+                  LEFT OUTER JOIN terceros as c
+                  ON c.idtercero = a.cliente
+                  WHERE orden = %s""",[id])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    db.execute("DESCRIBE ordenes")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
+end
+
+       
+%>
+<h2 class="ui header">Edicion Orden:</h2>
+<div class="ui buttons">
+  <a class="ui button" href="programacion_produccion.html">Programacion</a>
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+</div>
+<form class="ui form">
+    <div class="field">
+        <label>Orden</label>
+        <input type="text" name="orden" value="{{orden}}" readonly="">
+    </div>
+    <div class="field">
+        <label>Cliente</label>
+        <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}">
+        </select>
+    </div>
+    <div class="field">
+        <label>Referencia</label>
+        <select class="ui search selection dropdown" id="idmat" name="idmat" value="{{idmat}}">
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Cantidad</label>
+        <input type="number" step="any" name="cantidad_kg" value="{{cantidad_kg}}">
+    </div>
+
+    <div class="field">
+        <label># Pedido Cliente</label>
+        <input type="text" name="pedido_cliente" value="{{pedido_cliente}}">
+        </select>
+    </div>
+    <div class="field">
+        <label>Fecha Inicio</label>
+        <input type="datetime-local" name="fecha_inicio" value="{{fecha_inicio}}">
+    </div>
+    <div class="field">
+        <label>Fecha Fin</label>
+        <input type="datetime-local" name="fecha_fin" value="{{fecha_fin}}">
+    </div>
+    <div class="field">
+        <label>Precio de Venta</label>
+        <input type="number" step="any" name="precio_venta" value="{{precio_venta}}" required="" >
+    </div>
+
+    <div class="field">
+        <label>% uso hornos</label>
+        <input type="number" step="any" name="p_uso_hornos" value="{{p_uso_hornos}}">
+    </div>
+
+    <div class="ui buttons">
+        <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
+        <a class="ui button" href="edicion.html">Crear Otro</a>       
+    </div>
+</form>
+<script type="text/javascript">
+
+    $('#cliente').dropdown({
+        apiSettings: {
+          url: '/terceros/buscar.json?tipo=CLNT&query={query}'
+        }
+    });
+
+    % if cliente:
+    $('#cliente').dropdown('set value','{{cliente}}');
+    $('#cliente').dropdown('set text','{{cliente}} - {{tertext}}');
+    % end
+
+    $('#idmat').dropdown({
+        apiSettings: {
+          url: '/materiales/buscar.json?tipo=MPP&query={query}'
+        }
+    });
+
+    % if idmat:
+    $('#idmat').dropdown('set value','{{idmat}}');
+    $('#idmat').dropdown('set text','{{idmat}} - {{mattext}}');
+    % end
+
+</script>

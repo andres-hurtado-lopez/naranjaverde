@@ -1,0 +1,65 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.GET.id
+
+if id:
+    db.execute("SELECT * FROM users WHERE user = %s",[id])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    db.execute("DESCRIBE users")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
+end
+
+       
+%>
+<div class="ui small image">
+    <img src="/static/logo.png">
+</div>
+<h2 class="ui header">Edicion Usuario:</h2>
+<div class="ui buttons">
+  <a class="ui button" href="/usuarios/principal.html">Usuarios</a>
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+</div>
+<form class="ui form">
+    <div class="field">
+        <label>Usuario</label>
+        <input type="text" name="user" value="{{user}}" required="">
+    </div>
+    <div class="field">
+        <label>Nombre Completo</label>
+        <textarea name="full_name" required="">{{full_name}}</textarea>
+    </div>
+    <div class="field">
+        <label>Email</label>
+        <input type="text" name="email" value="{{email}}" required="" >
+    </div>
+    <div class="field">
+        <label>Direcci&oacute;n</label>
+        <textarea name="contact_address">{{contact_address}}</textarea>
+    </div>
+    <div class="field">
+        <label>Telefono</label>
+        <textarea name="telephone">{{telephone}}</textarea>
+    </div>
+    <div class="field">
+        <label>Notas</label>
+        <textarea name="notes">{{notes}}</textarea>
+    </div>
+    <div class="field">
+        <label>Departamento</label>
+        <input type="text" name="department" value="{{department}}" >
+    </div>
+
+    <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+    </div>
+</form>

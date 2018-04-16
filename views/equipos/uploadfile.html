@@ -1,0 +1,22 @@
+<%
+import utils, csv
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+
+upload = request.files.get('archivo_plano')
+upload.save('tmp/',overwrite=True)
+
+with open( 'tmp/'+upload.filename, 'rb') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+    for row in spamreader:
+    	if len(row) == 11:
+        	db.execute("""INSERT INTO `equipos`(`equipo`, `descripcion`, `fecha_adquisicion`, `proveedor`, `capacidad_kg`, `horas_operacion`, `horno`, `serial`, `lote_fabricacion`, `informacion_tecnica`, `numero_activo`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[ row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10]])
+        end
+    end
+end
+
+db.execute('COMMIT WORK')
+
+redirect('principal.html')

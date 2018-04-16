@@ -1,0 +1,112 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.GET.id
+
+if id:
+    db.execute("""SELECT `equipo`, `descripcion`, DATE_FORMAT(fecha_adquisicion,'%%Y-%%m-%%dT%%T') as `fecha_adquisicion`, `proveedor`, `capacidad_kg`, `horas_operacion`, `horno`, `serial`, `lote_fabricacion`, `informacion_tecnica`, `numero_activo`, `foto`
+    FROM equipos
+    WHERE equipo = %s""",[id])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    db.execute("DESCRIBE equipos")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
+end
+
+       
+%>
+<h2 class="ui header">Edicion Equipo:</h2>
+<div class="ui buttons">
+  <a class="ui button" href="/equipos/principal.html">Equipos</a>
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+</div>
+<form class="ui form">
+    <div class="field">
+        <label>Equipo</label>
+        <input type="text" name="equipo" value="{{equipo}}" required="">
+    </div>
+    <div class="field">
+        <label>Descripcion</label>
+        <textarea name="descripcion" required="">{{descripcion}}</textarea>
+    </div>
+    <div class="field">
+        <label>Fecha adquisicion</label>
+        <input type="datetime-local" name="fecha_adquisicion" value="{{fecha_adquisicion}}">
+    </div>
+    <div class="field">
+        <label>Proveedor</label>
+        <input type="text" name="proveedor" value="{{proveedor}}">
+    </div>
+    <div class="field">
+        <label>Capacidad kg</label>
+        <input type="number" name="capacidad_kg" value="{{capacidad_kg}}" step="any" >
+    </div>
+    <div class="field">
+        <label>Horas Operacion</label>
+        <input type="number" name="horas_operacion" value="{{horas_operacion}}" step="any" >
+    </div>
+    <div class="field">
+        <label>Horno</label>
+        <select name="horno">
+            <option value="">no</option>
+            <option value="X"{{ ' selected="" ' if horno == 'X' else ''}}>si</option>
+        </select>
+    </div>
+    <div class="field">
+        <label>Serial</label>
+        <input type="text" name="serial" value="{{serial}}">
+    </div>
+    <div class="field">
+        <label>Lote Fabricacion</label>
+        <input type="text" name="lote_fabricacion" value="{{lote_fabricacion}}">
+    </div>
+    <div class="field">
+        <label>Informacion Tecnica</label>
+        <textarea name="informacion_tecnica">{{informacion_tecnica}}</textarea>
+    </div>
+    <div class="field">
+        <label>Numero Activo</label>
+        <input type="text" name="numero_activo" value="{{numero_activo}}">
+    </div>
+    <div class="two fields">
+        <div class="field">
+            <label>Catalogo</label>
+            <input type="file" name="catalogo">
+        </div>
+        <div class="field">
+            <label>Cargar Catalogo</label>
+            <div class="ui slider checkbox">
+                <input type="checkbox" name="cargar_catalogo">
+                <label>Activar</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="two fields">
+        <div class="field">
+            <label>Foto</label>
+            <img class="ui image" src="foto_equipo?raw_request=true&id={{equipo}}" alt="{{equipo}}">
+            <input type="file" name="foto">
+        </div>
+        <div class="field">
+            <label>Cargar Foto</label>
+            <div class="ui slider checkbox">
+                <input type="checkbox" name="cargar_foto">
+                <label>Activar</label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST" formenctype="multipart/form-data">Guardar</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+    </div>
+</form>

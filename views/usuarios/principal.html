@@ -1,0 +1,80 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+%>
+<div class="ui small image">
+    <img src="/static/logo.png">
+</div>
+<h2 class="ui header">Usuarios</h2>
+<div class="ui buttons">
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+  <a class="ui button" href="edicion.html">Crear Usuario</a>
+</div>
+<table class="ui table">
+    <thead>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>email</th>
+        <th>Direccion</th>
+        <th>Telefono</th>
+        <th>Notas</th>
+        <th>Departameto</th>
+        <th>Acción</th>
+    </thead>
+    <tbody>
+        <% db.execute("SELECT * FROM users")
+           for row in db:
+        %>
+        <tr>
+            <td>{{row['user']}}</td>
+            <td>{{row['full_name']}}</td>
+            <td>{{row['email']}}</td>
+            <td>{{row['contact_address']}}</td>
+            <td>{{row['telephone']}}</td>
+            <td>{{row['notes']}}</td>
+            <td>{{row['department']}}</td>
+            <td>
+                <div class="ui buttons">
+                    <a class="ui vertical animated button" href="solicitar_cambio_clave.html?id={{row['user']}}">
+                      <div class="hidden content">Clave</div>
+                      <div class="visible content">
+                        <i class="lock icon"></i>
+                      </div>
+                    </a>
+                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['user']}}')">
+                      <div class="hidden content">Eliminar</div>
+                      <div class="visible content">
+                        <i class="remove icon"></i>
+                      </div>
+                    </a>
+                    <a class="ui vertical animated button" href="edicion.html?id={{row['user']}}">
+                      <div class="hidden content">Editar</div>
+                      <div class="visible content">
+                        <i class="edit icon"></i>
+                      </div>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        %end
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $('.search.button')
+  .api({
+    url: 'http://www.google.com?q={value}'
+  });
+
+    function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar.html?id='+id;
+        }
+    };
+
+</script>

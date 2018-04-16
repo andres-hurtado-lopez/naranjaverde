@@ -1,0 +1,66 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.GET.id
+
+if id:
+    db.execute("SELECT * FROM materiales WHERE idmat = %s",[id])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    db.execute("DESCRIBE materiales")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
+end
+
+       
+%>
+<h2 class="ui header">Edicion Material:</h2>
+<div class="ui buttons">
+  <a class="ui button" href="/materiales/principal.html">Materiales</a>
+  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+</div>
+<form class="ui form">
+    <div class="field">
+        <label>ID</label>
+        <input type="text" name="idmat" value="{{idmat}}" required="">
+    </div>
+    <div class="field">
+        <label>Descripci&oacute;n</label>
+        <input type="text" name="descripcion" value="{{descripcion}}">
+    </div>
+    <div class="field">
+        <label>Grupo 1</label>
+        <input type="text" name="grupo1" value="{{grupo1}}" required="" >
+    </div>
+    <div class="field">
+        <label>Grupo 2</label>
+        <input type="text" name="grupo2" value="{{grupo2}}">
+    </div>
+    <div class="field">
+        <label>Grupo 3</label>
+        <input type="text" name="grupo3" value="{{grupo3}}">
+    </div>
+    <div class="field">
+        <label>Grupo 4</label>
+        <input type="text" name="grupo4" value="{{grupo4}}">
+    </div>
+    <div class="field">
+        <label>Unidad</label>
+        <input type="text" name="unidad" value="{{unidad}}" required="" >
+    </div>
+    <div class="field">
+        <label>Costo</label>
+        <input type="text" name="costo" value="{{costo}}" required="" >
+    </div>
+
+    <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+    </div>
+</form>

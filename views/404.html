@@ -1,0 +1,21 @@
+<%
+from bottle import request
+rebase('base.html',
+    title="Control de Producción",
+)
+%>
+<h1>Página no encontrada</h1>
+<h2>Ruta:</h2>  {{request.url}}
+<h2>Método:</h2> {{request.method}}
+<h2>Parámetros:</h2>
+<pre>
+    %for i,val in request.params.iteritems():
+    {{i}} : ({{type(val)}}) {{val}}
+    %end
+</pre>
+<h2>Acciones Posibles:</h2>
+<ul>
+    <li><a href="javascript:history.back()">Regresar usando el boton del explorador</a></li>
+    <li><a href="/web/main_menu.html">Volver al menú principal</a></li>
+    <li><a href="/">Volver a iniciar sesión</a></li>
+</ul>

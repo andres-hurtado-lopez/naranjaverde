@@ -1,0 +1,15 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+idmat = request.params.get('idmat')
+descripcion = request.params.get('descripcion')
+cif = request.params.get('cif')
+
+db.execute("""INSERT INTO `hoja_ruta`(`idmat`, `descripcion`, `cif`) VALUES (%s,%s,%s)""",[ idmat, descripcion, cif,])
+db.execute('COMMIT WORK');
+
+redirect('edicion.html?id={id}'.format(id=idmat))

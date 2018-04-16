@@ -1,0 +1,14 @@
+<%
+rebase('base.html',
+    title="Control de Producción",
+    head = ['<meta http-equiv="refresh" content="3; url=/">']
+)
+%>
+<h1>Sesión Caducada</h1>
+<h2>Acciónes Posibles:</h2>
+Volviendo a pantalla de ingreso en 3 segundos
+<script type="text/javascript">
+    setTimeout(function(){
+        window.location.href = "/"
+    },3000);
+</script>

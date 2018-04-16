@@ -1,0 +1,20 @@
+<%
+import utils
+from bottle import request, redirect
+from passlib.hash import bcrypt
+
+db = utils.ConnectDB()
+
+id = request.params.get('id')
+new_password = request.params.get('new_password')
+hashdata = utils.hashpassword(id,new_password)
+
+db.execute("""UPDATE users SET 
+              `password` = %s
+              WHERE `user` = %s""",(hashdata, id))
+
+db.execute('COMMIT WORK')
+
+
+
+redirect('principal.html')

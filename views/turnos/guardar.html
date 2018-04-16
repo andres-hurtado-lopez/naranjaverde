@@ -1,0 +1,17 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+fecha_turno = request.params.get('fecha_turno')
+turno = request.params.get('turno')
+idtercero = request.params.get('operario')
+desde = request.params.get('desde')
+hasta = request.params.get('hasta')
+
+db.execute("""REPLACE INTO `registro_turnos`(`fecha_turno`, `turno`, `idtercero`, `desde`, `hasta`) VALUES (%s,%s,%s,%s,%s)""",[ fecha_turno,turno,idtercero,desde,hasta,])
+db.execute('COMMIT WORK');
+
+redirect('edicion.html?id={fecha_turno}&turno={turno}'.format(fecha_turno=fecha_turno, turno=turno))

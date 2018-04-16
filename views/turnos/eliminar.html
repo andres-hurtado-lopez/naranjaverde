@@ -1,0 +1,15 @@
+<%
+import utils
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+fecha_turno = request.params.get('fecha_turno')
+turno = request.params.get('turno')
+idtercero = request.params.get('idtercero')
+
+
+db.execute("""DELETE FROM `registro_turnos` WHERE `fecha_turno` = %s and `turno` = %s and `idtercero` = %s """,[ fecha_turno, turno, idtercero])
+db.execute('COMMIT WORK');
+
+redirect('edicion.html?id='+fecha_turno+'&turno='+turno)

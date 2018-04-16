@@ -1,0 +1,272 @@
+%rebase('base.html',title="Control Producción")
+<div class="ui search fluid selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="main_menu.html">Menu Principal</div>
+        <div class="item" data-value="ordenes/edicion.html">Crear Orden</div>
+        <div class="item" data-value="ordenes/programacion_produccion.html">Programacion Produccion</div>
+    </div>
+</div>
+
+<h2 class="ui header">Control Producci&oacute;n - Resumen 2018-05-15</h2>
+<h4 class="ui horizontal divider header">
+  <i class="calendar alternate outline icon"></i>
+  Hoy
+</h4>
+  
+<div class="ui statistics">
+  <div class="statistic">
+    <div class="value">
+      <i class="chart line icon"></i> 120
+    </div>
+    <div class="label">
+      Capacidad max.<br>de Planta kg / h<br>( kg dia teórico / 24 h )
+    </div>
+  </div>
+
+  <div class="statistic">
+    <div class="value">
+      <i class="battery half icon"></i> 22 %
+    </div>
+    <div class="label">
+      \% Capacidad de<br>planta utilizada
+      <br>( prod u. hora / cap max.)
+    </div>
+  </div>
+
+  <div class="statistic">
+    <div class="value">
+      <i class="industry icon"></i> 3
+    </div>
+    <div class="label">
+      Ordenes en Proceso
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="hourglass half icon"></i> 5
+    </div>
+    <div class="label">
+      Ordenes en Espera
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="flag checkered icon"></i> 3
+    </div>
+    <div class="label">
+      Ordenes Terminadas
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="chart line icon"></i> 264
+    </div>
+    <div class="label">
+      Produccion Ultima <br>Hora kg 
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="chart area icon"></i> 264
+    </div>
+    <div class="label">
+      Produccion Acumulada <br> kg 
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="dollar sign icon"></i> 200.3M
+    </div>
+    <div class="label">
+      Costo Acumulado <br> COP 
+    </div>
+  </div>
+</div>
+
+
+<h4 class="ui horizontal divider header">
+  <i class="calendar alternate icon"></i>
+  Ayer
+</h4>
+
+<div class="ui statistics">
+  <div class="statistic">
+    <div class="value">
+      <i class="battery half icon"></i> 22 %
+    </div>
+    <div class="label">
+      \% Capacidad de<br>planta utilizada
+      <br>( prod total / cap max)
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="flag checkered icon"></i> 3
+    </div>
+    <div class="label">
+      Ordenes Terminadas
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="chart area icon"></i> 264
+    </div>
+    <div class="label">
+      Produccion Total <br>( kg )
+    </div>
+  </div>
+  <div class="statistic">
+    <div class="value">
+      <i class="dollar sign icon"></i> 200.3M
+    </div>
+    <div class="label">
+      Costo Acumulado <br>( COP )
+    </div>
+  </div>
+
+</div>
+<h4 class="ui horizontal divider header">
+  <i class="industry icon"></i>
+  En Proceso
+</h4>
+<table class="ui very basic collapsing celled table">
+    <thead>
+        <tr>
+            <th colspan="2">Cliente</th>
+            <th colspan="2">Producto</th>
+            <th>Cantidad (kg)</th>
+            <th>Progreso</th>
+            <th>Fecha Compro-<br>metida entrega</th>
+            <th>Costo Acumulado</th>
+            <th>#Orden</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>299233</td>
+            <td>Himalaya</td>
+            <td>D2344</td>
+            <td>Piña en trozos</td>
+            <td>223</td>
+            <td>
+                <div class="ui indicating progress" data-percent="20">
+                    <div class="bar"></div>
+                    <div class="label">20% (44.6kg)</div>
+                </div>
+            </td>
+            <td>2018-05-23</td>
+            <td>$23.232.433</td>
+            <td>
+                <a href="" class="ui button">25</a>
+            </td>
+            <td>
+                <div class="ui buttons">
+                    <a href="" class="ui button">
+                        <i class="stop icon"></i>
+                    </a>
+                    <a href="" class="ui button">
+                        <i class="pause icon"></i>
+                    </a>                    
+                </div>
+            </td>
+
+        </tr>
+    </tbody>
+</table>
+
+<h4 class="ui horizontal divider header">
+  <i class="hourglass half icon"></i>
+  En Espera
+</h4>
+<table class="ui very basic collapsing celled table">
+    <thead>
+        <tr>
+            <th colspan="2">Cliente</th>
+            <th colspan="2">Producto</th>
+            <th>Cantidad (kg)</th>
+            <th>Progreso</th>
+            <th>Fecha Compro-<br>metida entrega</th>
+            <th>Costo Acumulado</th>
+            <th>#Orden</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>299233</td>
+            <td>Himalaya</td>
+            <td>D2344</td>
+            <td>Piña en trozos</td>
+            <td>223</td>
+            <td>
+                <div class="ui indicating progress" data-percent="20">
+                    <div class="bar"></div>
+                    <div class="label">20% (44.6kg)</div>
+                </div>
+            </td>
+            <td>2018-05-23</td>
+            <td>$23.232.433</td>
+            <td>
+                <a href="" class="ui button">25</a>
+            </td>
+            <td>
+                <div class="ui buttons">
+                    <a href="" class="ui button">
+                        <i class="play icon"></i>
+                    </a>
+                    <a href="" class="ui button">
+                        <i class="stop icon"></i>
+                    </a>                 
+                </div>
+            </td>
+
+        </tr>
+    </tbody>
+</table>
+
+
+<h4 class="ui horizontal divider header">
+  <i class="flag checkered icon"></i>
+  Terminado Reciente (hoy y/o ayer)
+</h4>
+<table class="ui very basic collapsing celled table">
+    <thead>
+        <tr>
+            <th colspan="2">Cliente</th>
+            <th colspan="2">Producto</th>
+            <th>Cantidad<br>(kg)</th>
+            <th>Fecha Compro-<br>metida Entrega</th>
+            <th>Fecha Real Fin</th>
+            <th>Costo Amulado</th>
+            <th>#Orden</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>299233</td>
+            <td>Himalaya</td>
+            <td>D2344</td>
+            <td>Piña en trozos</td>
+            <td>223</td>
+            <td>2018-05-23</td>
+            <td>2018-05-24</td>
+            <td>$23.232.433</td>
+            <td>
+                <a href="" class="ui button">25</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $('.ui.progress').progress();
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
+</script>

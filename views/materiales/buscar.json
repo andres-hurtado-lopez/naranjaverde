@@ -1,0 +1,31 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+query = request.GET.query
+tipo = request.GET.tipo
+query = '%' + str(query) + '%'
+
+
+print "tipo: "+tipo
+print "query: "+query
+
+
+if tipo:
+    db.execute("""SELECT a.idmat as value, concat(a.idmat,' - ', a.descripcion) as name FROM materiales as a
+                  WHERE a.grupo1 like %s and (a.idmat like %s or a.descripcion like %s)""",[tipo,query, query])
+    rows = db.fetchall()
+elif query:
+    db.execute("""SELECT a.idmat as value, concat(a.idmat,' - ', a.descripcion) as name FROM materiales as a
+                  WHERE a.idmat like %s or a.descripcion like %s""",[query, query])
+    rows = db.fetchall()
+end
+
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}

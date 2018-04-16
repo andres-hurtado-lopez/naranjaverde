@@ -1,0 +1,110 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.params.get('id')
+
+%>
+<h2 class="ui header">Hoja de Ruta - Componentes</h2>
+<div class="ui buttons">
+  <a class="ui button" href="principal.html">Hoja de Ruta</a>
+  <a class="ui button" href="principal_operaciones.html?id={{id}}">Operaciones</a>
+  <a class="ui button" href="edicion_componentes.html">Crear Componente</a>
+</div>
+<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
+    <div class="two fields">
+        <div class="field">
+            <label>Selecci&oacute;n Archivo Plano</label>
+            <input type="file" name="archivo_plano">
+        </div>
+        <div class="field">
+            <label>&nbsp;</label>
+            <button class="ui button fluid">Cargar Archivo</button>
+        </div>
+    </div>
+</form>
+<%
+ db.execute("SELECT b.descripcion, a.cif from hoja_ruta as a left outer join materiales as b on a.idmat = b.idmat where a.idmat = %s",(id,))
+
+ row = db.fetchone()
+ descripcion_material = row['descripcion']
+ cif = row['cif']
+ %>
+<form class="ui form">
+        <div class="field">
+            <label>ID Material</label>
+            <input type="text" value="{{id}}" readonly="">
+        </div>
+        <div class="field">
+            <label>Material</label>
+            <input type="text" value="{{descripcion_material}}" readonly="">
+        </div>
+        <div class="field">
+            <label>CIF</label>
+            <input type="text" value="{{'{:20,.2f}'.format(cif)}}" readonly="">
+        </div>
+</form>
+<table class="ui table">
+    <thead>
+        <th>Operacion</th>
+        <th>Componente</th>
+        <th>Tipo</th>
+        <th>Cant.Unit.</th>
+        <th>Unidad</th>
+        <th>Costo Estandar</th>
+        <th>#Operarios por operaci&oacute;n</th>
+        <th>Military Std.</th>
+        <th>Acción</th>
+    </thead>
+    <tbody>
+        <% db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s",(id,))
+           for row in db:
+        %>
+        <tr>
+            <td>{{row['operacion']}}</td>
+            <td>{{row['componente']}}</td>
+            <td>{{row['tipo']}}</td>
+            <td>{{row['cantidad']}}</td>
+            <td>{{row['unidad']}}</td>
+            <td>{{row['costo']}}</td>
+            <td>{{row['operarios']}}</td>
+            <td>{{row['mil_std']}}</td>
+            <td>
+                <div class="ui buttons">
+                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}','{{row['operacion']}}','{{row['componente']}}')">
+                      <div class="hidden content">Eliminar</div>
+                      <div class="visible content">
+                        <i class="remove icon"></i>
+                      </div>
+                    </a>
+                    <a class="ui vertical animated button" href="edicion.html?id={{row['idmat']}}&oper={{row['operacion']}}&comp={{row['componente']}}">
+                      <div class="hidden content">Editar</div>
+                      <div class="visible content">
+                        <i class="edit icon"></i>
+                      </div>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        %end
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $('.search.button')
+  .api({
+    url: 'http://www.google.com?q={value}'
+  });
+
+    function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar.html?id='+id;
+        }
+    };
+
+</script>

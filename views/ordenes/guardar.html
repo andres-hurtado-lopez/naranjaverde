@@ -1,0 +1,30 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+orden = request.params.get('orden')
+orden = orden if orden else 0
+cliente = request.params.get('cliente')
+idmat = request.params.get('idmat')
+cantidad_kg = request.params.get('cantidad_kg')
+pedido_cliente = request.params.get('pedido_cliente')
+fecha_inicio = request.params.get('fecha_inicio')
+fecha_fin = request.params.get('fecha_fin')
+fecha_fin = fecha_fin if fecha_fin else None
+precio_venta = request.params.get('precio_venta')
+p_uso_hornos = request.params.get('p_uso_hornos')
+
+db.execute("""REPLACE INTO ordenes (orden, cliente, idmat, cantidad_kg, pedido_cliente, fecha_inicio, fecha_fin, precio_venta, p_uso_hornos) value (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[ orden, cliente,idmat,cantidad_kg,pedido_cliente,fecha_inicio,fecha_fin,precio_venta,p_uso_hornos])
+db.execute('COMMIT WORK');
+
+if not orden:
+	db.execute('SELECT LAST_INSERT_ID() AS id')
+	newid = db.fetchone()['id']
+else:
+	newid = orden
+end
+
+redirect('edicion.html?id={id}'.format(id=newid))

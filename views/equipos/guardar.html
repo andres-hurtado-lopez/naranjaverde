@@ -1,0 +1,62 @@
+<%
+import utils
+import datetime
+from base64 import b64encode
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+idtercero = request.params.get('idtercero')
+nombre = request.params.get('nombre')
+salario = request.params.get('salario')
+notas = request.params.get('notas')
+tipo = request.params.get('tipo')
+
+equipo = request.params.get('equipo')
+descripcion = request.params.get('descripcion')
+fecha_adquisicion = request.params.get('fecha_adquisicion')
+proveedor = request.params.get('proveedor')
+capacidad_kg = request.params.get('capacidad_kg')
+horas_operacion = request.params.get('horas_operacion')
+horno = request.params.get('horno')
+serial = request.params.get('serial')
+lote_fabricacion = request.params.get('lote_fabricacion')
+informacion_tecnica = request.params.get('informacion_tecnica')
+numero_activo = request.params.get('numero_activo')
+cargar_catalogo = request.params.get('cargar_catalogo')
+cargar_foto = request.params.get('cargar_foto')
+
+db.execute("""REPLACE INTO `equipos`(`equipo`, `descripcion`, `fecha_adquisicion`, `proveedor`, `capacidad_kg`, `horas_operacion`, `horno`, `serial`, `lote_fabricacion`, `informacion_tecnica`, `numero_activo`) 
+              VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[  equipo,
+                                                                    descripcion,
+                                                                    fecha_adquisicion,
+                                                                    proveedor,
+                                                                    capacidad_kg,
+                                                                    horas_operacion,
+                                                                    horno,
+                                                                    serial,
+                                                                    lote_fabricacion,
+                                                                    informacion_tecnica,
+                                                                    numero_activo])
+
+db.execute('COMMIT WORK');
+
+if cargar_catalogo:
+    catalogo = request.files.get('catalogo')
+    db.execute("""UPDATE equipos set catalogo = %s WHERE equipo = %s""",[catalogo.file.read(), equipo])
+end
+
+if cargar_foto:
+    foto = request.files.get('foto')
+    print repr(foto)
+    if foto:
+        db.execute("""UPDATE equipos set foto = %s WHERE equipo = %s""",[foto.file.read(), equipo])
+    end
+end
+
+
+
+db.execute('COMMIT WORK');
+
+
+redirect('edicion.html?id={id}'.format(id=equipo))

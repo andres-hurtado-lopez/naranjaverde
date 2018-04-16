@@ -1,0 +1,22 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+user = request.params.get('user')
+full_name = request.params.get('full_name')
+email = request.params.get('email')
+contact_address = request.params.get('contact_address')
+telephone = request.params.get('telephone')
+notes = request.params.get('notes')
+department = request.params.get('department')
+
+db.execute("""REPLACE INTO `users`(`user`, `full_name`, `email`, `contact_address`, `telephone`, `notes`, `department`) 
+              VALUES (%s,%s,%s,%s,%s,%s,%s)""",
+              [user,full_name,email,contact_address,telephone,notes,department,])
+
+db.execute('COMMIT WORK');
+
+redirect('edicion.html?id={id}'.format(id=user))

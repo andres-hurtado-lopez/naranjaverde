@@ -1,0 +1,39 @@
+<% setdefault('css_includes', ['/static/base.css'])
+setdefault('js_includes', ['/static/index.js'])
+setdefault('head', []) %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>{{title or 'Sin Titulo'}}</title>
+    %for row in head:
+    {{!row}}
+    %end
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
+    %for row in css_includes:
+    <link rel="stylesheet" type="text/css" href="{{row}}">
+    %end
+    % for row in js_includes:
+    <script type="text/javascript" src="{{row}}"></script>
+    %end
+    <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="/static/utils.js"></script>
+</head>
+<body>
+  <div id="app" class="ui container">
+    
+
+    <div class="ui small images">
+        <img src="/static/logo.png">
+    </div>
+    {{!base}}
+  </div>
+</body>
+</html>

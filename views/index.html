@@ -1,0 +1,16 @@
+<%rebase('base.html',title="Inicio Sesión")
+from bottle import request
+%>
+<h1 class="ui header">Control Producci&oacute;n</h1>
+<form class="ui form" action="authenticate" method="POST">
+    <div class="field">
+        <label>Usuario</label>
+        <input type="text" name="username" id="username" value="{{request.params.get('username','')}}">
+    </div>
+    <div class="field">
+        <label>Clave</label>
+        <input type="password" name="password">
+    </div>
+    <button class="ui fluid blue button">Ingresar</button>
+
+</form>

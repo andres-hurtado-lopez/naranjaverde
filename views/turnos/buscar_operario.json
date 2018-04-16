@@ -1,0 +1,21 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+query = request.GET.query
+query = '%' + str(query) + '%'
+
+
+if query:
+    db.execute("""SELECT a.idtercero as title, a.nombre as description FROM terceros as a
+                  WHERE a.idtercero like %s or a.nombre like %s """,[query, query])
+    rows = db.fetchall()
+end
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}

@@ -1,0 +1,26 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+id = request.params.get('id')
+
+%>
+<div class="ui small image">
+    <img src="/static/logo.png">
+</div>
+<h2 class="ui header">Cambio Clave usuario - {{id}}</h2>
+
+<form class="ui form" action="cambiar_clave.html" method="post">
+    <div class="ui buttons">
+      <a class="ui button" href="principal.html">Regresar</a>
+      <button class="ui button">Cambiar Clave</a>
+    </div>
+    <div class="field">
+        <label>Nueva Clave</label>
+        <input type="password" name="new_password">
+        <input type="hidden" name="id" value={{id}}>
+    </div>
+
+</form>

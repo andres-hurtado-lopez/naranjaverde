@@ -1,0 +1,31 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+query = request.GET.query
+tipo = request.GET.tipo
+query = '%' + str(query) + '%'
+
+
+print "tipo: "+tipo
+print "query: "+query
+
+
+if tipo:
+    db.execute("""SELECT a.idtercero as value, concat(a.idtercero,' - ', a.nombre) as name FROM terceros as a
+                  WHERE a.tipo like %s and (a.idtercero like %s or a.nombre like %s)""",[tipo,query, query])
+    rows = db.fetchall()
+elif query:
+    db.execute("""SELECT a.idtercero as value, concat(a.idtercero,' - ', a.nombre) as name FROM terceros as a
+                  WHERE a.idtercero like %s or a.nombre like %s """,[query, query])
+    rows = db.fetchall()
+end
+
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}

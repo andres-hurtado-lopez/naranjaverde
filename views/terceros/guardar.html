@@ -1,0 +1,17 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+idtercero = request.params.get('idtercero')
+nombre = request.params.get('nombre')
+salario = request.params.get('salario') if request.params.get('salario') else '0.0' 
+notas = request.params.get('notas')
+tipo = request.params.get('tipo')
+
+db.execute("""REPLACE INTO `terceros`(`idtercero`, `nombre`, `salario`, `notas`, `tipo`) VALUES (%s,%s,%s,%s,%s)""",[ idtercero, nombre, salario, notas, tipo,])
+db.execute('COMMIT WORK');
+
+redirect('edicion.html?id={id}'.format(id=idtercero))
