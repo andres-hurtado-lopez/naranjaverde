@@ -7,9 +7,6 @@ db = utils.ConnectDB()
 id = request.params.get('id')
 
 %>
-<div class="ui small image">
-    <img src="/static/logo.png">
-</div>
 <h2 class="ui header">Cambio Clave usuario - {{id}}</h2>
 
 <form class="ui form" action="cambiar_clave.html" method="post">

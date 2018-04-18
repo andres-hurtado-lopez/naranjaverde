@@ -12,10 +12,11 @@ contact_address = request.params.get('contact_address')
 telephone = request.params.get('telephone')
 notes = request.params.get('notes')
 department = request.params.get('department')
+status = '1'
 
-db.execute("""REPLACE INTO `users`(`user`, `full_name`, `email`, `contact_address`, `telephone`, `notes`, `department`) 
-              VALUES (%s,%s,%s,%s,%s,%s,%s)""",
-              [user,full_name,email,contact_address,telephone,notes,department,])
+db.execute("""REPLACE INTO `users`(`user`, `full_name`, `email`, `contact_address`, `telephone`, `notes`,`status`, `department`) 
+              VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
+              [user,full_name,email,contact_address,telephone,notes,status,department,])
 
 db.execute('COMMIT WORK');
 
