@@ -1,0 +1,84 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+%>
+<h2 class="ui header">Registrar Producción</h2>
+
+
+<div class="ui fluid search selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="/main_menu.html">Menu Principal</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+    </div>
+</div>
+<br>
+
+<form class="ui form" action="registrar_produccion.html" method="get" accept-charset="utf-8">
+    <div class="ui field">
+        <label>Orden en Proceso</label>
+        <select class="ui search selection dropdown" name="orden" id="orden">
+            <option value=""></option>
+            <% db.execute("""SELECT a.orden as value,
+            CONCAT(c.nombre, ' - ',b.descripcion, ' - ',FORMAT(a.`cantidad_kg`,1),' kg - ',a.orden) as description
+            FROM `ordenes` as a
+            LEFT OUTER JOIN materiales as b
+            ON a.idmat = b.idmat
+            LEFT OUTER JOIN terceros as c
+            ON a.cliente = c.idtercero
+            WHERE a.estado = 'en proceso'
+            ORDER BY a.fecha_fin desc,c.nombre""")
+
+            for row in db:
+            %>
+            <option value="{{row['value']}}">{{row['description']}}</option>
+            %end
+        </select>
+    </div>
+
+    <div class="ui field">
+      <label>Operación</label>
+      <select class="ui search selection dropdown" id="operacion" name="operacion" data-orden="">
+        </select>
+    </div>
+
+    <div class="ui field">
+        <label>&nbsp;</label>
+        <button class="ui button fluid buscar">Ingresar</button>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+
+            window.location.href = value;    
+        
+      }
+    })
+
+    $('#orden').on('change',function(){
+        $('#operacion').attr('data-orden',$('#orden').val());
+    });
+
+
+    $('#operacion').dropdown({
+        apiSettings: {
+          url: '/ordenes/buscar_operacion_orden.json?orden={orden}query={query}',
+        }
+    });
+
+
+
+
+</script>

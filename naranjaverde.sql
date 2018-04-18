@@ -342,6 +342,7 @@ CREATE TABLE `hoja_ruta` (
   `idmat` varchar(20) NOT NULL,
   `descripcion` text NOT NULL,
   `cif` decimal(9,2) NOT NULL,
+  `rendimiento` decimal(5,2) DEFAULT NULL,
   PRIMARY KEY (`idmat`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -352,7 +353,7 @@ CREATE TABLE `hoja_ruta` (
 
 LOCK TABLES `hoja_ruta` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta` DISABLE KEYS */;
-INSERT INTO `hoja_ruta` VALUES ('01','datos piña hoa de ruta',50323.00);
+INSERT INTO `hoja_ruta` VALUES ('01','datos piña hoa de ruta',50323.00,NULL),('123','Fresa osmo deshidratada',123223.00,15.00);
 /*!40000 ALTER TABLE `hoja_ruta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -367,11 +368,11 @@ CREATE TABLE `hoja_ruta_componentes` (
   `idmat` varchar(20) NOT NULL,
   `operacion` varchar(50) NOT NULL,
   `componente` varchar(50) NOT NULL,
-  `tipo` varchar(4) NOT NULL,
+  `tipo` enum('MO','MP','MQ','LP') NOT NULL,
   `operarios` int(11) NOT NULL,
   `costo` decimal(9,3) NOT NULL,
+  `unidad` varchar(5) NOT NULL,
   `cantidad` decimal(9,3) NOT NULL,
-  `mil_std` varchar(1) NOT NULL,
   PRIMARY KEY (`idmat`,`operacion`,`componente`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -382,6 +383,7 @@ CREATE TABLE `hoja_ruta_componentes` (
 
 LOCK TABLES `hoja_ruta_componentes` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_componentes` DISABLE KEYS */;
+INSERT INTO `hoja_ruta_componentes` VALUES ('123','1','fresa','MP',0,12345.000,'kg',120.000),('123','1','operario','MO',3,7400.000,'h',0.150),('123','2','Deshidratacion','MQ',1,213423.000,'kg',1.000),('123','3','operario','MO',3,123.000,'kg',12.000);
 /*!40000 ALTER TABLE `hoja_ruta_componentes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -397,8 +399,7 @@ CREATE TABLE `hoja_ruta_operaciones` (
   `operacion` varchar(50) NOT NULL,
   `descripcion` text NOT NULL,
   `capacidad_kg_h` decimal(9,3) NOT NULL,
-  `tipo` varchar(4) NOT NULL,
-  `operarios` int(11) NOT NULL,
+  `tipo` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idmat`,`operacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -409,6 +410,7 @@ CREATE TABLE `hoja_ruta_operaciones` (
 
 LOCK TABLES `hoja_ruta_operaciones` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` DISABLE KEYS */;
+INSERT INTO `hoja_ruta_operaciones` VALUES ('123','1','alistamiento',160.000,'TUR'),('123','2','deshidratacion',18.800,'MAQ'),('123','3','desembandejado',270.000,'TUR'),('123','4','seleccion',300.000,'MAQ'),('123','5','empaque',250.000,'TUR');
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -610,12 +612,12 @@ CREATE TABLE `ordenes` (
   `cantidad_kg` decimal(9,0) NOT NULL,
   `pedido_cliente` varchar(50) NOT NULL,
   `fecha_inicio` datetime NOT NULL,
-  `precio_venta` decimal(12,3) DEFAULT NULL,
+  `precio_venta` decimal(9,3) NOT NULL,
   `p_uso_hornos` decimal(5,3) NOT NULL,
-  `fecha_fin` datetime DEFAULT NULL,
+  `fecha_fin` datetime NOT NULL,
   `estado` enum('abierta','cerrada','en proceso') DEFAULT NULL,
   PRIMARY KEY (`orden`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -624,7 +626,7 @@ CREATE TABLE `ordenes` (
 
 LOCK TABLES `ordenes` WRITE;
 /*!40000 ALTER TABLE `ordenes` DISABLE KEYS */;
-INSERT INTO `ordenes` VALUES (3,'10031188','100',233,'23432','2018-04-19 21:04:00',2357743.000,34.000,'2018-04-26 15:05:00','abierta'),(4,'10031188','100',233,'23432','2018-04-19 21:04:00',2357743.000,34.000,'2018-04-26 15:05:00','abierta'),(6,'10031189','123',21,'32332','2018-04-04 12:23:00',25000000.000,34.000,'2018-04-06 18:25:00','abierta');
+INSERT INTO `ordenes` VALUES (3,'91499686-5','123',251,'23423','2018-04-17 00:00:00',2342.000,0.000,'2018-04-17 00:00:00','en proceso'),(8,'91499686-5','123',250,'23423','2018-04-17 00:00:00',2342.000,0.000,'2018-04-17 00:00:00','en proceso'),(9,'91499686-5','123',250,'23423','2018-04-17 00:00:00',2342.000,0.000,'2018-04-17 00:00:00','en proceso'),(10,'91499686-5','123',250,'23423','2018-04-17 00:00:00',2342.000,0.000,'2018-04-17 00:00:00','abierta'),(11,'91499686-5','123',250,'23423','2018-04-17 00:00:00',2342.000,0.000,'2018-04-17 00:00:00','en proceso');
 /*!40000 ALTER TABLE `ordenes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -740,6 +742,34 @@ LOCK TABLES `ordenes_pedido_tercero` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ordenes_produccion`
+--
+
+DROP TABLE IF EXISTS `ordenes_produccion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ordenes_produccion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `orden` int(11) DEFAULT NULL,
+  `operacion` varchar(45) DEFAULT NULL,
+  `cantidad_kg` decimal(9,0) DEFAULT NULL,
+  `producto_terminado` int(11) DEFAULT NULL,
+  `desde` datetime DEFAULT NULL,
+  `hasta` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordenes_produccion`
+--
+
+LOCK TABLES `ordenes_produccion` WRITE;
+/*!40000 ALTER TABLE `ordenes_produccion` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ordenes_produccion` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `personal`
 --
 
@@ -820,7 +850,6 @@ CREATE TABLE `registro_turnos` (
 
 LOCK TABLES `registro_turnos` WRITE;
 /*!40000 ALTER TABLE `registro_turnos` DISABLE KEYS */;
-INSERT INTO `registro_turnos` VALUES ('2018-04-04','1','10031187','2018-04-04 06:00:00','2018-04-04 14:23:00'),('2018-04-04','1','42147451','2018-04-04 06:00:00','2018-04-04 14:00:00');
 /*!40000 ALTER TABLE `registro_turnos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -908,7 +937,7 @@ CREATE TABLE `terceros` (
 
 LOCK TABLES `terceros` WRITE;
 /*!40000 ALTER TABLE `terceros` DISABLE KEYS */;
-INSERT INTO `terceros` VALUES ('10031187','pedrito perez',123123123.00,'','EMPL'),('10031188','fulanito de tal',0.00,'','CLNT'),('10031189','andres hurtado lopez',0.00,'','CLNT'),('10092678-3','FRANCISCO HUBERTO VALENCIA GRAJALES',0.00,NULL,'PROV'),('10102428-3','CARLOS ARTURO BEDOYA RAMIREZ',0.00,NULL,'PROV'),('10108974-0','HUGO DE JESUS SALADARRIAGA RODRIGUEZ',0.00,NULL,'PROV'),('10283685-5','EDUARDO VELEZ ARBELADEZ',0.00,NULL,'PROV'),('11259559-8','CARLOS ROJAS',0.00,NULL,'PROV'),('12533246-6','LEONARDO PERDOMO SALAS',0.00,NULL,'PROV'),('19220832-6','FABIAN LOZADA',0.00,NULL,'PROV'),('29136530','LUZ MIRELLA MEJIA',0.00,NULL,'PROV'),('42087028','CLAUDIA INES GONZALEZ LOPEZ',0.00,NULL,'PROV'),('42112353-9','GLORIA MILENA LOPEZ BEDOYA',0.00,NULL,'PROV'),('42147451','Liliana Herrera Ramirez',0.00,'','EMPL'),('70950653','RAUL VILLEGAS',0.00,NULL,'PROV'),('75046659-4','HECTOR DIEGO GOMEZ MEJIA',0.00,NULL,'PROV'),('79131530-1','CARLOS JULIO TORRES GARAY',0.00,NULL,'PROV'),('80096454-3','FREDY ANDRES GUTIERREZ CABUYO(DIEGO BOGOTA)',0.00,NULL,'PROV'),('860026759-4','CARTONES AMERICA SA CAME',0.00,NULL,'PROV'),('860511541-6','COMESTIBLES ALFA LTDA',0.00,NULL,'PROV'),('860712584-0','MATEO MARQUEZ SANCHEZ',0.00,NULL,'PROV'),('900124107-7','CINDY COCO SAS',0.00,NULL,'PROV'),('900124794-7','ALIMENTOS SUQA SAS',0.00,NULL,'PROV'),('900380814-2','DIPSA FOOD ENERGY REPRESENTACIONES SAS',0.00,NULL,'PROV'),('900409034-2','TERRAFERTIL COLOMBIA SAS',0.00,NULL,'PROV'),('900473144-6','CONNPLANTS SAS',0.00,NULL,'PROV'),('900543350-8','FAIR FRUITS SAS',0.00,NULL,'PROV'),('900560551-3','SERO COLOMBIA S.A.S',0.00,NULL,'PROV'),('900687446-4','PACIFICOCO COLOMBIA SAS',0.00,NULL,'PROV'),('900767263-7','FLP PROCESADOS SAS',0.00,NULL,'PROV'),('900830404-8','COMERCIALIZADO DE PRODUCTOS AGRICOLAS DF SAS',0.00,NULL,'PROV'),('91499686-5','AGRO BARBOSA',0.00,NULL,'PROV'),('98473570-2','ELKIN FERNANDO ORREGO ZULUAGA (INDUBOLSAS)',0.00,NULL,'PROV');
+INSERT INTO `terceros` VALUES ('10092678-3','FRANCISCO HUBERTO VALENCIA GRAJALES',0.00,NULL,'EMPL'),('10102428-3','CARLOS ARTURO BEDOYA RAMIREZ',0.00,NULL,'PROV'),('10108974-0','HUGO DE JESUS SALADARRIAGA RODRIGUEZ',0.00,NULL,'PROV'),('10283685-5','EDUARDO VELEZ ARBELADEZ',0.00,NULL,'PROV'),('11259559-8','CARLOS ROJAS',0.00,NULL,'PROV'),('12533246-6','LEONARDO PERDOMO SALAS',0.00,NULL,'PROV'),('19220832-6','FABIAN LOZADA',0.00,NULL,'PROV'),('29136530','LUZ MIRELLA MEJIA',0.00,NULL,'PROV'),('42087028','CLAUDIA INES GONZALEZ LOPEZ',0.00,NULL,'PROV'),('42112353-9','GLORIA MILENA LOPEZ BEDOYA',0.00,NULL,'PROV'),('70950653','RAUL VILLEGAS',0.00,NULL,'EMPL'),('75046659-4','HECTOR DIEGO GOMEZ MEJIA',0.00,NULL,'PROV'),('79131530-1','CARLOS JULIO TORRES GARAY',0.00,NULL,'EMPL'),('80096454-3','FREDY ANDRES GUTIERREZ CABUYO(DIEGO BOGOTA)',0.00,NULL,'PROV'),('860026759-4','CARTONES AMERICA SA CAME',0.00,NULL,'PROV'),('860511541-6','COMESTIBLES ALFA LTDA',0.00,NULL,'PROV'),('860712584-0','MATEO MARQUEZ SANCHEZ',0.00,NULL,'PROV'),('900124107-7','CINDY COCO SAS',0.00,NULL,'PROV'),('900124794-7','ALIMENTOS SUQA SAS',0.00,NULL,'PROV'),('900380814-2','DIPSA FOOD ENERGY REPRESENTACIONES SAS',0.00,NULL,'PROV'),('900409034-2','TERRAFERTIL COLOMBIA SAS',0.00,NULL,'PROV'),('900473144-6','CONNPLANTS SAS',0.00,NULL,'PROV'),('900543350-8','FAIR FRUITS SAS',0.00,NULL,'PROV'),('900560551-3','SERO COLOMBIA S.A.S',0.00,NULL,'PROV'),('900687446-4','PACIFICOCO COLOMBIA SAS',0.00,NULL,'PROV'),('900767263-7','FLP PROCESADOS SAS',0.00,NULL,'PROV'),('900830404-8','COMERCIALIZADO DE PRODUCTOS AGRICOLAS DF SAS',0.00,NULL,'PROV'),('91499686-5','AGRO BARBOSA',0.00,NULL,'CLNT'),('98473570-2','ELKIN FERNANDO ORREGO ZULUAGA (INDUBOLSAS)',0.00,NULL,'CLNT');
 /*!40000 ALTER TABLE `terceros` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1059,7 +1088,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','7651b581-a052-4a07-ae77-360c0fcf30f3',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','540765f1-e751-4b37-adff-af3cc97e614e',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','22b677e4-47bb-4241-8dd2-85aa668fbf4f',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
+INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','09bbab0a-67d1-44f8-9bb2-03fd50fbd30a',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'b503c984-9e1b-4051-9124-e420434f2b09',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','540765f1-e751-4b37-adff-af3cc97e614e',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','22b677e4-47bb-4241-8dd2-85aa668fbf4f',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1179,4 +1208,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-12 20:48:35
+-- Dump completed on 2018-04-18 12:49:49

@@ -11,7 +11,8 @@ db = utils.ConnectDB()
 
 q_desde = request.GET.q_desde if request.GET.q_desde else weekstart.strftime('%Y-%m-%d')
 q_hasta = request.GET.q_hasta if request.GET.q_hasta else weekend.strftime('%Y-%m-%d')
-q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
+q_cliente = request.GET.q_cliente if request.GET.q_cliente else '%'
+q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
 
 %>
 <h2 class="ui header">Programacion Producción</h2>
@@ -24,12 +25,13 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
         <div class="item" data-value="/main_menu.html">Menu Principal</div>
         <div class="item" data-value="/home.html">Resumen</div>
         <div class="item" data-value="edicion.html">Crear Orden</div>
-        <div class="item" data-value="/home.html">Crear Orden con modelo</div>
+        <div class="item" data-value="editar_orden">Crear Orden</div>
+        <div class="item" data-value="crear_con_modelo">Crear Orden con modelo</div>
     </div>
 </div>
 
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
-    <div class="five fields">
+    <div class="five six fields">
         <div class="ui field">
           <label>Entrega Desde</label>
           <input type="date" name="q_desde" value="{{ q_desde }}">
@@ -46,17 +48,22 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
         </div>
         <div class="ui field">
             <label>Estado</label>
-            <select name="q_estado">
-                <option value="%">Todas</option>
+            <select name="q_estado" id="q_estado">
                 <option value="en proceso">En Proceso</option>
+                <option value="%">Todas</option>
                 <option value="abierta">Abierta</option>
                 <option value="cerrada">Cerrada</option>
             </select>
         </div>
         <div class="ui field">
             <label>&nbsp;</label>
-            <a class="ui button fluid buscar" href>Buscar</a>
+            <button class="ui button fluid buscar">Buscar</button>
         </div>
+        <div class="ui field">
+            <label>&nbsp;</label>
+            <a class="ui button fluid buscar" href="programacion_produccion.html">Limpiar</a>
+        </div>
+
     </div>
 </form>
 
@@ -96,7 +103,10 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
             ON a.idmat = b.idmat
             LEFT OUTER JOIN terceros as c
             ON a.cliente = c.idtercero
-            WHERE 1""")
+            WHERE a.fecha_fin between %s and %s and estado LIKE %s 
+            ORDER BY a.fecha_fin desc,
+            c.nombre
+            LIMIT 40""",[q_desde, q_hasta, q_estado])
                for row in db:
             %>
             <tr>
@@ -114,18 +124,6 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
                 <td>{{row['estado']}}</td>
                 <td>
                     <div class="ui buttons">
-                        <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['orden']}}')">
-                          <div class="hidden content">Eliminar</div>
-                          <div class="visible content">
-                            <i class="remove icon"></i>
-                          </div>
-                        </a>
-                        <a class="ui vertical animated button" href="edicion.html?id={{row['orden']}}">
-                          <div class="hidden content">Editar</div>
-                          <div class="visible content">
-                            <i class="edit icon"></i>
-                          </div>
-                        </a>
                         <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=en+proceso">
                           <div class="hidden content">Procesar</div>
                           <div class="visible content">
@@ -143,6 +141,23 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
                           <div class="visible content">
                             <i class="pause icon"></i>
                           </div>
+                        <a class="ui vertical animated button" href="edicion.html?id={{row['orden']}}">
+                          <div class="hidden content">Editar</div>
+                          <div class="visible content">
+                            <i class="edit icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="crear_copia.html?id={{row['orden']}}">
+                          <div class="hidden content">Copiar</div>
+                          <div class="visible content">
+                            <i class="copy outline icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['orden']}}')">
+                          <div class="hidden content">Eliminar</div>
+                          <div class="visible content">
+                            <i class="remove icon"></i>
+                          </div>
                         </a>
                     </div>
                 </td>
@@ -151,7 +166,6 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
         </tbody>
     </table>
 </div>
-
 
 <script type="text/javascript">
 
@@ -165,14 +179,11 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
         }
     };
 
-    function crear_con_modelo()
-    {
-        
-    }
-
     $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){
-        window.location.href = value;
+
+            window.location.href = value;    
+        
       }
     })
 
@@ -181,5 +192,17 @@ q_cliente = request.GET.q_cliente if request.GET.q_cliente else ''
           url: '/terceros/buscar.json?tipo=CLNT&query={query}'
         }
     });
+
+    % if q_cliente:
+    $('#q_cliente').dropdown('set value','{{q_cliente}}');
+    $('#q_cliente').dropdown('set text','{{q_cliente}} - {{q_cliente}}');
+    % end
+
+    % if q_estado:
+    $('#q_estado').val('{{q_estado}}');
+    %end
+
+
+
 
 </script>

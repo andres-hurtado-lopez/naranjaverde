@@ -1,0 +1,1 @@
+alter table ordenes add column estado enum('abierta','cerrada','en proceso');

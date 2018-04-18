@@ -13,8 +13,8 @@ if id:
                          a.idmat,
                          a.cantidad_kg,
                          a.pedido_cliente,
-                         DATE_FORMAT(a.fecha_inicio, "%%Y-%%m-%%dT%%T") as fecha_inicio,
-                         DATE_FORMAT(a.fecha_fin, "%%Y-%%m-%%dT%%T") as fecha_fin,
+                         DATE_FORMAT(a.fecha_inicio, "%%Y-%%m-%%d") as fecha_inicio,
+                         DATE_FORMAT(a.fecha_fin, "%%Y-%%m-%%d") as fecha_fin,
                          a.precio_venta,
                          a.p_uso_hornos,
                          b.descripcion as mattext, c.nombre as tertext FROM ordenes as a 
@@ -67,11 +67,11 @@ end
     </div>
     <div class="field">
         <label>Fecha Inicio</label>
-        <input type="datetime-local" name="fecha_inicio" value="{{fecha_inicio}}">
+        <input type="date" name="fecha_inicio" value="{{fecha_inicio}}">
     </div>
     <div class="field">
         <label>Fecha Fin</label>
-        <input type="datetime-local" name="fecha_fin" value="{{fecha_fin}}">
+        <input type="date" name="fecha_fin" value="{{fecha_fin}}">
     </div>
     <div class="field">
         <label>Precio de Venta</label>

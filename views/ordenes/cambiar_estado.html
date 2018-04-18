@@ -1,0 +1,15 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+orden = request.params.get('id')
+estado = request.params.get('estado')
+
+db.execute("""UPDATE ordenes set estado = %s WHERE orden = %s""",[ estado, orden])
+db.execute('COMMIT WORK');
+
+
+redirect('programacion_produccion.html')

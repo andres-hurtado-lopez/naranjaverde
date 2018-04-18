@@ -1,0 +1,40 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+orden = request.params.get('id')
+estado = request.params.get('estado')
+
+db.execute("""INSERT INTO ordenes (cliente,idmat,cantidad_kg,pedido_cliente,fecha_inicio,precio_venta,p_uso_hornos,fecha_fin,estado) SELECT
+    `ordenes`.`cliente`,
+    `ordenes`.`idmat`,
+    `ordenes`.`cantidad_kg`,
+    `ordenes`.`pedido_cliente`,
+    `ordenes`.`fecha_inicio`,
+    `ordenes`.`precio_venta`,
+    `ordenes`.`p_uso_hornos`,
+    `ordenes`.`fecha_fin`,
+    'abierta' as `estado`
+FROM `ordenes` WHERE orden = %s""",[ orden])
+
+db.execute('COMMIT WORK')
+
+
+db.execute('SELECT LAST_INSERT_ID() AS id')
+newid = db.fetchone()['id']
+
+
+
+#redirect('programacion_produccion.html')
+%>
+<h1>Orden Copiada</h1>
+<h2>Nueva Orden Creada:{{newid}}</h2>
+
+<script type="text/javascript">
+    setTimeout(function(){
+        window.location.href = "programacion_produccion.html"
+    },3000);
+</script>

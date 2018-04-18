@@ -1,0 +1,33 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+query = request.GET.query
+query = '%' + str(query) + '%'
+
+
+if query:
+
+	db.execute("""SELECT 
+		    a.orden as title,
+            CONCAT(c.nombre, ' - ',b.descripcion, ' - ',FORMAT(a.`cantidad_kg`,1),' kg - ',a.orden) as description
+            FROM `ordenes` as a
+            LEFT OUTER JOIN materiales as b
+            ON a.idmat = b.idmat
+            LEFT OUTER JOIN terceros as c
+            ON a.cliente = c.idtercero
+            WHERE a.estado = 'en proceso' AND (c.nombre like %s or b.descripcion LIKE %s or a.orden LIKE %s )
+            ORDER BY a.fecha_fin desc,
+            c.nombre
+            LIMIT 40 """,[query,query,query])
+
+    rows = db.fetchall()
+end
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}

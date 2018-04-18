@@ -1,0 +1,26 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+orden = request.GET.orden
+query = "%"+request.GET.query+"%" if request.GET.query else '%'
+
+
+if query:
+
+	db.execute("""SELECT a.operacion, a.descripcion 
+                    FROM  hoja_ruta_operaciones as a
+                    INNER JOIN ordenes as b
+                    ON A.idmat = b.idmat
+                    WHERE B.orden = %s and a.descripcion LIKE %s """,[orden, query])
+
+    rows = db.fetchall()
+end
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}
