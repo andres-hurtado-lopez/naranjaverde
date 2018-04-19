@@ -12,7 +12,7 @@ id = request.params.get('id')
 <div class="ui buttons">
   <a class="ui button" href="principal.html">Hoja de Ruta</a>
   <a class="ui button" href="principal_operaciones.html?id={{id}}">Operaciones</a>
-  <a class="ui button" href="edicion_componentes.html">Crear Componente</a>
+  <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}">Crear Componente</a>
 </div>
 <form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
     <div class="two fields">
@@ -56,7 +56,6 @@ id = request.params.get('id')
         <th>Unidad</th>
         <th>Costo Estandar</th>
         <th>#Operarios por operaci&oacute;n</th>
-        <th>Military Std.</th>
         <th>Acción</th>
     </thead>
     <tbody>
@@ -71,7 +70,6 @@ id = request.params.get('id')
             <td>{{row['unidad']}}</td>
             <td>{{row['costo']}}</td>
             <td>{{row['operarios']}}</td>
-            <td>{{row['mil_std']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}','{{row['operacion']}}','{{row['componente']}}')">
@@ -80,7 +78,7 @@ id = request.params.get('id')
                         <i class="remove icon"></i>
                       </div>
                     </a>
-                    <a class="ui vertical animated button" href="edicion.html?id={{row['idmat']}}&oper={{row['operacion']}}&comp={{row['componente']}}">
+                    <a class="ui vertical animated button" href="edicion_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}&comp={{row['componente']}}&title={{'Edicion'}}">
                       <div class="hidden content">Editar</div>
                       <div class="visible content">
                         <i class="edit icon"></i>
@@ -99,11 +97,11 @@ id = request.params.get('id')
     url: 'http://www.google.com?q={value}'
   });
 
-    function confirmar_borrado(id)
+    function confirmar_borrado(id,oper,comp)
     {
         if (confirm("¿ Desea borrar este registro ?"))
         {
-            document.location = 'eliminar.html?id='+id;
+            document.location = 'eliminar_componentes.html?id='+id+'&oper='+oper+'&comp='+comp;
         }
     };
 

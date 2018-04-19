@@ -1,2 +1,2 @@
-mysql -uroot -p1234qwerasdF naranjaverde < naranjaverde.sql
+mysql -uroot -pubuntu naranjaverde < naranjaverde.sql
 

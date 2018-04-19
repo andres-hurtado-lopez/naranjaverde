@@ -6,13 +6,16 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.GET.id
+operacion =  request.GET.oper
+componente = request.GET.comp
+title = request.GET.title
 
-if id:
-    db.execute("SELECT * FROM materiales WHERE idmat = %s",[id])
+if id and operacion and componente:
+    db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,operacion,componente])
     vara = db.fetchone()
     locals().update(vara)
 else:
-    db.execute("DESCRIBE materiales")
+    db.execute("DESCRIBE hoja_ruta_componentes")
     for row in db:
         locals().update({row['Field']:''})
     end
@@ -20,43 +23,52 @@ end
 
        
 %>
-<h2 class="ui header">Edicion Material:</h2>
+<h2 class="ui header">{{title}} Componentes:</h2>
 <div class="ui buttons">
-  <a class="ui button" href="/materiales/principal.html">Materiales</a>
-  <a class="ui button" href="/main_menu.html">Menu Principal</a>
+  <a class="ui button" href="principal_componentes.html?id={{id}}">Componentes</a>
+  <a class="ui button" href="principal.html">Hoja de Ruta</a>
 </div>
 <form class="ui form">
     <div class="field">
         <label>ID</label>
-        <input type="text" name="idmat" value="{{idmat}}" required="">
+        <input type="text" name="idmat" value="{{id}}" required="" readonly>
     </div>
     <div class="field">
-        <label>Descripci&oacute;n</label>
-        <input type="text" name="descripcion" value="{{descripcion}}">
+        <label>Operaci&oacute;n</label>
+        <input type="text" name="operacion" value="{{operacion}}">
     </div>
     <div class="field">
-        <label>Grupo 1</label>
-        <input type="text" name="grupo1" value="{{grupo1}}" required="" >
+        <label>Componente</label>
+        <input type="text" name="componente" value="{{componente}}" required="" >
     </div>
     <div class="field">
-        <label>Grupo 2</label>
-        <input type="text" name="grupo2" value="{{grupo2}}">
+        <label>Tipo</label>
+        <select  name="tipo" >
+                <option value="MO" {{'selected' if tipo=='MO' else ''}}>Mano de Obra</option>
+                <option value="MP" {{'selected' if tipo=='MP' else ''}}>Materia Prima</option>
+                <option value="MQ" {{'selected' if tipo=='MQ' else ''}}>Maquinaria</option>
+                <option value="LP" {{'selected' if tipo=='LP' else ''}}>Muestras</option>
+        </select>
     </div>
     <div class="field">
-        <label>Grupo 3</label>
-        <input type="text" name="grupo3" value="{{grupo3}}">
+        <label>Operarios</label>
+        <input type="number" name="operarios" value="{{operarios}}">
     </div>
     <div class="field">
-        <label>Grupo 4</label>
-        <input type="text" name="grupo4" value="{{grupo4}}">
+        <label>Costo</label>
+        <input type="number" step="any" name="costo" value="{{costo}}">
     </div>
     <div class="field">
         <label>Unidad</label>
-        <input type="text" name="unidad" value="{{unidad}}" required="" >
+        <input type="text" name="unidad" value="{{unidad}}" required="" maxlength="5">
+    </div>
+    <div class="field">
+            <label>Cantidad</label>
+            <input type="number" step="any" name="cantidad" value="{{cantidad}}" required="" >
     </div>
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar_componentes.html" formmethod="POST">Guardar</button>
+            <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
     </div>
 </form>

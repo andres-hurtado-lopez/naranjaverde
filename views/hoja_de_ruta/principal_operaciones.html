@@ -12,7 +12,7 @@ id = request.params.get('id')
 <div class="ui buttons">
   <a class="ui button" href="principal.html">Hoja de Ruta</a>
   <a class="ui button" href="principal_componentes.html?id={{id}}">Componentes</a>
-  <a class="ui button" href="edicion.html">Crear Operacion</a>
+  <a class="ui button" href="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Operacion</a>
 </div>
 <form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
     <div class="two fields">
@@ -53,7 +53,6 @@ id = request.params.get('id')
         <th>Descripción</th>
         <th>Capacidad (kg/h)</th>
         <th>Tipo</th>
-        <th>Operarios</th>
         <th>Acción</th>
     </thead>
     <tbody>
@@ -65,7 +64,6 @@ id = request.params.get('id')
             <td>{{row['descripcion']}}</td>
             <td>{{row['capacidad_kg_h']}}</td>
             <td>{{row['tipo']}}</td>
-            <td>{{row['operarios']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}','{{row['operacion']}}')">
@@ -74,7 +72,7 @@ id = request.params.get('id')
                         <i class="remove icon"></i>
                       </div>
                     </a>
-                    <a class="ui vertical animated button" href="edicion.html?id={{row['idmat']}}&oper={{row['operacion']}}">
+                    <a class="ui vertical animated button" href="edicion_operaciones.html?id={{row['idmat']}}&oper={{row['operacion']}}&title={{'Edicion'}}">
                       <div class="hidden content">Editar</div>
                       <div class="visible content">
                         <i class="edit icon"></i>
@@ -93,11 +91,11 @@ id = request.params.get('id')
     url: 'http://www.google.com?q={value}'
   });
 
-    function confirmar_borrado(id)
+    function confirmar_borrado(id,oper)
     {
         if (confirm("¿ Desea borrar este registro ?"))
         {
-            document.location = 'eliminar.html?id='+id;
+            document.location = 'eliminar_operaciones.html?id='+id+'&oper='+oper;
         }
     };
 

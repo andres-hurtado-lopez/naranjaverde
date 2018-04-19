@@ -5,9 +5,10 @@ from bottle import request, redirect
 db = utils.ConnectDB()
 
 id = request.params.get('id')
+operacion = request.params.get('oper')
 
 
-db.execute("""DELETE FROM `materiales` WHERE idmat = %s """,[ id,])
+db.execute("""DELETE FROM `hoja_ruta_operaciones` WHERE idmat = %s and operacion = %s """,[ id,operacion])
 db.execute('COMMIT WORK');
 
-redirect('principal.html')
+redirect('principal_operaciones.html?id={id}'.format(id=id) )

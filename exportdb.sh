@@ -1,2 +1,2 @@
-mysqldump -uroot -p1234qwerasdF naranjaverde > naranjaverde.sql
+mysqldump -uroot -pubuntu naranjaverde > naranjaverde.sql
 

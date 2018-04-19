@@ -6,15 +6,16 @@ from bottle import request, redirect
 db = utils.ConnectDB()
 
 idmat = request.params.get('idmat')
-descripcion = request.params.get('descripcion')
-grupo1 = request.params.get('grupo1')
-grupo2 = request.params.get('grupo2')
-grupo3 = request.params.get('grupo3')
-grupo3 = request.params.get('grupo3')
+operacion = request.params.get('operacion')
+componente = request.params.get('componente')
+tipo = request.params.get('tipo')
+operarios = request.params.get('operarios')
+costo = request.params.get('costo')
 unidad = request.params.get('unidad')
+cantidad = request.params.get('cantidad')
 
-db.execute("""REPLACE INTO `materiales`(`idmat`, `descripcion`, `grupo1`, `grupo2`, `grupo3`, `grupo4`, `unidad`) 
-    VALUES (%s,%s,%s,%s,%s,%s,%s)""",[ idmat, descripcion, grupo1, grupo2, grupo3, grupo3, unidad,])
+db.execute("""REPLACE INTO `hoja_ruta_componentes`(`idmat`, `operacion`, `componente`, `tipo`, `operarios`, `costo`, `unidad`, `cantidad`) 
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",[ idmat, operacion, componente, tipo, operarios, costo, unidad, cantidad])
 db.execute('COMMIT WORK');
 
-redirect('edicion.html?id={id}'.format(id=idmat))
+redirect('edicion_componentes.html?id={id}&oper={oper}&comp={comp}&title={title}'.format(id=idmat,oper=operacion,comp=componente,title='Edicion'))
