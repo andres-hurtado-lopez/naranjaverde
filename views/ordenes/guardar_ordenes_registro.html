@@ -1,0 +1,21 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+orden = request.params.get('orden')
+orden = orden if orden else 0
+operacion = request.params.get('operacion')
+componente = request.params.get('componente')
+cantidad = request.params.get('cantidad')
+nota = request.params.get('nota')
+fecha = request.params.get('fecha')
+
+db.execute("""REPLACE INTO ordenes_registro (`orden`, `operacion`, `componente`, `cantidad`, `notas`, `fecha`) 
+value (%s,%s,%s,%s,%s,%s)""",[ orden, operacion,componente,cantidad,nota,fecha])
+db.execute('COMMIT WORK');
+
+
+redirect('registro_trabajo_planta.html')

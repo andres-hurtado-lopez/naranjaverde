@@ -6,19 +6,35 @@ import json
 db = utils.ConnectDB()
 
 orden = request.GET.orden
-query = "%"+request.GET.query+"%" if request.GET.query else '%'
+param = request.GET.param
+oper  = request.GET.oper
 
-
-if query:
-
+if param == "0" :
 	db.execute("""SELECT a.operacion, a.descripcion 
                     FROM  hoja_ruta_operaciones as a
                     INNER JOIN ordenes as b
-                    ON A.idmat = b.idmat
-                    WHERE B.orden = %s and a.descripcion LIKE %s """,[orden, query])
+                    ON a.idmat = b.idmat
+                    WHERE b.orden = %s
+                    and b.estado='en proceso' """,[orden])
 
     rows = db.fetchall()
-end
+
+else :
+
+    db.execute("""SELECT c.componente 
+                    FROM  hoja_ruta_operaciones as a
+                    INNER JOIN ordenes as b
+                    ON a.idmat = b.idmat
+                    inner join hoja_ruta_componentes as c
+                    on a.operacion = c.operacion and a.idmat=c.idmat
+                    WHERE b.orden = %s
+                    and a.operacion = %s   
+                    and b.estado='en proceso' """,[orden,oper])
+
+    rows = db.fetchall()                
+end 
+
+   
 
 results = {'results':rows}
 output = json.dumps(results)

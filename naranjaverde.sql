@@ -371,7 +371,7 @@ CREATE TABLE `hoja_ruta_componentes` (
   `tipo` enum('MO','MP','MQ','LP') NOT NULL,
   `operarios` int(11) NOT NULL,
   `costo` decimal(9,3) NOT NULL,
-  `unidad` varchar(5) NOT NULL,
+  `unidad` enum('kg','l','g','m','cm','lb','un') NOT NULL,
   `cantidad` decimal(9,3) NOT NULL,
   PRIMARY KEY (`idmat`,`operacion`,`componente`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -383,7 +383,7 @@ CREATE TABLE `hoja_ruta_componentes` (
 
 LOCK TABLES `hoja_ruta_componentes` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_componentes` DISABLE KEYS */;
-INSERT INTO `hoja_ruta_componentes` VALUES ('123','1','fresa','MP',0,12345.000,'kg',120.000),('123','1','operario','MO',3,7400.000,'h',0.150),('123','2','Deshidratacion','MQ',1,213423.000,'kg',1.000),('123','3','operario','MO',3,123.000,'kg',12.000);
+INSERT INTO `hoja_ruta_componentes` VALUES ('123','1','Deshidratacion','MQ',1,213423.000,'kg',1.000),('123','1','fresa','MP',0,12345.000,'kg',120.000),('123','3','operario','MO',3,123.000,'kg',12.000);
 /*!40000 ALTER TABLE `hoja_ruta_componentes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -410,7 +410,7 @@ CREATE TABLE `hoja_ruta_operaciones` (
 
 LOCK TABLES `hoja_ruta_operaciones` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` DISABLE KEYS */;
-INSERT INTO `hoja_ruta_operaciones` VALUES ('123','1','alistamientos-hector',180.000,'TUR'),('123','2','deshidratacion',18.800,'MAQ'),('123','3','desembandejado',270.000,'TUR'),('123','4','seleccion',300.000,'MAQ'),('123','5','empaque',250.000,'TUR');
+INSERT INTO `hoja_ruta_operaciones` VALUES ('123','1','alistamientos-hector',180.000,'TUR'),('123','2','deshidratacion',18.800,'MAQ'),('123','5','empaque',250.000,'TUR');
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -770,6 +770,35 @@ LOCK TABLES `ordenes_produccion` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ordenes_registro`
+--
+
+DROP TABLE IF EXISTS `ordenes_registro`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ordenes_registro` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `orden` int(11) NOT NULL,
+  `operacion` varchar(50) NOT NULL,
+  `componente` varchar(50) NOT NULL,
+  `cantidad` decimal(20,10) NOT NULL,
+  `notas` text NOT NULL,
+  `fecha` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordenes_registro`
+--
+
+LOCK TABLES `ordenes_registro` WRITE;
+/*!40000 ALTER TABLE `ordenes_registro` DISABLE KEYS */;
+INSERT INTO `ordenes_registro` VALUES (1,11,'1','Deshidratacion',12544.0000000000,'hola mundo','2018-04-21 09:30:07');
+/*!40000 ALTER TABLE `ordenes_registro` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `personal`
 --
 
@@ -850,6 +879,7 @@ CREATE TABLE `registro_turnos` (
 
 LOCK TABLES `registro_turnos` WRITE;
 /*!40000 ALTER TABLE `registro_turnos` DISABLE KEYS */;
+INSERT INTO `registro_turnos` VALUES ('2018-04-21','1','70950653','2018-04-21 06:00:00','2018-04-21 14:00:00');
 /*!40000 ALTER TABLE `registro_turnos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1088,7 +1118,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','09bbab0a-67d1-44f8-9bb2-03fd50fbd30a',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'e2616874-2111-4f56-aa8c-5e4ed37b8224',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','540765f1-e751-4b37-adff-af3cc97e614e',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','22b677e4-47bb-4241-8dd2-85aa668fbf4f',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
+INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','09bbab0a-67d1-44f8-9bb2-03fd50fbd30a',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'5746a3ca-02be-45b0-a4bf-7f1b19a4f5b5',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','540765f1-e751-4b37-adff-af3cc97e614e',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','22b677e4-47bb-4241-8dd2-85aa668fbf4f',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1208,4 +1238,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-18 22:06:19
+-- Dump completed on 2018-04-21 11:57:00

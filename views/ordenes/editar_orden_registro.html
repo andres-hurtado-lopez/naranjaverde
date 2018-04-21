@@ -1,0 +1,148 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+id = request.params.get('id')
+
+db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, DATE_FORMAT(`fecha`,'%%Y-%%m-%%dT%%H:%%i:%%s') AS fecha
+FROM `ordenes_registro` WHERE `id`= %s """,[id])
+
+
+row_registro = db.fetchone();
+
+
+db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg` 
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+where o.estado='en proceso'  
+ Limit 100  """,[])
+
+row_ordenes = db.fetchall()
+
+db.execute("""SELECT a.operacion, a.descripcion 
+FROM  hoja_ruta_operaciones as a
+INNER JOIN ordenes as b
+ON a.idmat = b.idmat
+WHERE b.orden = %s
+and b.estado='en proceso' """,[row_registro['orden']])
+
+row_operacion = db.fetchall()
+
+db.execute("""SELECT c.componente 
+FROM  hoja_ruta_operaciones as a
+INNER JOIN ordenes as b
+ON a.idmat = b.idmat
+inner join hoja_ruta_componentes as c
+on a.operacion = c.operacion and a.idmat=c.idmat
+WHERE b.orden = %s
+and a.operacion = %s   
+and b.estado='en proceso' """,[row_registro['orden'],row_registro['operacion'] ] )
+
+row_componente = db.fetchall()
+
+
+
+%>
+<h2 class="ui header">Programacion Producción</h2>
+<div class="ui buttons">
+    <a class="ui button" href="/main_menu.html">Menu Principal</a>
+    <a class="ui button" href="registro_trabajo_planta.html">Menu Principal</a>
+</div>
+
+<br>
+<form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
+    
+        <div class="ui field">
+          <label>Orden</label>
+          <select class="ui search selection dropdown" id="orden" name="orden" >
+              % for row in row_ordenes :  
+              <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
+              %end
+            </select>
+        </div>
+
+        <div class="ui field">
+                <label>Operacion</label>
+                <select class="ui search selection dropdown" id="operacion" name="operacion" >      
+                        % for row in row_operacion :  
+                        <option value="{{row['operacion']}}">{{ row['operacion'] + ' - ' + str(row['descripcion'])  }}</option>
+                        %end            
+                </select>
+        </div>
+
+        <div class="ui field">
+                <label>Componentes</label>
+                <select class="ui search selection dropdown" id="componente" name="componente" >       
+                        % for row in row_componente :  
+                        <option value="{{row['componente']}}">{{ row['componente'] }}</option>
+                        %end            
+                 </select>
+        </div>
+
+        <div class="ui field">
+                <label>Cantidad</label>
+                <input type="number" step="any" name="cantidad"  required="" value="{{row_registro['cantidad']}}" >
+        </div>
+        <div class="ui field">
+                <label>Notas</label>
+                <textarea  name="nota"  value="{{row_registro['notas']}}" ></textarea>
+        </div>
+        <div class="ui field">
+            <label>Fecha y Hora</label>
+            <input type="datetime-local" name="fecha" value="{{ row_registro['fecha'] }}"  >
+        </div>
+        <br>
+        <div class="ui buttons">
+            <button class="ui button" type="submit" formmethod="POST" formaction="guardar_ordenes_registro.html">Guardar</button>     
+        </div>
+        <br> <br>
+    </form>
+
+<script>
+
+$('#orden').dropdown('set selected','{{row_registro["orden"]}}');
+$('#operacion').dropdown('set selected','{{row_registro["operacion"]}}');
+$('#componente').dropdown('set selected','{{row_registro["componente"]}}');
+
+$('#orden').on('change', function(){
+
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=0", function( data ) {
+
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
+
+            }, this);
+
+            $('#operacion').dropdown();
+
+    },'json');
+
+
+});
+
+$('#operacion').on('change', function() {
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=1&oper="+$('#operacion').val(), function( data ) {
+
+            $('#componente').empty();
+            data.results.forEach(function(element) {
+                
+                $('#componente').append('<option value="'+element.componente+'">'+element.componente+'</option>');
+
+            }, this);
+
+            $('#componente').dropdown();
+
+    },'json');
+
+} );
+
+</script>

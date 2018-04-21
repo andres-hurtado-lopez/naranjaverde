@@ -1,0 +1,192 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg` 
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+where o.estado='en proceso' Limit 100 """,[])
+
+%>
+<h2 class="ui header">Programacion Producción</h2>
+
+<div class="ui fluid search selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="/main_menu.html">Menu Principal</div>
+        <div class="item" data-value="/home.html">Resumen</div>
+        <div class="item" data-value="edicion.html">Crear Orden</div>
+        <div class="item" data-value="editar_orden">Crear Orden</div>
+        <div class="item" data-value="crear_con_modelo">Crear Orden con modelo</div>
+    </div>
+</div>
+
+<br>
+<form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
+    
+        <div class="ui field">
+          <label>Orden</label>
+          <select class="ui search selection dropdown" id="orden" name="orden" >
+              % for row in db :  
+              <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
+              %end
+            </select>
+        </div>
+
+        <div class="ui field">
+                <label>Operacion</label>
+                <select class="ui search selection dropdown" id="operacion" name="operacion" >                  
+                 </select>
+        </div>
+
+        <div class="ui field">
+                <label>Componentes</label>
+                <select class="ui search selection dropdown" id="componente" name="componente" >                  
+                 </select>
+        </div>
+
+        <div class="ui field">
+                <label>Cantidad</label>
+                <input type="number" name="cantidad"  required="" >
+        </div>
+        <div class="ui field">
+                <label>Notas</label>
+                <input type="text" name="nota"  required="">
+        </div>
+        <br>
+        <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Ingresar</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+        </div>
+
+        <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Avance de Produccion</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+        </div>
+
+</form>
+
+
+
+<div class="ui container" style="overflow: auto; height: 23em;">
+    <table class="ui table">
+        <thead style="position: -webkit-sticky; position: sticky; top:0;">
+            <th>Id</th>
+            <th>Orden</th>
+            <th>Operacion</th>
+            <th>Componentes</th>
+            <th>Cantidad</th>
+            <th>Notas</th>
+            <th>Fecha</th>
+            <th>Accion</th>
+        </thead>
+        <tbody>
+            <% db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, `fecha` 
+                             FROM `ordenes_registro`
+                             order by fecha
+            LIMIT 40""",[])
+               for row in db:
+            %>
+            <tr>
+                <td>{{row['id']}}</td>
+                <td>{{row['orden']}}</td>
+                <td>{{row['operacion']}}</td>
+                <td>{{row['componente']}}</td>
+                <td>{{row['cantidad']}}</td>
+                <td>{{row['notas']}}</td>
+                <td>{{row['fecha']}}</td>
+                <td>
+                    <div class="ui buttons">
+                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=en+proceso">
+                          <div class="hidden content">Procesar</div>
+                          <div class="visible content">
+                            <i class="play icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=cerrada">
+                          <div class="hidden content">Cerrar</div>
+                          <div class="visible content">
+                            <i class="stop icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=abierta">
+                          <div class="hidden content">Pausar</div>
+                          <div class="visible content">
+                            <i class="pause icon"></i>
+                          </div>
+                        <a class="ui vertical animated button" href="edicion.html?id={{row['orden']}}">
+                          <div class="hidden content">Editar</div>
+                          <div class="visible content">
+                            <i class="edit icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="crear_copia.html?id={{row['orden']}}">
+                          <div class="hidden content">Copiar</div>
+                          <div class="visible content">
+                            <i class="copy outline icon"></i>
+                          </div>
+                        </a>
+                        <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['orden']}}')">
+                          <div class="hidden content">Eliminar</div>
+                          <div class="visible content">
+                            <i class="remove icon"></i>
+                          </div>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            %end
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+$('#orden').on('change', function(){
+
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+0, function( data ) {
+
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
+
+            }, this);
+
+            $('#operacion').dropdown();
+
+    },'json');
+
+    $('#operacion').val();
+
+})
+
+$('#componente').on('change', function(){
+
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
+
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.componente+'</option>');
+
+            }, this);
+
+            $('#operacion').dropdown();
+
+    },'json');
+
+    $('#operacion').val();
+
+})
+
+</script>

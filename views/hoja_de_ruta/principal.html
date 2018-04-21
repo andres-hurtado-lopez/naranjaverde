@@ -22,7 +22,7 @@ db = utils.ConnectDB()
     <tbody>
         <% db.execute("""SELECT a.idmat, concat(a.idmat,' - ',b.descripcion) as producto,
                                 a.descripcion,
-                                a.cif as std,
+                                IFNULL( (SELECT sum(`costo`*`cantidad`) from hoja_ruta_componentes where `idmat`=a.idmat ), 0 )+a.cif as std,
                                 a.cif
                          FROM hoja_ruta as a
                          LEFT OUTER JOIN materiales as b
@@ -33,8 +33,8 @@ db = utils.ConnectDB()
         <tr>
             <td>{{row['producto']}}</td>
             <td>{{row['descripcion']}}</td>
-            <td>{{'{:20,.2f}'.format( row['std'])}}</td>
-            <td>{{'{:20,.2f}'.format(row['cif'])}}</td>
+            <td>{{'{:20,.2f}'.format( row['std'] )  }}</td>
+            <td>{{'{:20,.2f}'.format( row['cif'] ) }}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}">
