@@ -6,11 +6,18 @@ from bottle import request
 db = utils.ConnectDB()
 
 %>
-<h2 class="ui header">Hojas de Ruta de Producci&oacute;n</h2>
-<div class="ui buttons">
-  <a class="ui button" href="/main_menu.html">Menu Principal</a>
-  <a class="ui button" href="edicion.html">Crear Hoja de Ruta</a>
+
+<div class="ui search fluid selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="">Menu</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+        <div class="item" data-value="edicion.html">Crear Hoja de Ruta</div>
+    </div>
 </div>
+
 <table class="ui table">
     <thead>
         <th>Producto</th>
@@ -37,12 +44,12 @@ db = utils.ConnectDB()
             <td>{{'{:20,.2f}'.format( row['cif'] ) }}</td>
             <td>
                 <div class="ui buttons">
-                    <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}">
+                <!--   <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}">
                       <div class="hidden content">Compon.</div>
                       <div class="visible content">
                         <i class="cubes icon"></i>
                       </div>
-                    </a>
+                    </a>-->
                     <a class="ui vertical animated button" href="principal_operaciones.html?id={{row['idmat']}}">
                       <div class="hidden content">Oper.</div>
                       <div class="visible content">
@@ -81,5 +88,11 @@ db = utils.ConnectDB()
             document.location = 'eliminar.html?id='+id;
         }
     };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
 
 </script>

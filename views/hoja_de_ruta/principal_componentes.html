@@ -6,14 +6,24 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.params.get('id')
+oper = request.params.get('oper')
 
 %>
-<h2 class="ui header">Hoja de Ruta - Componentes</h2>
-<div class="ui buttons">
-  <a class="ui button" href="principal.html">Hoja de Ruta</a>
-  <a class="ui button" href="principal_operaciones.html?id={{id}}">Operaciones</a>
-  <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}">Crear Componente</a>
-</div>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="principal.html">Hoja de Ruta</div>
+            <div class="item" data-value="principal_operaciones.html?id={{id}}">Operacion</div>
+            <div class="item" data-value="edicion_componentes.html?id={{id}}&title={{'Crear'}}&oper={{oper}}">Crear Componente</div>
+        </div>
+ </div>   
+
+
 <form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
     <div class="two fields">
         <div class="field">
@@ -59,7 +69,12 @@ id = request.params.get('id')
         <th>Acción</th>
     </thead>
     <tbody>
-        <% db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s",(id,))
+        <% db.execute("""SELECT *  
+                        FROM  hoja_ruta_operaciones as a
+                        inner join hoja_ruta_componentes as c
+                        on a.operacion = c.operacion and a.idmat=c.idmat
+                        WHERE a.idmat = %s
+                        and a.operacion = %s """,(id,oper ) )
            for row in db:
         %>
         <tr>
@@ -104,5 +119,11 @@ id = request.params.get('id')
             document.location = 'eliminar_componentes.html?id='+id+'&oper='+oper+'&comp='+comp;
         }
     };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
 
 </script>

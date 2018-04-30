@@ -48,15 +48,23 @@ row_componente = db.fetchall()
 
 
 %>
-<h2 class="ui header">Programacion Producción</h2>
-<div class="ui buttons">
-    <a class="ui button" href="/main_menu.html">Menu Principal</a>
-    <a class="ui button" href="registro_trabajo_planta.html">Menu Principal</a>
-</div>
+
+<div class="ui search fluid selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="">Menu</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+        <div class="item" data-value="ordenes/registro_trabajo_planta.html">Registro Trabajo de Planta</div>
+    </div>
+</div>        
 
 <br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
-    
+
+        <input type="number" step="any" name="id_edit"   value="{{row_registro['id']}}" >
+
         <div class="ui field">
           <label>Orden</label>
           <select class="ui search selection dropdown" id="orden" name="orden" >
@@ -89,8 +97,8 @@ row_componente = db.fetchall()
                 <input type="number" step="any" name="cantidad"  required="" value="{{row_registro['cantidad']}}" >
         </div>
         <div class="ui field">
-                <label>Notas</label>
-                <textarea  name="nota"  value="{{row_registro['notas']}}" ></textarea>
+            <label>Notas</label>
+            <textarea  name="nota" >{{ row_registro['notas'] }}</textarea>
         </div>
         <div class="ui field">
             <label>Fecha y Hora</label>
@@ -98,7 +106,7 @@ row_componente = db.fetchall()
         </div>
         <br>
         <div class="ui buttons">
-            <button class="ui button" type="submit" formmethod="POST" formaction="guardar_ordenes_registro.html">Guardar</button>     
+            <button class="ui button" type="submit" formmethod="POST" formaction="editar_or_registro.html">Editar</button>     
         </div>
         <br> <br>
     </form>
@@ -144,5 +152,11 @@ $('#operacion').on('change', function() {
     },'json');
 
 } );
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
 
 </script>

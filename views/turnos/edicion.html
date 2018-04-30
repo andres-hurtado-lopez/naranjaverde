@@ -26,10 +26,18 @@ end
        
 %>
 <h2 class="ui header">Edicion Turno:</h2>
-<div class="ui buttons">
-  <a class="ui button" href="/turnos/principal.html">Turnos</a>
-  <a class="ui button" href="/main_menu.html">Menu Principal</a>
-</div>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="/turnos/principal.html">Turnos</div>
+        </div>
+    </div>  
+
 <form class="ui form">
     <div class="fields">
         <div class="eight wide field">
@@ -120,6 +128,12 @@ end
         url: '/terceros/buscar.json?tipo=EMPL&query={query}'
       }
   });
+
+
+  $('.ui.dropdown.optionmenu').dropdown({
+        action:function(text, value){    
+        window.location.href = value;}
+    })
 
 
 </script>

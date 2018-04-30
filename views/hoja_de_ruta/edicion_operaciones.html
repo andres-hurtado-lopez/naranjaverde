@@ -23,10 +23,19 @@ end
        
 %>
 <h2 class="ui header">{{title}} Operacion:</h2>
-<div class="ui buttons">
-  <a class="ui button" href="principal_operaciones.html?id={{id}}">Operaciones</a>
-  <a class="ui button" href="principal.html">Hoja de Ruta</a>
-</div>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="principal_operaciones.html?id={{id}}">Operaciones</div>
+            <div class="item" data-value="principal.html">Hoja de Ruta</div>
+        </div>
+ </div>   
+
 <form class="ui form">
     <div class="field">
         <label>ID</label>
@@ -58,3 +67,11 @@ end
     </div>
 </form>
 
+<script>
+
+$('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
+</script>

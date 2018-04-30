@@ -20,7 +20,7 @@ where o.estado='en proceso' Limit 100 """,[])
     <div class="text">Menu</div>
     <i class="dropdown icon"></i>
     <div class="menu">
-        <div class="item" data-value="/main_menu.html">Menu Principal</div>
+        <div class="item" data-value="">Menu</div>
         <div class="item" data-value="/home.html">Resumen</div>
         <div class="item" data-value="edicion.html">Crear Orden</div>
         <div class="item" data-value="editar_orden">Crear Orden</div>
@@ -189,4 +189,11 @@ $('#componente').on('change', function(){
 
 })
 
+
+$('.ui.dropdown.optionmenu').dropdown({
+      
+	action:function(text, value){        
+	window.location.href = value;     
+	 }
+    })
 </script>

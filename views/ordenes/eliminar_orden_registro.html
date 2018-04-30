@@ -1,0 +1,12 @@
+<%
+import utils
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+id = request.params.get('id')
+
+db.execute("""DELETE FROM `ordenes_registro` WHERE id = %s """,[ id])
+db.execute('COMMIT WORK');
+
+redirect('registro_trabajo_planta.html')

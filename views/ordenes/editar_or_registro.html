@@ -1,0 +1,21 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+id = request.params.get('id_edit')
+orden = request.params.get('orden')
+operacion = request.params.get('operacion')
+componente = request.params.get('componente')
+cantidad = request.params.get('cantidad')
+nota = request.params.get('nota')
+fecha = request.params.get('fecha')
+
+db.execute(""" UPDATE ordenes_registro set `orden` =%s , `operacion`=%s, `componente`=%s, `cantidad`=%s, `notas`=%s, `fecha`=%s where id = %s """
+,[ orden, operacion,componente,cantidad,nota,fecha,id])
+db.execute('COMMIT WORK');
+
+
+redirect('registro_trabajo_planta.html')

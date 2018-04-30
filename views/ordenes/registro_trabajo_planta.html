@@ -13,10 +13,23 @@ on o.idmat = m.idmat
 where o.estado='en proceso' Limit 100 """,[])
 
 %>
+
+
+<div class="ui search fluid selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+       <div class="item" data-value="">Menu</div> 
+        <div class="item" data-value="/home.html">Inicio</div>
+    </div>
+</div>   
+
+<!--
 <h2 class="ui header">Programacion Producción</h2>
 <div class="ui buttons">
     <a class="ui button" href="/main_menu.html">Menu Principal</a>
-</div>
+</div>-->
 
 <br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
@@ -32,13 +45,13 @@ where o.estado='en proceso' Limit 100 """,[])
 
         <div class="ui field">
                 <label>Operacion</label>
-                <select class="ui search selection dropdown" id="operacion" name="operacion" >                  
+                <select class="ui search selection dropdown" id="operacion" name="operacion" required="" >                  
                  </select>
         </div>
 
         <div class="ui field">
                 <label>Componentes</label>
-                <select class="ui search selection dropdown" id="componente" name="componente" >                  
+                <select class="ui search selection dropdown" id="componente" name="componente" required="" >                  
                  </select>
         </div>
 
@@ -153,5 +166,19 @@ $('#operacion').on('change', function() {
     },'json');
 
 } );
+
+function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar_orden_registro.html?id='+id;
+        }
+    };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+        action:function(text, value){
+        window.location.href = value;
+        }
+    })
 
 </script>

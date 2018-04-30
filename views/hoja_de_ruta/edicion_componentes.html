@@ -24,10 +24,19 @@ end
        
 %>
 <h2 class="ui header">{{title}} Componentes:</h2>
-<div class="ui buttons">
-  <a class="ui button" href="principal_componentes.html?id={{id}}">Componentes</a>
-  <a class="ui button" href="principal.html">Hoja de Ruta</a>
-</div>
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="principal_componentes.html?id={{id}}&oper={{operacion}}">Componentes</div>
+            <div class="item" data-value="principal.html">Hoja de Ruta</div>
+        </div>
+ </div>   
+
+
 <form class="ui form">
     <div class="field">
         <label>ID</label>
@@ -35,7 +44,7 @@ end
     </div>
     <div class="field">
         <label>Operaci&oacute;n</label>
-        <input type="text" name="operacion" value="{{operacion}}">
+        <input type="text" name="operacion" value="{{operacion}}" readonly>
     </div>
     <div class="field">
         <label>Componente</label>
@@ -72,3 +81,13 @@ end
             <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
     </div>
 </form>
+
+
+<script>
+    
+    $('.ui.dropdown.optionmenu').dropdown({
+        action:function(text, value){    
+        window.location.href = value;}
+    })
+
+</script>

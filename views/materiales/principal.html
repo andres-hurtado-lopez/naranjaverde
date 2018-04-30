@@ -6,10 +6,18 @@ from bottle import request
 db = utils.ConnectDB()
 %>
 <h2 class="ui header">Materiales</h2>
-<div class="ui buttons">
-  <a class="ui button" href="/main_menu.html">Menu Principal</a>
-  <a class="ui button" href="edicion.html">Crear Material</a>
-</div>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="edicion.html">Crear Material</div>
+        </div>
+    </div>  
+
 <form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
     <div class="two fields">
         <div class="field">
@@ -81,5 +89,10 @@ db = utils.ConnectDB()
             document.location = 'eliminar.html?id='+id;
         }
     };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+        action:function(text, value){    
+        window.location.href = value;}
+    })
 
 </script>
