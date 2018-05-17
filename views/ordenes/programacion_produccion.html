@@ -112,9 +112,30 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                             c.nombre
                             LIMIT 40""",[q_desde, q_hasta, q_estado])
 
-                       
-
                for row in db:
+
+                db.execute("""SELECT  MIN( c.`cantidad` )as cantidad
+                            FROM  hoja_ruta_operaciones as a
+                            INNER JOIN ordenes as b
+                            ON a.idmat = b.idmat
+                            inner join hoja_ruta_componentes as c
+                            on a.operacion = c.operacion and a.idmat=c.idmat 
+                            where b.orden = %s 
+                            and b.estado='en proceso' """,[ row['orden'] ]) 
+
+
+
+                row_register = db.fetchone();
+
+                print row_register['cantidad'],row['cantidad_kg']
+
+                row_value =  ( float( row_register['cantidad'])  /  float(row['cantidad_kg'] ) )
+                
+                row_value = row_value / 24 
+
+                fecha_exp =  row['fecha_inicio'] + datetime.timedelta(days = row_value);
+              
+
             %>
             <tr>
                 <td>{{row['fecha_inicio']}}</td>
@@ -126,8 +147,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 <td>{{row['cantidad_kg']}}</td>
                 <td>{{row['precio_venta']}}</td>
                 <td>{{row['p_uso_hornos']}}</td>
-                <td></td>
                 <td>{{row['fecha_fin']}}</td>
+                <td>{{fecha_exp}}</td>
+                <td></td>
                 <td>{{row['orden']}}</td>
                 <td>{{row['estado']}}</td>
                 <td></td>
@@ -212,13 +234,6 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
     %end
 
 
-/*
-db.execute("""SELECT c.componente 
-                            FROM  hoja_ruta_operaciones as a
-                            INNER JOIN ordenes as b
-                            ON a.idmat = b.idmat
-                            inner join hoja_ruta_componentes as c
-                            on a.operacion = c.operacion and a.idmat=c.idmat  """,[])   
-*/
+
 
 </script>
