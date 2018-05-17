@@ -78,6 +78,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
             <th>Cantidad Kg</th>
             <th>Precio Venta</th>
             <th>% Uso Hornos</th>
+            <th>Fecha Comprometida Entrega</th>
             <th>Fecha Estimada Entrega</th>
             <th>Costo Estimado</th>
             <th>#Orden</th>
@@ -86,28 +87,33 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
             <th>#Accion</th>
         </thead>
         <tbody>
-            <% db.execute("""SELECT 
-            a.`fecha_inicio`, 
-            a.`cliente`, 
-            c.nombre,
-            a.`pedido_cliente`,
-            a.`idmat`, 
-            b.descripcion,
-            FORMAT(a.`cantidad_kg`,1) as cantidad_kg,         
-            FORMAT(a.`precio_venta`,0) as precio_venta, 
-            FORMAT(a.`p_uso_hornos`,1) as p_uso_hornos, 
-            a.`fecha_fin`,
-            a.orden,
-            a.estado
-            FROM `ordenes` as a
-            LEFT OUTER JOIN materiales as b
-            ON a.idmat = b.idmat
-            LEFT OUTER JOIN terceros as c
-            ON a.cliente = c.idtercero
-            WHERE a.fecha_fin between %s and %s and estado LIKE %s 
-            ORDER BY a.fecha_fin desc,
-            c.nombre
-            LIMIT 40""",[q_desde, q_hasta, q_estado])
+            <% 
+            
+            db.execute("""SELECT 
+                            a.`fecha_inicio`, 
+                            a.`cliente`, 
+                            c.nombre,
+                            a.`pedido_cliente`,
+                            a.`idmat`, 
+                            b.descripcion,
+                            FORMAT(a.`cantidad_kg`,1) as cantidad_kg,         
+                            FORMAT(a.`precio_venta`,0) as precio_venta, 
+                            FORMAT(a.`p_uso_hornos`,1) as p_uso_hornos, 
+                            a.`fecha_fin`,
+                            a.orden,
+                            a.estado
+                            FROM `ordenes` as a
+                            LEFT OUTER JOIN materiales as b
+                            ON a.idmat = b.idmat
+                            LEFT OUTER JOIN terceros as c
+                            ON a.cliente = c.idtercero
+                            WHERE a.fecha_fin between %s and %s and estado LIKE %s 
+                            ORDER BY a.fecha_fin desc,
+                            c.nombre
+                            LIMIT 40""",[q_desde, q_hasta, q_estado])
+
+                       
+
                for row in db:
             %>
             <tr>
@@ -120,6 +126,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 <td>{{row['cantidad_kg']}}</td>
                 <td>{{row['precio_venta']}}</td>
                 <td>{{row['p_uso_hornos']}}</td>
+                <td></td>
                 <td>{{row['fecha_fin']}}</td>
                 <td>{{row['orden']}}</td>
                 <td>{{row['estado']}}</td>
@@ -205,6 +212,13 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
     %end
 
 
-
+/*
+db.execute("""SELECT c.componente 
+                            FROM  hoja_ruta_operaciones as a
+                            INNER JOIN ordenes as b
+                            ON a.idmat = b.idmat
+                            inner join hoja_ruta_componentes as c
+                            on a.operacion = c.operacion and a.idmat=c.idmat  """,[])   
+*/
 
 </script>
