@@ -5,15 +5,31 @@ from bottle import request
 
 db = utils.ConnectDB()
 
-db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg` 
+orden = request.GET.orden
+
+db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+inner join hoja_ruta_operaciones as h
+ON o.idmat = h.idmat
+where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
+
+row_registro = db.fetchone()
+
+print row_registro['orden'] , row_registro['operacion']
+
+db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
 inner JOIN materiales as m
 on o.idmat = m.idmat 
 where o.estado='en proceso' Limit 100 """,[])
 
+
 %>
-<h2 class="ui header">Programacion Producción</h2>
+<h2 class="ui header">Avance Producción</h2>
 
 <div class="ui fluid search selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -21,45 +37,99 @@ where o.estado='en proceso' Limit 100 """,[])
     <i class="dropdown icon"></i>
     <div class="menu">
         <div class="item" data-value="">Menu</div>
-        <div class="item" data-value="/home.html">Resumen</div>
-        <div class="item" data-value="edicion.html">Crear Orden</div>
-        <div class="item" data-value="editar_orden">Crear Orden</div>
-        <div class="item" data-value="crear_con_modelo">Crear Orden con modelo</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+        <div class="item" data-value="registro_trabajo_planta.html">Registro de Produccion</div>
     </div>
 </div>
+
 
 <br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
     
-        <div class="ui field">
-          <label>Orden</label>
-          <select class="ui search selection dropdown" id="orden" name="orden" >
-              % for row in db :  
-              <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
-              %end
-            </select>
+        <div class="two fields">
+                <div class="field">
+                    <label>Orden</label>
+                    <select class="ui search selection dropdown" id="orden" name="orden" >
+                        % for row in db :  
+                        <option value="{{row['orden']}}">{{    str(row['orden'])  }}</option>
+                        %end
+                    </select>
+                </div>    
+               <div class="field">
+                    <label>Cliente</label>
+                    <input type="text" name="cliente"  required="" value="{{row_registro['cliente']}}">
+            
+                </div>
         </div>
 
-        <div class="ui field">
-                <label>Operacion</label>
-                <select class="ui search selection dropdown" id="operacion" name="operacion" >                  
-                 </select>
+        <div class="two fields">
+                <div class="ui field">
+                        <label>Operacion</label>
+                        <select class="ui search selection dropdown" id="operacion" name="operacion" >                  
+                         </select>
+                </div>
+                <div class="field">
+                        <label>Cantidad</label>
+                        <input type="text" name="cliente"  required="" value="{{row_registro['cantidad_kg']}}">
+
+                </div>     
+        </div>        
+
+        <div class="two fields">
+
+            <div class="ui field">
+                <label>Material</label>
+                <input type="text" name="cliente"  required="" value="{{row_registro['descripcion']}}">
+            </div>
+
+            <div class="ui field">
+                <label>Fecha Entrega</label>
+                <input type="text" name="cliente"  required="" value="{{row_registro['fecha_fin']}}">
+            </div>
         </div>
 
+        <div class="two fields">
+
+            <div class="ui field">
+                <label>Meta Turno</label>
+                <input type="text" name=""  required="">
+            </div>
+
+            <div class="ui field">
+                    <label>fecha</label>
+                    <input type="text" name="nota"  required="">
+            </div>
+
+            <div class="ui field">
+                <label>Desde</label>
+                <input type="text" name="nota"  required="">
+            </div>
+
+            <div class="ui field">
+                <label>Hasta</label>
+                <input type="text" name="nota"  required="">
+            </div>
+        </div>
+
+        
+
+         <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Consultar</button>    
+        </div>
+        <br>
+          <!--
         <div class="ui field">
                 <label>Componentes</label>
                 <select class="ui search selection dropdown" id="componente" name="componente" >                  
                  </select>
         </div>
 
-        <div class="ui field">
-                <label>Cantidad</label>
-                <input type="number" name="cantidad"  required="" >
-        </div>
+        
         <div class="ui field">
                 <label>Notas</label>
                 <input type="text" name="nota"  required="">
         </div>
+       
         <br>
         <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Ingresar</button>
@@ -69,78 +139,55 @@ where o.estado='en proceso' Limit 100 """,[])
         <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Avance de Produccion</button>
             <a class="ui button" href="edicion.html">Crear Otro</a>       
-        </div>
+        </div>-->
 
 </form>
 
-
+<br>
 
 <div class="ui container" style="overflow: auto; height: 23em;">
     <table class="ui table">
         <thead style="position: -webkit-sticky; position: sticky; top:0;">
-            <th>Id</th>
-            <th>Orden</th>
-            <th>Operacion</th>
-            <th>Componentes</th>
-            <th>Cantidad</th>
-            <th>Notas</th>
-            <th>Fecha</th>
-            <th>Accion</th>
+            <th>hora</th>
+            <th>Planeado</th>
+            <th>Ejecutado</th>
+            <th>Acomulado</th>
+            <th>Diferencias</th>
         </thead>
         <tbody>
-            <% db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, `fecha` 
-                             FROM `ordenes_registro`
-                             order by fecha
-            LIMIT 40""",[])
+            <% 
+            
+            db.execute("""  select t1.rango,format(t1.ejecutado,1) as ejecutado,format(t3.capacidad_kg_h,1) as planeado, format( (t1.ejecutado - t3.capacidad_kg_h),1 ) as diferencia,t1.hora
+                            from 
+                            (SELECT  sum(`cantidad`) as ejecutado,LEFT(`fecha`,13) as rango, orden ,concat( substring(`fecha`,12,2) , ':00:00' )as hora
+                            FROM `ordenes_registro`
+                            where orden  = %s and operacion = %s and fecha BETWEEN '2018-05-17 00:00:00' and '2018-05-17 23:59:59'
+                            group by rango,hora ) as t1
+                            inner join ordenes as t2
+                            on t1.orden = t2.orden
+                            left outer join hoja_ruta_operaciones as t3
+                            on t2.idmat = t3.idmat and t3.operacion = %s """ , 
+                            [ orden, 2 , 2 ])
+            
+
+            conteo = 0;
                for row in db:
+
+               if conteo == 1:
+                  acomulado = acomulado + float(row['ejecutado'])
+               else:
+                 acomulado = float(row['ejecutado'])
+                 conteo =1
+               end  
             %>
             <tr>
-                <td>{{row['id']}}</td>
-                <td>{{row['orden']}}</td>
-                <td>{{row['operacion']}}</td>
-                <td>{{row['componente']}}</td>
-                <td>{{row['cantidad']}}</td>
-                <td>{{row['notas']}}</td>
-                <td>{{row['fecha']}}</td>
-                <td>
-                    <div class="ui buttons">
-                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=en+proceso">
-                          <div class="hidden content">Procesar</div>
-                          <div class="visible content">
-                            <i class="play icon"></i>
-                          </div>
-                        </a>
-                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=cerrada">
-                          <div class="hidden content">Cerrar</div>
-                          <div class="visible content">
-                            <i class="stop icon"></i>
-                          </div>
-                        </a>
-                        <a class="ui vertical animated button" href="cambiar_estado.html?id={{row['orden']}}&estado=abierta">
-                          <div class="hidden content">Pausar</div>
-                          <div class="visible content">
-                            <i class="pause icon"></i>
-                          </div>
-                        <a class="ui vertical animated button" href="edicion.html?id={{row['orden']}}">
-                          <div class="hidden content">Editar</div>
-                          <div class="visible content">
-                            <i class="edit icon"></i>
-                          </div>
-                        </a>
-                        <a class="ui vertical animated button" href="crear_copia.html?id={{row['orden']}}">
-                          <div class="hidden content">Copiar</div>
-                          <div class="visible content">
-                            <i class="copy outline icon"></i>
-                          </div>
-                        </a>
-                        <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['orden']}}')">
-                          <div class="hidden content">Eliminar</div>
-                          <div class="visible content">
-                            <i class="remove icon"></i>
-                          </div>
-                        </a>
-                    </div>
-                </td>
+                <td>{{row['hora']}}</td>
+                <td>{{row['planeado']}}</td>
+                <td>{{row['ejecutado']}}</td>
+                <td>{{acomulado}}</td>
+                <td>{{row['diferencia']}}</td>
+
+                
             </tr>
             %end
         </tbody>

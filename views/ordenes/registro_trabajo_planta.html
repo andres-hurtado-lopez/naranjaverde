@@ -13,7 +13,7 @@ on o.idmat = m.idmat
 where o.estado='en proceso' Limit 100 """,[])
 
 %>
-
+<h2 class="ui header">Registro de Producción</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -71,14 +71,13 @@ where o.estado='en proceso' Limit 100 """,[])
         <div class="ui buttons">
             <button class="ui button" type="submit" formmethod="POST" formaction="guardar_ordenes_registro.html">Ingresar</button>     
         </div>
-
-        <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="avance_produccion.html" formmethod="POST">Avance de Produccion</button>     
-        </div>
         <br> <br>
 </form>
 
-
+<div class="ui buttons">
+    <button class="ui button" type="submit" id="avance">Avance de Produccion</button>     
+</div>
+<br> <br>
 
 <div class="ui container" style="overflow: auto; height: 23em;">
     <table class="ui table">
@@ -95,7 +94,7 @@ where o.estado='en proceso' Limit 100 """,[])
         <tbody>
             <% db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, `fecha` 
                              FROM `ordenes_registro`
-                             order by fecha
+                             order by fecha  desc
             LIMIT 40""",[])
                for row in db:
             %>
@@ -180,5 +179,12 @@ function confirmar_borrado(id)
         window.location.href = value;
         }
     })
+
+
+ $('#avance').on('click', function(){
+
+    window.location.href = 'avance_produccion.html?orden='+$('#orden').val();
+
+ });   
 
 </script>

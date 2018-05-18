@@ -123,8 +123,6 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                             where b.orden = %s 
                             and b.estado='en proceso' """,[ row['orden'] ]) 
 
-
-
                 row_register = db.fetchone();
 
                 print row_register['cantidad'],row['cantidad_kg']
