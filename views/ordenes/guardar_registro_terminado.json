@@ -1,0 +1,29 @@
+<% import utils
+import datetime
+from bottle import request,redirect
+import json
+
+db = utils.ConnectDB()
+
+orden = request.params.get('orden')
+operacion = request.params.get('operacion')
+cantidad = request.params.get('producido')
+terminado = request.params.get('terminado')
+
+if terminado:
+  t = 1
+else :
+  t = 0
+end
+
+fecha = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
+db.execute(""" INSERT INTO `ordenes_produccion`( `orden`, `operacion`, `cantidad_kg`, `producto_terminado`, `fecha`)
+      VALUES ( %s,%s,%s,%s,%s )""",[orden,operacion,cantidad,t,fecha])
+
+db.execute('commit')
+
+redirect('avance_produccion.html?orden={orden}&operacion={operacion}'.format(orden=orden,operacion=operacion))
+
+
+%>

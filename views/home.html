@@ -1,4 +1,41 @@
-%rebase('base.html',title="Control Producción")
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+ db =utils.ConnectDB()
+
+ #DATE_ADD(CURDATE(), INTERVAL -1 DAY)
+
+ db.execute("""SELECT count(*) as cont_abierta 
+               FROM `ordenes_estado` as e
+               INNER JOIN ordenes as o
+               ON e.estado =o.estado
+               WHERE 
+               `fecha` BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')
+               and e.`estado` = 'abierta' """,[ ])
+ row_abierta = db.fetchone()
+
+ db.execute("""SELECT count(*) as cont_proceso
+                FROM `ordenes_estado` as e
+                INNER JOIN ordenes as o
+                ON e.estado =o.estado
+                WHERE 
+                `fecha` BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')
+                and e.`estado` = 'en proceso' """,[ ])
+row_proceso = db.fetchone()
+
+ db.execute("""SELECT count(*) as cont_cerrado 
+              FROM `ordenes_estado` as e
+              INNER JOIN ordenes as o
+              ON e.estado =o.estado
+              WHERE 
+              `fecha` BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')
+              and e.`estado` = 'cerrada' """,[ ])
+row_cerrada = db.fetchone()
+
+
+
+%>
+
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
     <div class="text">Menu</div>
@@ -52,18 +89,17 @@
       <br>( prod u. hora / cap max.)
     </div>
   </div>
-
   <div class="statistic">
     <div class="value">
-      <i class="industry icon"></i> 3
+      <i class="industry icon"></i> {{row_abierta['cont_abierta']}}
     </div>
     <div class="label">
-      Ordenes en Proceso
+      Ordenes Abiertas        
     </div>
   </div>
   <div class="statistic">
     <div class="value">
-      <i class="hourglass half icon"></i> 5
+      <i class="hourglass half icon"></i>{{row_proceso['cont_proceso']}}
     </div>
     <div class="label">
       Ordenes en Espera
@@ -71,7 +107,7 @@
   </div>
   <div class="statistic">
     <div class="value">
-      <i class="flag checkered icon"></i> 3
+      <i class="flag checkered icon"></i> {{row_cerrada['cont_cerrado']}}
     </div>
     <div class="label">
       Ordenes Terminadas
@@ -163,6 +199,14 @@
         </tr>
     </thead>
     <tbody>
+        <%
+          db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
+                        round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
+                        FROM ordenes o
+                        where o.estado = 'en proceso' """,[])
+          
+          for row in db:
+        %>
         <tr>
             <td>299233</td>
             <td>Himalaya</td>
@@ -170,9 +214,9 @@
             <td>Piña en trozos</td>
             <td>223</td>
             <td>
-                <div class="ui indicating progress" data-percent="20">
+                <div class="ui indicating progress" data-percent="{{ row['total_porcentaje'] }}">
                     <div class="bar"></div>
-                    <div class="label">20% (44.6kg)</div>
+                    <div class="label">{{ row['total_porcentaje'] }}% ({{ row['kg'] }}kg)</div>
                 </div>
             </td>
             <td>2018-05-23</td>
@@ -190,7 +234,7 @@
                     </a>                    
                 </div>
             </td>
-
+          %end
         </tr>
     </tbody>
 </table>

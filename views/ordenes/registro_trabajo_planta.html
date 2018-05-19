@@ -130,56 +130,22 @@ where o.estado='en proceso' Limit 100 """,[])
 
 <script>
 
-$('#orden').on('change', function(){
+$('#orden').on('change', cargar_operacion);
 
+$('#operacion').on('change', cargar_componente); 
 
-    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=0", function( data ) {
-
-            $('#operacion').empty();
-            data.results.forEach(function(element) {
-                
-                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
-
-            }, this);
-            
-            $('#operacion').dropdown();
-
-    },'json');
-
-
-});
-
-$('#operacion').on('change', function() {
-
-    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=1&oper="+$('#operacion').val(), function( data ) {
-
-            $('#componente').empty();
-            data.results.forEach(function(element) {
-                
-                $('#componente').append('<option value="'+element.componente+'">'+element.componente+'</option>');
-
-            }, this);
-
-           
-            $('#componente').dropdown();
-
-    },'json');
-
-} );
-
-function confirmar_borrado(id)
-    {
+function confirmar_borrado(id){
         if (confirm("¿ Desea borrar este registro ?"))
         {
             document.location = 'eliminar_orden_registro.html?id='+id;
         }
-    };
+};
 
-    $('.ui.dropdown.optionmenu').dropdown({
+$('.ui.dropdown.optionmenu').dropdown({
         action:function(text, value){
         window.location.href = value;
         }
-    })
+});
 
 
  $('#avance').on('click', function(){
@@ -195,5 +161,44 @@ function confirmar_borrado(id)
     }
 
  });   
+
+
+function cargar_operacion(){
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=0", function( data ) {
+
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
+
+            }, this);
+            
+            $('#operacion').dropdown();
+
+            cargar_componente();
+
+    },'json');
+    
+};
+
+function cargar_componente(){
+
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=1&oper="+$('#operacion').val(), function( data ) {
+
+            $('#componente').empty();
+            data.results.forEach(function(element) {
+                
+                $('#componente').append('<option value="'+element.componente+'">'+element.componente+'</option>');
+
+            }, this);
+
+           
+            $('#componente').dropdown();
+
+    },'json');
+}
+
+cargar_operacion();
 
 </script>

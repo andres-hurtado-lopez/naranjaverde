@@ -10,7 +10,7 @@ oper =  request.GET.oper
 componente = request.GET.comp
 title = request.GET.title
 
-if id and oper and componente:
+if id and oper and componente and title != 'Crear' :
     db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,oper,componente])
     vara = db.fetchone()
     locals().update(vara)
@@ -31,6 +31,7 @@ end
         <div class="menu">
             <div class="item" data-value="">Menu</div>
             <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="principal_operaciones.html?id={{id}}">Operaciones</div>
             <div class="item" data-value="principal_componentes.html?id={{id}}&oper={{oper}}">Componentes</div>
             <div class="item" data-value="principal.html">Hoja de Ruta</div>
         </div>
@@ -57,6 +58,7 @@ end
                 <option value="MP" {{'selected' if tipo=='MP' else ''}}>Materia Prima</option>
                 <option value="MQ" {{'selected' if tipo=='MQ' else ''}}>Maquinaria</option>
                 <option value="LP" {{'selected' if tipo=='LP' else ''}}>Muestras</option>
+                <option value="IN" {{'selected' if tipo=='IN' else ''}}>Insumo</option>
         </select>
     </div>
     <div class="field">
@@ -70,6 +72,8 @@ end
                 <option value="un">un</option>
                 <option value="l">l</option>
                 <option value="m">m</option>
+                <option value="h">h</option>
+                <option value="ml">ml</option>
         </select>
         
     </div>
@@ -80,7 +84,7 @@ end
 
     <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar_componentes.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
+            <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}&oper={{oper}}&comp={{componente}}">Crear Otro</a>       
     </div>
 </form>
 

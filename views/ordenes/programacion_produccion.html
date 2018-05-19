@@ -28,9 +28,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
         <div class="item" data-value="crear_con_modelo">Crear Orden con modelo</div>
     </div>
 </div>
-
+<br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
-    <div class="five six fields">
+    <div class="two fields">
         <div class="ui field">
           <label>Entrega Desde</label>
           <input type="date" name="q_desde" value="{{ q_desde }}">

@@ -133,8 +133,31 @@ where o.estado='en proceso' Limit 100 """,[])
             <button class="ui button" type="submit" >Consultar</button>    
         </div>
         <br>
+</form>
 
+ <br>
+<form class="ui form" action="guardar_registro_terminado.json" method="post" >
 
+   <div class="two fields">
+
+        <div class="field">
+            <label>Producido</label>
+            <input type="number" name="producido"  required="" step="any" >
+        </div>  
+        <div class="ui checked checkbox">
+            <br><br>
+            <input type="checkbox" checked="" name="terminado">
+            <label>Producto Terminado</label>
+        </div>
+
+        <input type="hidden" name="orden" id="ordenh" value="{{orden }}">
+        <input type="hidden" name="operacion" id="operacionh" value="{{operacion }}">
+
+    </div>     
+
+    <div class="ui buttons">
+        <button class="ui button" type="submit"  >Registrar</button>    
+    </div>
 </form>
 
 <br>
@@ -234,6 +257,10 @@ $('#componente').on('change', function(){
 
 })
 
+$('#registrar').on('click',function(){
+
+
+});
 
 $('.ui.dropdown.optionmenu').dropdown({
       

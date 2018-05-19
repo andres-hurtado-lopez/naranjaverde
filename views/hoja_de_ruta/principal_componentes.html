@@ -10,6 +10,9 @@ oper = request.params.get('oper')
 
 %>
 
+
+<h2 class="ui header">Hoja de Ruta : Componentes.</h2>
+
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
         <div class="text">Menu</div>
@@ -44,9 +47,14 @@ oper = request.params.get('oper')
  cif = row['cif']
  %>
 <form class="ui form">
+        
         <div class="field">
             <label>ID Material</label>
             <input type="text" value="{{id}}" readonly="">
+        </div>
+        <div class="field">
+                <label>Operacion</label>
+                <input type="text" value="{{oper}}" readonly="">
         </div>
         <div class="field">
             <label>Material</label>
@@ -59,7 +67,6 @@ oper = request.params.get('oper')
 </form>
 <table class="ui table">
     <thead>
-        <th>Operacion</th>
         <th>Componente</th>
         <th>Tipo</th>
         <th>Cant.Unit.</th>
@@ -77,7 +84,6 @@ oper = request.params.get('oper')
            for row in db:
         %>
         <tr>
-            <td>{{row['operacion']}}</td>
             <td>{{row['componente']}}</td>
             <td>{{row['tipo']}}</td>
             <td>{{row['cantidad']}}</td>
