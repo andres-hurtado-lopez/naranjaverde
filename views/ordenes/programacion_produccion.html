@@ -114,25 +114,24 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
 
                for row in db:
 
-                db.execute("""SELECT  MIN( c.`cantidad` )as cantidad
-                            FROM  hoja_ruta_operaciones as a
-                            INNER JOIN ordenes as b
-                            ON a.idmat = b.idmat
-                            inner join hoja_ruta_componentes as c
-                            on a.operacion = c.operacion and a.idmat=c.idmat 
-                            where b.orden = %s 
-                            and b.estado='en proceso' """,[ row['orden'] ]) 
+                db.execute("""select min(t1.capacidad) as capacidad 
+                                 from 
+                                (SELECT   a.capacidad_kg_h  * a.`operarios` as capacidad
+                                            FROM  hoja_ruta_operaciones as a
+                                            INNER JOIN ordenes as b
+                                            ON a.idmat = b.idmat
+                                            where b.orden = %s ) as t1 """,[ row['orden'] ]) 
 
                 row_register = db.fetchone();
 
-                print row_register['cantidad'],row['cantidad_kg']
+                if row_register :
+ 
+                fecha_exp =  row['fecha_inicio'] + datetime.timedelta(days = ( float(row['cantidad_kg'] )  / float(row_register['capacidad'] )) /24);
 
-                row_value =  ( float( row_register['cantidad'])  /  float(row['cantidad_kg'] ) )
-                
-                row_value = row_value / 24 
+                else :
 
-                fecha_exp =  row['fecha_inicio'] + datetime.timedelta(days = row_value);
-              
+                fecha_exp = ''
+                end
 
             %>
             <tr>

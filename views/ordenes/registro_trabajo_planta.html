@@ -141,7 +141,7 @@ $('#orden').on('change', function(){
                 $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
 
             }, this);
-
+            
             $('#operacion').dropdown();
 
     },'json');
@@ -160,6 +160,7 @@ $('#operacion').on('change', function() {
 
             }, this);
 
+           
             $('#componente').dropdown();
 
     },'json');
@@ -182,8 +183,16 @@ function confirmar_borrado(id)
 
 
  $('#avance').on('click', function(){
+    
+    var s =$('#orden').val();
+    var g = $('#operacion').val();
+    if( $('#orden').val() != null && $('#operacion').val() != null ){
 
-    window.location.href = 'avance_produccion.html?orden='+$('#orden').val();
+         window.location.href = 'avance_produccion.html?orden='+$('#orden').val()+'&operacion='+$('#operacion').val();
+    }else{
+
+        alert('por favor seleccionar orden y operacion.');
+    }
 
  });   
 

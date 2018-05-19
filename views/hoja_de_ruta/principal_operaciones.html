@@ -9,6 +9,8 @@ id = request.params.get('id')
 
 %>
 
+<h2 class="ui header">Hoja de Ruta : Operacion.</h2>
+
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
     <div class="text">Menu</div>
@@ -62,6 +64,7 @@ id = request.params.get('id')
         <th>Capacidad (kg/h)</th>
         <th>Tipo</th>
         <th>Acción</th>
+        <th>#Operarios por operaci&oacute;n</th>
     </thead>
     <tbody>
         <% db.execute("SELECT * FROM hoja_ruta_operaciones WHERE idmat = %s",(id,))
@@ -72,6 +75,7 @@ id = request.params.get('id')
             <td>{{row['descripcion']}}</td>
             <td>{{row['capacidad_kg_h']}}</td>
             <td>{{row['tipo']}}</td>
+            <td>{{row['operarios']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}">

@@ -54,18 +54,18 @@ end
     </div>
     <div class="field">
         <label>Cliente</label>
-        <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}">
+        <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}" required=""> 
         </select>
     </div>
     <div class="field">
         <label>Referencia</label>
-        <select class="ui search selection dropdown" id="idmat" name="idmat" value="{{idmat}}">
+        <select class="ui search selection dropdown" id="idmat" name="idmat" value="{{idmat}}" required="" > 
         </select>
     </div>
 
     <div class="field">
         <label>Cantidad</label>
-        <input type="number" step="any" name="cantidad_kg" value="{{cantidad_kg}}">
+        <input type="number" step="any" name="cantidad_kg" value="{{cantidad_kg}}" required="">
     </div>
 
     <div class="field">
@@ -75,11 +75,11 @@ end
     </div>
     <div class="field">
         <label>Fecha Inicio</label>
-        <input type="date" name="fecha_inicio" value="{{fecha_inicio}}">
+        <input type="date" name="fecha_inicio" value="{{fecha_inicio}}" required="">
     </div>
     <div class="field">
-        <label>Fecha Fin</label>
-        <input type="date" name="fecha_fin" value="{{fecha_fin}}">
+        <label>Fecha Comprometida de entrega</label>
+        <input type="date" name="fecha_fin" value="{{fecha_fin}}" required="">
     </div>
     <div class="field">
         <label>Precio de Venta</label>

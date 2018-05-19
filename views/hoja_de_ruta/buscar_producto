@@ -8,9 +8,9 @@ db = utils.ConnectDB()
 
 query = '%' + request.params.get('query','') + '%'
 
-db.execute("""SELECT idmat, descripcion as title
+db.execute("""SELECT idmat, descripcion
               FROM materiales
-              WHERE descripcion like %s""",(query,))
+              WHERE descripcion like %s""",[query])
 
 list = []
 for row in db:

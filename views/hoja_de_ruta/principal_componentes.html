@@ -65,7 +65,6 @@ oper = request.params.get('oper')
         <th>Cant.Unit.</th>
         <th>Unidad</th>
         <th>Costo Estandar</th>
-        <th>#Operarios por operaci&oacute;n</th>
         <th>Acción</th>
     </thead>
     <tbody>
@@ -84,7 +83,6 @@ oper = request.params.get('oper')
             <td>{{row['cantidad']}}</td>
             <td>{{row['unidad']}}</td>
             <td>{{row['costo']}}</td>
-            <td>{{row['operarios']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}','{{row['operacion']}}','{{row['componente']}}')">

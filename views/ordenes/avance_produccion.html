@@ -6,6 +6,7 @@ from bottle import request
 db = utils.ConnectDB()
 
 orden = request.GET.orden
+operacion = request.GET.operacion
 
 db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion
 FROM `ordenes` as o inner join terceros  as t
@@ -16,9 +17,7 @@ inner join hoja_ruta_operaciones as h
 ON o.idmat = h.idmat
 where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
 
-row_registro = db.fetchone()
-
-print row_registro['orden'] , row_registro['operacion']
+row_registro = db.fetchall()
 
 db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
 FROM `ordenes` as o inner join terceros  as t
@@ -27,8 +26,10 @@ inner JOIN materiales as m
 on o.idmat = m.idmat 
 where o.estado='en proceso' Limit 100 """,[])
 
-
 %>
+
+
+
 <h2 class="ui header">Avance Producción</h2>
 
 <div class="ui fluid search selection dropdown optionmenu">
@@ -44,20 +45,20 @@ where o.estado='en proceso' Limit 100 """,[])
 
 
 <br>
-<form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
+<form class="ui form" action="avance_produccion.html" method="get" accept-charset="utf-8">
     
         <div class="two fields">
                 <div class="field">
                     <label>Orden</label>
                     <select class="ui search selection dropdown" id="orden" name="orden" >
                         % for row in db :  
-                        <option value="{{row['orden']}}">{{    str(row['orden'])  }}</option>
+                        <option value="{{row['orden']}}">{{ str(row['orden'])  }}</option>
                         %end
                     </select>
                 </div>    
                <div class="field">
                     <label>Cliente</label>
-                    <input type="text" name="cliente"  required="" value="{{row_registro['cliente']}}">
+                    <input type="text" name="cliente"  readonly value="{{row_registro[0]['cliente']}}">
             
                 </div>
         </div>
@@ -65,12 +66,17 @@ where o.estado='en proceso' Limit 100 """,[])
         <div class="two fields">
                 <div class="ui field">
                         <label>Operacion</label>
-                        <select class="ui search selection dropdown" id="operacion" name="operacion" >                  
-                         </select>
+                       
+                        <select class="ui search selection dropdown" id="operacion" name="operacion" >  
+                                % for row in row_registro :   
+                                <option value="{{row['operacion']}}" >{{ row['operacion'] + ' - '+row['descripcion']}} </option>
+                                %end
+                        </select>
+                       
                 </div>
                 <div class="field">
                         <label>Cantidad</label>
-                        <input type="text" name="cliente"  required="" value="{{row_registro['cantidad_kg']}}">
+                        <input type="text" name="cliente" readonly required="" value="{{row_registro[0]['cantidad_kg']}}">
 
                 </div>     
         </div>        
@@ -79,12 +85,12 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                 <label>Material</label>
-                <input type="text" name="cliente"  required="" value="{{row_registro['descripcion']}}">
+                <input type="text" id="material" name="cliente" readonly value="{{row_registro[0]['descripcion']}}">
             </div>
 
             <div class="ui field">
                 <label>Fecha Entrega</label>
-                <input type="text" name="cliente"  required="" value="{{row_registro['fecha_fin']}}">
+                <input type="text" name="cliente"  readonly value="{{row_registro[0]['fecha_fin']}}">
             </div>
         </div>
 
@@ -92,54 +98,42 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                 <label>Meta Turno</label>
-                <input type="text" name=""  required="">
+                <input type="text" name="turno"  >
             </div>
 
             <div class="ui field">
-                    <label>fecha</label>
-                    <input type="text" name="nota"  required="">
+                <label>fecha</label>
+                <input type="date" name="fecha" >
             </div>
 
             <div class="ui field">
                 <label>Desde</label>
-                <input type="text" name="nota"  required="">
+
+                <select class="ui search selection dropdown" id="desde" name="desde" > 
+                    % for row in ['{0:02d}'.format(i)+':00:00' for i in range(24) ] :  
+                    <option value="{{ row }}">{{ row }}</option>
+                    %end
+                </select>
+
             </div>
 
             <div class="ui field">
                 <label>Hasta</label>
-                <input type="text" name="nota"  required="">
+                <select class="ui search selection dropdown" id="hasta" name="hasta" >  
+                    % for row in ['{0:02d}'.format(i)+':00:00' for i in range(24) ] :  
+                        <option value="{{ row }}">{{    row  }}</option>
+                    %end
+                </select>
             </div>
         </div>
 
         
 
          <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Consultar</button>    
+            <button class="ui button" type="submit" >Consultar</button>    
         </div>
         <br>
-          <!--
-        <div class="ui field">
-                <label>Componentes</label>
-                <select class="ui search selection dropdown" id="componente" name="componente" >                  
-                 </select>
-        </div>
 
-        
-        <div class="ui field">
-                <label>Notas</label>
-                <input type="text" name="nota"  required="">
-        </div>
-       
-        <br>
-        <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Ingresar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
-        </div>
-
-        <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Avance de Produccion</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
-        </div>-->
 
 </form>
 
@@ -196,11 +190,14 @@ where o.estado='en proceso' Limit 100 """,[])
 
 <script>
 
+
+$('#orden').dropdown('set selected','{{orden}}');
+$('#operacion').dropdown('set selected','{{ operacion }}');
+
 $('#orden').on('change', function(){
 
-
+    
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+0, function( data ) {
-
             $('#operacion').empty();
             data.results.forEach(function(element) {
                 
@@ -209,6 +206,7 @@ $('#orden').on('change', function(){
             }, this);
 
             $('#operacion').dropdown();
+            $('#operacion').selectmenu("refresh");
 
     },'json');
 
@@ -218,9 +216,8 @@ $('#orden').on('change', function(){
 
 $('#componente').on('change', function(){
 
-
+    
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
-
             $('#operacion').empty();
             data.results.forEach(function(element) {
                 
@@ -229,6 +226,7 @@ $('#componente').on('change', function(){
             }, this);
 
             $('#operacion').dropdown();
+            $('#operacion').selectmenu("refresh");
 
     },'json');
 

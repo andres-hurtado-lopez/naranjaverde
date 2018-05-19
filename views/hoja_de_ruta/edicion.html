@@ -7,6 +7,10 @@ db = utils.ConnectDB()
 
 id = request.GET.id
 
+db.execute("""SELECT idmat, descripcion  FROM materiales""",[])
+
+resul_material = db.fetchall();
+
 if id:
     db.execute("SELECT * FROM hoja_ruta WHERE idmat = %s",[id])
     vara = db.fetchone()
@@ -37,14 +41,18 @@ end
     <div class="two fields">
         <div class="field">
             <label>Producto</label>
-            <input type="text" name="idmat" value="{{idmat}}" required="">
+            <input type="text" id="idmat" name="idmat" value="{{idmat}}" required="" readonly>
         </div>
         <div class="field">
+
             <label>Busqueda producto</label>
-            <div class="ui search">
-                <input class="prompt" type="text" placeholder="producto a buscar">
-                <div class="results"></div>
-            </div>
+
+            <select class="ui search selection dropdown" id="material" name="material" >
+                    % for row in resul_material :  
+                    <option value="{{row['idmat']}}">{{ row['descripcion'] }}</option>
+                    %end
+            </select>
+            
         </div>
     </div>
     <div class="field">
@@ -61,23 +69,20 @@ end
     </div>
 </form>
 <script type="text/javascript">
-    $('.ui.search')
-      .search({
-        apiSettings: {
-          url: 'buscar_producto?query={query}'
-        },
-        fields: {
-          results : 'items',
-          title   : 'name',
-          url     : 'html_url'
-        },
-        minCharacters : 3
-      })
-    ;
+
+$('#material').on('change', function(){
+
+    $('#idmat').empty();
+    $('#idmat').val( $('#material').val() );
+
+});
 
     $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){
         window.location.href = value;
       }
     })
+
+    $('#material').dropdown();  
+
 </script>

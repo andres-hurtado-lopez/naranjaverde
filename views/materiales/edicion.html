@@ -44,7 +44,12 @@ end
     </div>
     <div class="field">
         <label>Grupo 1</label>
-        <input type="text" name="grupo1" value="{{grupo1}}" required="" >
+        <select id="grupo1" name="grupo1" >
+                <option value="MPP">MPP - Producto Terminado</option>
+                <option value="MPF">MPF - Materia Prima para Fabricaciion</option>
+                <option value="Insu">Insu - Insumo</option> 
+        </select>
+
     </div>
     <div class="field">
         <label>Grupo 2</label>
@@ -60,7 +65,12 @@ end
     </div>
     <div class="field">
         <label>Unidad</label>
-        <input type="text" name="unidad" value="{{unidad}}" required="" >
+        <select name="unidad" id="unidades">
+                <option value="kg">kg</option>
+                <option value="un">un</option>
+                <option value="l">l</option>
+                <option value="m">m</option>
+        </select>
     </div>
     <div class="field">
         <label>Costo</label>
@@ -74,6 +84,10 @@ end
 </form>
 
 <script>
+
+$('#unidades').dropdown('set selected','{{grupo1}}');
+$('#unidades').dropdown('set selected','{{unidad}}');
+
         $('.ui.dropdown.optionmenu').dropdown({
         action:function(text, value){    
         window.location.href = value;}

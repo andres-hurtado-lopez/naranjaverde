@@ -18,7 +18,7 @@ db = utils.ConnectDB()
         </div>
     </div>  
 
-<form class="ui form">
+<form class="ui form" action="edicion.html" method="get">
 
     <div class="field">
         <label>Fecha</label>
@@ -30,11 +30,14 @@ db = utils.ConnectDB()
           <option value="1">06:00am - 02:00pm</option>
           <option value="2">02:00pm - 10:00pm</option>
           <option value="3">10:00pm - 06:00am</option>
-
+        
         </select>
     </div>
 
-</div>
+    <button class="ui button" type="submit" >Ingresar</button>
+
+
+</form>
 
 <script>
     

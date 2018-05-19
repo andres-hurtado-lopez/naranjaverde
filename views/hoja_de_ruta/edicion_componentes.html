@@ -6,12 +6,12 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.GET.id
-operacion =  request.GET.oper
+oper =  request.GET.oper
 componente = request.GET.comp
 title = request.GET.title
 
-if id and operacion and componente:
-    db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,operacion,componente])
+if id and oper and componente:
+    db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,oper,componente])
     vara = db.fetchone()
     locals().update(vara)
 else:
@@ -31,7 +31,7 @@ end
         <div class="menu">
             <div class="item" data-value="">Menu</div>
             <div class="item" data-value="/home.html">Inicio</div>
-            <div class="item" data-value="principal_componentes.html?id={{id}}&oper={{operacion}}">Componentes</div>
+            <div class="item" data-value="principal_componentes.html?id={{id}}&oper={{oper}}">Componentes</div>
             <div class="item" data-value="principal.html">Hoja de Ruta</div>
         </div>
  </div>   
@@ -44,7 +44,7 @@ end
     </div>
     <div class="field">
         <label>Operaci&oacute;n</label>
-        <input type="text" name="operacion" value="{{operacion}}" readonly>
+        <input type="text" name="operacion" value="{{oper}}" readonly>
     </div>
     <div class="field">
         <label>Componente</label>
@@ -60,16 +60,18 @@ end
         </select>
     </div>
     <div class="field">
-        <label>Operarios</label>
-        <input type="number" name="operarios" value="{{operarios}}">
-    </div>
-    <div class="field">
         <label>Costo</label>
         <input type="number" step="any" name="costo" value="{{costo}}">
     </div>
     <div class="field">
         <label>Unidad</label>
-        <input type="text" name="unidad" value="{{unidad}}" required="" maxlength="5">
+        <select name="unidad" id="unidades">
+                <option value="kg">kg</option>
+                <option value="un">un</option>
+                <option value="l">l</option>
+                <option value="m">m</option>
+        </select>
+        
     </div>
     <div class="field">
             <label>Cantidad</label>
@@ -84,7 +86,10 @@ end
 
 
 <script>
-    
+
+    $('#unidades').dropdown('set selected','{{unidad}}');
+
+
     $('.ui.dropdown.optionmenu').dropdown({
         action:function(text, value){    
         window.location.href = value;}

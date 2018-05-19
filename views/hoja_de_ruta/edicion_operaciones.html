@@ -8,6 +8,7 @@ db = utils.ConnectDB()
 id = request.GET.id
 operacion = request.GET.oper
 title = request.GET.title
+operarios = request.GET.opera
 
 if id and operacion:
     db.execute("SELECT * FROM hoja_ruta_operaciones  WHERE idmat = %s and operacion = %s ",[id,operacion])
@@ -43,14 +44,14 @@ end
     </div>
     <div class="field">
         <label>Operaci&oacute;n</label>
-        <input type="text" name="operacion" value="{{operacion}}">
+        <input type="number"  step="1" name="operacion" value="{{operacion}}">
     </div>
     <div class="field">
         <label>Descripci&oacute;n</label>
         <input type="text" name="descripcion" value="{{descripcion}}" required="" >
     </div>
     <div class="field">
-        <label>Capacidad (kg)</label>
+        <label>Capacidad (kg / h / hombre) </label>
         <input type="number"  step="any" name="capacidad_kg_h" value="{{capacidad_kg_h}}">
     </div>
     <div class="field">
@@ -60,6 +61,11 @@ end
            <option value="MAQ" {{'selected' if tipo=='MAQ' else ''}}>Maquinaria</option>
         </select>
     </div>
+
+    <div class="field">
+            <label>Operarios </label>
+            <input type="number"  step="any" name="operarios" value="{{operarios}}">
+     </div>
 
     <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>
