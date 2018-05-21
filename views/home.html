@@ -3,7 +3,6 @@ import utils
 import datetime
  db =utils.ConnectDB()
 
- #DATE_ADD(CURDATE(), INTERVAL -1 DAY)
 
  db.execute("""SELECT count(*) as cont_abierta 
                FROM `ordenes_estado` as e
@@ -32,9 +31,17 @@ row_proceso = db.fetchone()
               and e.`estado` = 'cerrada' """,[ ])
 row_cerrada = db.fetchone()
 
-
+db.execute("""SELECT count(*) as cont_cerrado_ayer 
+              FROM `ordenes_estado` as e
+              INNER JOIN ordenes as o
+              ON e.estado =o.estado
+              WHERE 
+              `fecha` BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')
+              and e.`estado` = 'cerrada' """,[ ])
+row_cerrada_ayer = db.fetchone()
 
 %>
+
 
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -63,6 +70,7 @@ row_cerrada = db.fetchone()
         <div class="item" data-value="ordenes/consumos_insumos.html">Usuarios</div>
     </div>
 </div>
+
 
 <h2 class="ui header">Control Producci&oacute;n - Resumen 2018-05-15</h2>
 <h4 class="ui horizontal divider header">
@@ -121,6 +129,16 @@ row_cerrada = db.fetchone()
       Produccion Ultima <br>Hora kg 
     </div>
   </div>
+
+  <div class="statistic">
+      <div class="value">
+        <i class="chart line icon"></i> 264
+      </div>
+      <div class="label">
+        Producto Adecuado &Uacute;ltima <br>Hora kg 
+      </div>
+    </div>
+
   <div class="statistic">
     <div class="value">
       <i class="chart area icon"></i> 264
@@ -129,6 +147,16 @@ row_cerrada = db.fetchone()
       Produccion Acumulada <br> kg 
     </div>
   </div>
+
+  <div class="statistic">
+      <div class="value">
+        <i class="chart area icon"></i> 264
+      </div>
+      <div class="label">
+        Producto Adecuado Acumulado <br> kg 
+      </div>
+    </div>
+
   <div class="statistic">
     <div class="value">
       <i class="dollar sign icon"></i> 200.3M
@@ -157,15 +185,23 @@ row_cerrada = db.fetchone()
   </div>
   <div class="statistic">
     <div class="value">
-      <i class="flag checkered icon"></i> 3
+      <i class="flag checkered icon"></i> {{row_cerrada_ayer['cont_cerrado_ayer']}}
     </div>
     <div class="label">
       Ordenes Terminadas
     </div>
   </div>
+  <%
+     db.execute(""" SELECT  sum(`cantidad_kg`) as total_kg
+      FROM `ordenes_produccion` 
+      WHERE `fecha` BETWEEN CONCAT( SUBDATE(CURDATE(), 1) ,'T00:00:00') 
+          AND CONCAT( SUBDATE(CURDATE(), 1) ,'T23:59:59')""",[])
+
+      row_total_kg = db.fetchone()     
+  %>
   <div class="statistic">
     <div class="value">
-      <i class="chart area icon"></i> 264
+      <i class="chart area icon"></i> {{row_total_kg['total_kg']}}
     </div>
     <div class="label">
       Produccion Total <br>( kg )
@@ -200,29 +236,37 @@ row_cerrada = db.fetchone()
     </thead>
     <tbody>
         <%
-          db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
-                        round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
-                        FROM ordenes o
-                        where o.estado = 'en proceso' """,[])
-          
+           
+
+
+            db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
+                            FROM `ordenes` as o
+                            INNER JOIN terceros as t
+                            ON o.cliente =t.idtercero
+                            INNER JOIN materiales as m
+                            ON o.idmat = m.idmat
+                            WHERE o.estado = 'en proceso' """ , [])
+
+
+
           for row in db:
         %>
         <tr>
-            <td>299233</td>
-            <td>Himalaya</td>
-            <td>D2344</td>
-            <td>Piña en trozos</td>
-            <td>223</td>
+            <td>{{ row['idtercero'] }}</td>
+            <td>{{ row['nombre'] }}</td>
+            <td>{{ row['idmat'] }}</td>
+            <td>{{ row['descripcion'] }}</td>
+            <td>{{ row['cantidad_kg'] }}</td>
             <td>
-                <div class="ui indicating progress" data-percent="{{ row['total_porcentaje'] }}">
+                <div class="ui indicating progress" data-percent="">
                     <div class="bar"></div>
-                    <div class="label">{{ row['total_porcentaje'] }}% ({{ row['kg'] }}kg)</div>
+                    <div class="label">% ( kg)</div>
                 </div>
             </td>
-            <td>2018-05-23</td>
+            <td>{{ row['fecha_fin'] }}</td>
             <td>$23.232.433</td>
             <td>
-                <a href="" class="ui button">25</a>
+                <a href="" class="ui button">4</a>
             </td>
             <td>
                 <div class="ui buttons">
@@ -234,8 +278,8 @@ row_cerrada = db.fetchone()
                     </a>                    
                 </div>
             </td>
-          %end
         </tr>
+        %end
     </tbody>
 </table>
 
@@ -257,22 +301,42 @@ row_cerrada = db.fetchone()
         </tr>
     </thead>
     <tbody>
+        <%
+        #db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
+         #             round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
+          #            FROM ordenes o
+           #           where o.estado = 'en proceso' """,[])
+
+           #row['total_porcentaje']  row['kg'] }}
+
+          db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
+                          FROM `ordenes` as o
+                          INNER JOIN terceros as t
+                          ON o.cliente =t.idtercero
+                          INNER JOIN materiales as m
+                          ON o.idmat = m.idmat
+                          WHERE o.estado = 'abierta' """ , [])
+
+
+
+        for row in db:
+      %>
         <tr>
-            <td>299233</td>
-            <td>Himalaya</td>
-            <td>D2344</td>
-            <td>Piña en trozos</td>
-            <td>223</td>
+            <td>{{ row['idtercero'] }}</td>
+            <td>{{ row['nombre'] }}</td>
+            <td>{{ row['idmat'] }}</td>
+            <td>{{ row['descripcion'] }}</td>
+            <td>{{ row['cantidad_kg'] }}</td>
             <td>
                 <div class="ui indicating progress" data-percent="20">
                     <div class="bar"></div>
                     <div class="label">20% (44.6kg)</div>
                 </div>
             </td>
-            <td>2018-05-23</td>
+            <td>{{ row['fecha_fin'] }}</td>
             <td>$23.232.433</td>
             <td>
-                <a href="" class="ui button">25</a>
+                <a href="" class="ui button">3</a>
             </td>
             <td>
                 <div class="ui buttons">
@@ -284,8 +348,8 @@ row_cerrada = db.fetchone()
                     </a>                 
                 </div>
             </td>
-
         </tr>
+        %end
     </tbody>
 </table>
 
@@ -307,27 +371,54 @@ row_cerrada = db.fetchone()
         </tr>
     </thead>
     <tbody>
+        <%
+        #db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
+         #             round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
+          #            FROM ordenes o
+           #           where o.estado = 'en proceso' """,[])
+
+           #row['total_porcentaje']  row['kg'] }}
+
+
+          db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
+                          FROM `ordenes` as o
+                          INNER JOIN terceros as t
+                          ON o.cliente =t.idtercero
+                          INNER JOIN materiales as m
+                          ON o.idmat = m.idmat
+                          INNER JOIN `ordenes_estado` as e
+                          ON e.estado =o.estado
+                          WHERE e.estado = 'abierta' and
+                          `fecha` BETWEEN  concat( SUBDATE(CURDATE(), 1) ,'T00:00:00') and concat(CURDATE(),'T23:59:59')""" , [])
+
+
+
+        for row in db:
+      %>
         <tr>
-            <td>299233</td>
-            <td>Himalaya</td>
-            <td>D2344</td>
-            <td>Piña en trozos</td>
-            <td>223</td>
-            <td>2018-05-23</td>
+            <td>{{ row['idtercero'] }}</td>
+            <td>{{ row['nombre'] }}</td>
+            <td>{{ row['idmat'] }}</td>
+            <td>{{ row['descripcion'] }}</td>
+            <td>{{ row['cantidad_kg'] }}</td>
+            <td>{{ row['fecha_fin'] }}</td>
             <td>2018-05-24</td>
             <td>$23.232.433</td>
             <td>
-                <a href="" class="ui button">25</a>
+                <a href="" class="ui button">2</a>
             </td>
         </tr>
+       %end 
     </tbody>
 </table>
 
 <script type="text/javascript">
+
     $('.ui.progress').progress();
     $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){
         window.location.href = value;
       }
     })
+
 </script>

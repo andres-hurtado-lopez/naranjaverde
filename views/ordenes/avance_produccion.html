@@ -8,7 +8,7 @@ db = utils.ConnectDB()
 orden = request.GET.orden
 operacion = request.GET.operacion
 
-db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion
+db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion as nombre_mat,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion as nombre_ope
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
 inner JOIN materiales as m
@@ -69,7 +69,7 @@ where o.estado='en proceso' Limit 100 """,[])
                        
                         <select class="ui search selection dropdown" id="operacion" name="operacion" >  
                                 % for row in row_registro :   
-                                <option value="{{row['operacion']}}" >{{ row['operacion'] + ' - '+row['descripcion']}} </option>
+                                <option value="{{row['operacion']}}" >{{ str( row['operacion'] ) + ' - '+row['nombre_ope']}} </option>
                                 %end
                         </select>
                        
@@ -85,7 +85,7 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                 <label>Material</label>
-                <input type="text" id="material" name="cliente" readonly value="{{row_registro[0]['descripcion']}}">
+                <input type="text" id="material" name="cliente" readonly value="{{row_registro[0]['nombre_mat']}}">
             </div>
 
             <div class="ui field">
@@ -144,11 +144,12 @@ where o.estado='en proceso' Limit 100 """,[])
             <label>Producido</label>
             <input type="number" name="producido"  required="" step="any" >
         </div>  
-        <div class="ui checked checkbox">
-            <br><br>
-            <input type="checkbox" checked="" name="terminado">
-            <label>Producto Terminado</label>
+
+        <div class="ui toggle checkbox" style="margin-left: 2em;margin-top: 2em;">
+                <input type="checkbox" name="terminado" id="terminado">
+                <label>Producto Terminado</label>
         </div>
+
 
         <input type="hidden" name="orden" id="ordenh" value="{{orden }}">
         <input type="hidden" name="operacion" id="operacionh" value="{{operacion }}">
@@ -237,9 +238,9 @@ $('#orden').on('change', function(){
 
 })
 
-$('#componente').on('change', function(){
+$('#operacion').on('change', function(){
 
-    
+    /*
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
             $('#operacion').empty();
             data.results.forEach(function(element) {
@@ -253,14 +254,11 @@ $('#componente').on('change', function(){
 
     },'json');
 
-    $('#operacion').val();
+    $('#operacion').val();*/
 
 })
 
-$('#registrar').on('click',function(){
 
-
-});
 
 $('.ui.dropdown.optionmenu').dropdown({
       

@@ -17,12 +17,16 @@ if id:
                          DATE_FORMAT(a.fecha_fin, "%%Y-%%m-%%d") as fecha_fin,
                          a.precio_venta,
                          a.p_uso_hornos,
-                         b.descripcion as mattext, c.nombre as tertext FROM ordenes as a 
-                  LEFT OUTER JOIN materiales as b
-                  ON a.idmat = b.idmat
-                  LEFT OUTER JOIN terceros as c
-                  ON c.idtercero = a.cliente
-                  WHERE orden = %s""",[id])
+                         b.descripcion as mattext,
+                         c.nombre as tertext,
+                         a.fecha_entrega,
+                         a.fecha_despacho 
+                         FROM ordenes as a 
+                        LEFT OUTER JOIN materiales as b
+                        ON a.idmat = b.idmat
+                        LEFT OUTER JOIN terceros as c
+                        ON c.idtercero = a.cliente
+                        WHERE orden = %s""",[id])
     vara = db.fetchone()
     locals().update(vara)
 else:
@@ -43,7 +47,7 @@ end
     <div class="menu">
             <div class="item" data-value="">Menu</div>
             <div class="item" data-value="/home.html">Inicio</div>
-            <div class="item" data-value="programacion_produccion.html">Registro Trabajo de Planta</div>
+            <div class="item" data-value="programacion_produccion.html">Programaci&oacute;n Producci&oacute;n</div>
     </div>
 </div>     
 
@@ -81,13 +85,24 @@ end
         <label>Fecha Comprometida de entrega</label>
         <input type="date" name="fecha_fin" value="{{fecha_fin}}" required="">
     </div>
+
+    <div class="field">
+        <label>Fecha Produccion</label>
+        <input type="date" name="fecha_despacho" value="{{fecha_despacho}}">
+    </div>
+    
+    <div class="field">
+        <label>Fecha Entrega</label>
+        <input type="date" name="fecha_entrega" value="{{fecha_entrega}}" >
+    </div>  
+
     <div class="field">
         <label>Precio de Venta</label>
         <input type="number" step="any" name="precio_venta" value="{{precio_venta}}" required="" >
     </div>
 
     <div class="field">
-        <label>% uso hornos</label>
+        <label>Uso Hornos</label>
         <input type="number" step="any" name="p_uso_hornos" value="{{p_uso_hornos}}">
     </div>
 

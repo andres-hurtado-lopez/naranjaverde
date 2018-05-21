@@ -59,6 +59,21 @@ end
             
         </div>
     </div>
+
+    <div class="two fields">
+
+            <div class="field">
+                <label>Rendimiento</label>
+                <input type="number" step="any" id="rendimiento" name="rendimiento" value="{{rendimiento}}" required="">
+            </div>
+
+            <div class="ui toggle checkbox" style="margin-left: 2em;margin-top: 2em;">
+                    <input type="checkbox" name="reempaque" id="reempaque">
+                    <label>Reempaque</label>
+            </div>
+
+    </div>
+
     <div class="field">
         <label>Descripci&oacute;n</label>
         <textarea name="descripcion">{{descripcion}}</textarea>
@@ -73,6 +88,13 @@ end
     </div>
 </form>
 <script type="text/javascript">
+
+if( '{{reempaque}}' == 0){
+    $('#reempaque').prop('checked', false); 
+}else{
+    $('#reempaque').prop('checked', true); 
+}
+
 
 $('#material').on('change', function(){
 

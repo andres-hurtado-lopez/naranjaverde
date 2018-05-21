@@ -63,8 +63,9 @@ id = request.params.get('id')
         <th>Descripción</th>
         <th>Capacidad (kg/h)</th>
         <th>Tipo</th>
-        <th>Acción</th>
         <th>#Operarios por operaci&oacute;n</th>
+        <th>Pro - fresco</th>
+        <th>Acción</th>       
     </thead>
     <tbody>
         <% db.execute("SELECT * FROM hoja_ruta_operaciones WHERE idmat = %s",(id,))
@@ -76,6 +77,12 @@ id = request.params.get('id')
             <td>{{row['capacidad_kg_h']}}</td>
             <td>{{row['tipo']}}</td>
             <td>{{row['operarios']}}</td>
+            <td>
+                    <div class="ui {{'checked' if row['fresco'] != 0 else ''}}    checkbox" >
+                        <input type="checkbox" {{ 'checked=""' if row['fresco'] != 0 else '' }} disabled="disabled" >
+                        <label></label>
+                    </div>
+             </td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}">

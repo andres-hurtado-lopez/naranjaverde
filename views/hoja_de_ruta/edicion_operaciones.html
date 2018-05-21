@@ -11,14 +11,18 @@ title = request.GET.title
 operarios = request.GET.opera
 
 if id and operacion:
-    db.execute("SELECT * FROM hoja_ruta_operaciones  WHERE idmat = %s and operacion = %s ",[id,operacion])
+    db.execute("""SELECT * FROM hoja_ruta_operaciones  WHERE idmat = %s and operacion = %s """,[id,operacion])
     vara = db.fetchone()
     locals().update(vara)
 else:
-    db.execute("DESCRIBE hoja_ruta_operaciones")
-    for row in db:
-        locals().update({row['Field']:''})
-    end
+
+db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco
+                FROM `hoja_ruta_operaciones`
+                WHERE `idmat` = %s """,[id])
+                valor = db.fetchone()
+
+locals().update(valor)
+
 end
 
        
@@ -44,7 +48,7 @@ end
     </div>
     <div class="field">
         <label>Operaci&oacute;n</label>
-        <input type="number"  step="1" name="operacion" value="{{operacion}}">
+        <input type="text"   name="operacion" value="{{operacion}}" readonly>
     </div>
     <div class="field">
         <label>Descripci&oacute;n</label>
@@ -67,6 +71,11 @@ end
             <input type="number"  step="any" name="operarios" value="{{operarios}}">
      </div>
 
+    <div class="ui toggle checkbox" >            
+            <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
+            <label>Operaci&oacute;n Procesamiento en Freco</label>
+    </div>
+    <br> <br>
     <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>
             <a class="ui button" href="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
@@ -74,6 +83,13 @@ end
 </form>
 
 <script>
+
+if( '{{fresco}}' == 0){
+    $('#procesamiento').prop('checked', false); 
+}else{
+    $('#procesamiento').prop('checked', true); 
+}
+
 
 $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){
