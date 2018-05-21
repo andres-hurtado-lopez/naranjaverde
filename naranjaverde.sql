@@ -343,6 +343,7 @@ CREATE TABLE `hoja_ruta` (
   `descripcion` text NOT NULL,
   `cif` decimal(9,2) NOT NULL,
   `rendimiento` decimal(5,2) DEFAULT NULL,
+  `reempaque` int(11) NOT NULL,
   PRIMARY KEY (`idmat`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -353,7 +354,7 @@ CREATE TABLE `hoja_ruta` (
 
 LOCK TABLES `hoja_ruta` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta` DISABLE KEYS */;
-INSERT INTO `hoja_ruta` VALUES ('D203','banano mitades',900.00,NULL);
+INSERT INTO `hoja_ruta` VALUES ('D0310','Mango de un centímetro ',6000.00,NULL,0),('D0616','este producto es para producir fresa trozo de tamaño 4 a 7 mm.\r\nSe usa para Nestle, Nutreo, Dispronat',6000.00,11.11,1),('D203','banano mitades',900.00,NULL,0),('Prueba','prueba',1000.00,10.11,0);
 /*!40000 ALTER TABLE `hoja_ruta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -368,9 +369,9 @@ CREATE TABLE `hoja_ruta_componentes` (
   `idmat` varchar(20) NOT NULL,
   `operacion` varchar(50) NOT NULL,
   `componente` varchar(50) NOT NULL,
-  `tipo` enum('MO','MP','MQ','LP') NOT NULL,
+  `tipo` enum('MO','MP','MQ','LP','IN') NOT NULL,
   `costo` decimal(9,3) NOT NULL,
-  `unidad` enum('kg','l','g','m','cm','lb','un') NOT NULL,
+  `unidad` enum('kg','l','g','m','cm','lb','un','h','ml') NOT NULL,
   `cantidad` decimal(9,3) NOT NULL,
   PRIMARY KEY (`idmat`,`operacion`,`componente`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -382,7 +383,7 @@ CREATE TABLE `hoja_ruta_componentes` (
 
 LOCK TABLES `hoja_ruta_componentes` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_componentes` DISABLE KEYS */;
-INSERT INTO `hoja_ruta_componentes` VALUES ('123','1','Deshidratacion','MQ',213423.000,'un',150.000),('123','2','fresa','MP',12345.000,'kg',120.000),('123','3','operario','MO',123.000,'kg',12.000),('D203','1','adecuacion','MO',264.000,'kg',1.000),('D203','1','agua','MP',50.000,'l',22.000),('D203','1','Banano','MP',2941.000,'kg',5.880),('D203','2','horno','MQ',2763.000,'kg',1.000),('D203','3','desenbandejado','MO',132.000,'kg',1.000),('D203','4','seleccion','MO',377.000,'kg',1.000),('D203','5','detector de metales','MQ',88.000,'kg',1.000),('pruebas','4','2','MO',111.000,'kg',1.000);
+INSERT INTO `hoja_ruta_componentes` VALUES ('123','1','Deshidratacion','MQ',213423.000,'un',150.000),('123','2','fresa','MP',12345.000,'kg',120.000),('123','3','operario','MO',123.000,'kg',12.000),('D0310','1','MANGO FRESCO','MP',1000.000,'kg',14.280),('D0616','1','fresa  fresca','MP',2200.000,'kg',11.110),('D0616','1','jefe de almacén de materia prima','MO',5285.000,'h',0.018),('D0616','2','agua','IN',8.000,'l',0.700),('D0616','2','desinfectante','IN',33.260,'ml',1.000),('D0616','2','desmoldeante','IN',20.000,'ml',0.260),('D0616','2','operario','MO',5285.000,'h',2.000),('D0616','3','horno deshidratador','MQ',2763.000,'kg',1.000),('D0616','4','operario','MO',176.000,'kg',1.000),('D0616','5','operario','MO',1321.000,'kg',1.000),('D0616','6','operario','MO',250.000,'kg',1.000),('D0616','7','empaque bolsas y cajas','IN',50.000,'kg',1.000),('D0616','7','operario','MO',150.000,'kg',1.000),('D203','1','adecuacion','MO',264.000,'kg',1.000),('D203','1','agua','MP',50.000,'l',22.000),('D203','1','Banano','MP',2941.000,'kg',5.880),('D203','2','horno','MQ',2763.000,'kg',1.000),('D203','3','desenbandejado','MO',132.000,'kg',1.000),('D203','4','seleccion','MO',377.000,'kg',1.000),('D203','5','detector de metales','MQ',88.000,'kg',1.000),('pruebas','4','2','MO',111.000,'kg',1.000);
 /*!40000 ALTER TABLE `hoja_ruta_componentes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,6 +401,7 @@ CREATE TABLE `hoja_ruta_operaciones` (
   `capacidad_kg_h` decimal(9,3) NOT NULL,
   `tipo` enum('TUR','MAQ') DEFAULT NULL,
   `operarios` int(11) NOT NULL,
+  `fresco` int(11) NOT NULL,
   PRIMARY KEY (`idmat`,`operacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -410,7 +412,7 @@ CREATE TABLE `hoja_ruta_operaciones` (
 
 LOCK TABLES `hoja_ruta_operaciones` WRITE;
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` DISABLE KEYS */;
-INSERT INTO `hoja_ruta_operaciones` VALUES ('D203','1','adecuacion',3.400,'TUR',8),('D203','2','deshidratacion',20.000,'MAQ',1),('D203','3','desenbadejado',30.000,'TUR',8),('D203','4','seleccion',14.000,'TUR',8),('D203','5','detector de metales',60.000,'MAQ',1);
+INSERT INTO `hoja_ruta_operaciones` VALUES ('D0310','1','Recepcion ',750.000,'TUR',2,0),('D0616','2','Adecuacion',15.800,'TUR',4,1),('D0616','3','Deshidratacion',93.750,'MAQ',1,1),('D0616','4','Desembandejado',30.000,'TUR',2,0),('D0616','5','seleccion',4.000,'TUR',5,0),('D0616','6',' Molienda',30.000,'TUR',1,0),('D0616','7','empaque',50.000,'TUR',3,0),('D203','1','adecuacion',3.400,'TUR',8,0),('D203','2','deshidratacion',20.000,'MAQ',1,0),('D203','3','desenbadejado',30.000,'TUR',8,0),('D203','4','seleccion',14.000,'TUR',8,0),('D203','5','detector de metales',60.000,'MAQ',1,0);
 /*!40000 ALTER TABLE `hoja_ruta_operaciones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -544,7 +546,7 @@ CREATE TABLE `materiales` (
 
 LOCK TABLES `materiales` WRITE;
 /*!40000 ALTER TABLE `materiales` DISABLE KEYS */;
-INSERT INTO `materiales` VALUES ('01','Piña','MPF','','','','kg',0.000),('02','Banano','MPF','','',NULL,'kg',0.000),('03','Mango','MPF','','',NULL,'kg',0.000),('04','Papaya','MPF','','',NULL,'kg',0.000),('05','Uchuva','MPF','','',NULL,'kg',0.000),('06','Fresa','MPF','','',NULL,'kg',0.000),('07','Pitahaya','MPF','','',NULL,'kg',0.000),('08','Ciruela','MPF','','',NULL,'kg',0.000),('09','Mora','MPF','','',NULL,'kg',0.000),('10','Kiwi','MPF','','',NULL,'kg',0.000),('100','Coco Hojuela Blanco Cuticula 0%','MPP','','',NULL,'kg',0.000),('101','Espinaca Molida','MPP','','',NULL,'kg',0.000),('102','Paprika Molida','MPP','','',NULL,'kg',0.000),('103','Uchuva Deshidratada','MPP','','',NULL,'kg',0.000),('104','Mango Deshidratado','MPP','','',NULL,'kg',0.000),('105','Piña Deshidratada','MPP','','',NULL,'kg',0.000),('106','Linaza Molida','MPP','','',NULL,'kg',0.000),('109','Bolsas 3 Kg','Insu','','',NULL,'kg',0.000),('11','Chontaduro','MPF','','',NULL,'kg',0.000),('110','Bolsas 5 Kg','Insu','','',NULL,'kg',0.000),('111','Bolsas 10 Kg','Insu','','',NULL,'kg',0.000),('112','Carambolo','MPF','','',NULL,'kg',0.000),('113','Bolsas Azules','Insu','','',NULL,'kg',0.000),('114','Manzana Deshidratada','MPP','','',NULL,'kg',0.000),('115','Mora Rodajas Deshidratada','MPP','','',NULL,'kg',0.000),('116','Aceite Desmoldeante','Insu','','',NULL,'kg',0.000),('118','Cilantro Deshidratado En Hojas','MPP','','',NULL,'kg',0.000),('119','Pimenton Rojo Escamas','MPP','','',NULL,'kg',0.000),('12','Borojo','MPF','','',NULL,'kg',0.000),('120','Piel de Uva Granular','MPP','','',NULL,'kg',0.000),('121','Pitahaya Rodajas','MPP','','',NULL,'kg',0.000),('122','Curcuma Polvo','MPP','','',NULL,'kg',0.000),('123','Fresa Deshidratada','MPP','','',NULL,'kg',0.000),('124','Noni En Polvo','MPP','','',NULL,'kg',0.000),('125','Ahuyama en Escamas','MPP','','',NULL,'kg',0.000),('126','Tomate Deshiadratado En Polvo','MPP','','',NULL,'kg',0.000),('127','Limon Granular','MPP','','',NULL,'kg',0.000),('128','Toronja Granular','MPP','','',NULL,'kg',0.000),('129','Banano Deshidratado Trozos','MPP','','',NULL,'kg',0.000),('13','Noni','MPF','','',NULL,'kg',0.000),('130','Cilantro Deshidratado Polvo','MPP','','',NULL,'kg',0.000),('131','Servicio De Maquila','MPP','','',NULL,'kg',0.000),('132','Remolacha Granular','MPP','','',NULL,'kg',0.000),('133','Ciruela En polvo','MPP','','',NULL,'kg',0.000),('134','Cajas pequeñas','Insu','','',NULL,'kg',0.000),('135','Borojo Deshidratado','MPP','','',NULL,'kg',0.000),('136','Naranja Rodajas','MPP','','',NULL,'kg',0.000),('137','Guayaba Rodajas','MPP','','',NULL,'kg',0.000),('138','Cajas medianas','Insu','','',NULL,'kg',0.000),('139','Cajas grandes','Insu','','',NULL,'kg',0.000),('14','Cereza almibar','MPP','','',NULL,'kg',0.000),('140','Cajas de exportación','Insu','','',NULL,'kg',0.000),('141','Cajas de barras dispensadoras','Insu','','',NULL,'kg',0.000),('142','Cajas de barras maestro','Insu','','',NULL,'kg',0.000),('143','Desinfectante','Insu','','',NULL,'kg',0.000),('15','Breva en almibar','MPP','','',NULL,'kg',0.000),('16','Guayaba','MPF','','',NULL,'kg',0.000),('17','Toronja','MPF','','',NULL,'kg',0.000),('18','Limon','MPF','','',NULL,'kg',0.000),('19','Naranja','MPF','','',NULL,'kg',0.000),('20','Agraz','MPF','','',NULL,'kg',0.000),('21','Feijoa','MPF','','',NULL,'kg',0.000),('22','Guanabana','MPF','','',NULL,'kg',0.000),('23','Melon','MPF','','',NULL,'kg',0.000),('24','Maracuya','MPF','','',NULL,'kg',0.000),('25','Arandano','MPP','','',NULL,'kg',0.000),('26','Datiles','MPF','','',NULL,'kg',0.000),('27','Chachafruto','MPF','','',NULL,'kg',0.000),('28','Piel de Uva','MPF','','',NULL,'kg',0.000),('29','Uva Pasa','MPP','','',NULL,'kg',0.000),('30','Lulo','MPF','','',NULL,'kg',0.000),('31','Manzana','MPF','','',NULL,'kg',0.000),('32','Pera','MPF','','',NULL,'kg',0.000),('33','Durazno','MPF','','',NULL,'kg',0.000),('34','Aguacate','MPF','','',NULL,'kg',0.000),('35','Tomate Chonto','MPF','','',NULL,'kg',0.000),('36','Azucar','MPP','','',NULL,'kg',0.000),('37','Coco Hojuelas Blanco Cuticula','MPP','','',NULL,'kg',0.000),('38','Cascara de Piña','MPF','','',NULL,'kg',0.000),('39','Cascara de Mango','MPF','','',NULL,'kg',0.000),('40','Araza','MPF','','',NULL,'kg',0.000),('41','Anon','MPF','','',NULL,'kg',0.000),('42','Coco Hojuela Acaramelado','MPP','','',NULL,'kg',0.000),('43','Curuba','MPF','','',NULL,'kg',0.000),('44','Frambruesa','MPF','','',NULL,'kg',0.000),('45','Granadilla','MPF','','',NULL,'kg',0.000),('46','Mandarina','MPF','','',NULL,'kg',0.000),('47','Mangostan','MPF','','',NULL,'kg',0.000),('48','Papayuela','MPF','','',NULL,'kg',0.000),('49','Zapote','MPF','','',NULL,'kg',0.000),('50','Almendras','MPP','','',NULL,'kg',0.000),('51','Lechuga','MPF','','',NULL,'kg',0.000),('52','Calabacin (Zuchini)','MPF','','',NULL,'kg',0.000),('53','Acelga','MPF','','',NULL,'kg',0.000),('54','Cohombro','MPF','','',NULL,'kg',0.000),('55','Habichuela','MPF','','',NULL,'kg',0.000),('56','Repollitas','MPF','','',NULL,'kg',0.000),('57','Berro','MPF','','',NULL,'kg',0.000),('58','Semilla de amapola','MPP','','',NULL,'kg',0.000),('59','Remolacha','MPF','','',NULL,'kg',0.000),('60','Uva','MPF','','',NULL,'kg',0.000),('61','Champiñones','MPF','','',NULL,'kg',0.000),('62','Pimenton','MPF','','',NULL,'kg',0.000),('63','Ahuyama','MPF','','',NULL,'kg',0.000),('64','Espinaca ','MPF','','',NULL,'kg',0.000),('65','Zanahoria','MPF','','',NULL,'kg',0.000),('66','Berenjena','MPF','','',NULL,'kg',0.000),('67','Guatila','MPF','','',NULL,'kg',0.000),('68','Rabano','MPF','','',NULL,'kg',0.000),('69','Aji','MPF','','',NULL,'kg',0.000),('70','Arverja','MPF','','',NULL,'kg',0.000),('71','Alcachofa','MPF','','',NULL,'kg',0.000),('72','Platano Harton','MPF','','',NULL,'kg',0.000),('73','Puerro','MPF','','',NULL,'kg',0.000),('74','Brocoli','MPF','','',NULL,'kg',0.000),('75','Apio','MPF','','',NULL,'kg',0.000),('76','Coliflor','MPF','','',NULL,'kg',0.000),('77','Esparragos','MPF','','',NULL,'kg',0.000),('78','Pepino','MPF','','',NULL,'kg',0.000),('79','Yacon','MPF','','',NULL,'kg',0.000),('80','Ñame','MPF','','',NULL,'kg',0.000),('81','Repollo','MPF','','',NULL,'kg',0.000),('82','Papa','MPF','','',NULL,'kg',0.000),('83','Albahaca','MPP','','',NULL,'kg',0.000),('84','Laurel','MPP','','',NULL,'kg',0.000),('85','Oregano','MPP','','',NULL,'kg',0.000),('86','Paprika 0%','MPP','','',NULL,'kg',0.000),('87','Ajo','MPP','','',NULL,'kg',0.000),('88','Comino Molido','MPP','','',NULL,'kg',0.000),('89','Cilantro','MPP','','',NULL,'kg',0.000),('90','Perejil','MPP','','',NULL,'kg',0.000),('91','Pimienta Molida (Blanca)','MPP','','',NULL,'kg',0.000),('92','Nuez Moscada','MPP','','',NULL,'kg',0.000),('93','Jengibre','MPP','','',NULL,'kg',0.000),('94','Cebolla','MPP','','',NULL,'kg',0.000),('95','Tomillo','MPP','','',NULL,'kg',0.000),('96','Semillas de Cilantro Molida','MPP','','',NULL,'kg',0.000),('97','Estragon','MPP','','',NULL,'kg',0.000),('98','Canela','MPP','','','','kg',0.000),('99','Curcuma','MPP','','',NULL,'kg',0.000),('D203','Banano mitades','MPP','','','','kg',8283.000);
+INSERT INTO `materiales` VALUES ('01','Piña','MPF','','','','kg',0.000),('02','Banano','MPF','','',NULL,'kg',0.000),('03','Mango','MPF','','',NULL,'kg',0.000),('04','Papaya','MPF','','',NULL,'kg',0.000),('05','Uchuva','MPF','','',NULL,'kg',0.000),('06','Fresa','MPF','','',NULL,'kg',0.000),('07','Pitahaya','MPF','','',NULL,'kg',0.000),('08','Ciruela','MPF','','',NULL,'kg',0.000),('09','Mora','MPF','','',NULL,'kg',0.000),('10','Kiwi','MPF','','',NULL,'kg',0.000),('100','Coco Hojuela Blanco Cuticula 0%','MPP','','',NULL,'kg',0.000),('101','Espinaca Molida','MPP','','',NULL,'kg',0.000),('102','Paprika Molida','MPP','','',NULL,'kg',0.000),('103','Uchuva Deshidratada','MPP','','',NULL,'kg',0.000),('104','Mango Deshidratado','MPP','','',NULL,'kg',0.000),('105','Piña Deshidratada','MPP','','',NULL,'kg',0.000),('106','Linaza Molida','MPP','','',NULL,'kg',0.000),('109','Bolsas 3 Kg','Insu','','',NULL,'kg',0.000),('11','Chontaduro','MPF','','',NULL,'kg',0.000),('110','Bolsas 5 Kg','Insu','','',NULL,'kg',0.000),('111','Bolsas 10 Kg','Insu','','',NULL,'kg',0.000),('112','Carambolo','MPF','','',NULL,'kg',0.000),('113','Bolsas Azules','Insu','','',NULL,'kg',0.000),('114','Manzana Deshidratada','MPP','','',NULL,'kg',0.000),('115','Mora Rodajas Deshidratada','MPP','','',NULL,'kg',0.000),('116','Aceite Desmoldeante','Insu','','',NULL,'kg',0.000),('118','Cilantro Deshidratado En Hojas','MPP','','',NULL,'kg',0.000),('119','Pimenton Rojo Escamas','MPP','','',NULL,'kg',0.000),('12','Borojo','MPF','','',NULL,'kg',0.000),('120','Piel de Uva Granular','MPP','','',NULL,'kg',0.000),('121','Pitahaya Rodajas','MPP','','',NULL,'kg',0.000),('122','Curcuma Polvo','MPP','','',NULL,'kg',0.000),('123','Fresa Deshidratada','MPP','','',NULL,'kg',0.000),('124','Noni En Polvo','MPP','','',NULL,'kg',0.000),('125','Ahuyama en Escamas','MPP','','',NULL,'kg',0.000),('126','Tomate Deshiadratado En Polvo','MPP','','',NULL,'kg',0.000),('127','Limon Granular','MPP','','',NULL,'kg',0.000),('128','Toronja Granular','MPP','','',NULL,'kg',0.000),('129','Banano Deshidratado Trozos','MPP','','',NULL,'kg',0.000),('13','Noni','MPF','','',NULL,'kg',0.000),('130','Cilantro Deshidratado Polvo','MPP','','',NULL,'kg',0.000),('131','Servicio De Maquila','MPP','','',NULL,'kg',0.000),('132','Remolacha Granular','MPP','','',NULL,'kg',0.000),('133','Ciruela En polvo','MPP','','',NULL,'kg',0.000),('134','Cajas pequeñas','Insu','','',NULL,'kg',0.000),('135','Borojo Deshidratado','MPP','','',NULL,'kg',0.000),('136','Naranja Rodajas','MPP','','',NULL,'kg',0.000),('137','Guayaba Rodajas','MPP','','',NULL,'kg',0.000),('138','Cajas medianas','Insu','','',NULL,'kg',0.000),('139','Cajas grandes','Insu','','',NULL,'kg',0.000),('14','Cereza almibar','MPP','','',NULL,'kg',0.000),('140','Cajas de exportación','Insu','','',NULL,'kg',0.000),('141','Cajas de barras dispensadoras','Insu','','',NULL,'kg',0.000),('142','Cajas de barras maestro','Insu','','',NULL,'kg',0.000),('143','Desinfectante','Insu','','',NULL,'kg',0.000),('15','Breva en almibar','MPP','','',NULL,'kg',0.000),('16','Guayaba','MPF','','',NULL,'kg',0.000),('17','Toronja','MPF','','',NULL,'kg',0.000),('18','Limon','MPF','','',NULL,'kg',0.000),('19','Naranja','MPF','','',NULL,'kg',0.000),('20','Agraz','MPF','','',NULL,'kg',0.000),('21','Feijoa','MPF','','',NULL,'kg',0.000),('22','Guanabana','MPF','','',NULL,'kg',0.000),('23','Melon','MPF','','',NULL,'kg',0.000),('24','Maracuya','MPF','','',NULL,'kg',0.000),('25','Arandano','MPP','','',NULL,'kg',0.000),('26','Datiles','MPF','','',NULL,'kg',0.000),('27','Chachafruto','MPF','','',NULL,'kg',0.000),('28','Piel de Uva','MPF','','',NULL,'kg',0.000),('29','Uva Pasa','MPP','','',NULL,'kg',0.000),('30','Lulo','MPF','','',NULL,'kg',0.000),('31','Manzana','MPF','','',NULL,'kg',0.000),('32','Pera','MPF','','',NULL,'kg',0.000),('33','Durazno','MPF','','',NULL,'kg',0.000),('34','Aguacate','MPF','','',NULL,'kg',0.000),('35','Tomate Chonto','MPF','','',NULL,'kg',0.000),('36','Azucar','MPP','','',NULL,'kg',0.000),('37','Coco Hojuelas Blanco Cuticula','MPP','','',NULL,'kg',0.000),('38','Cascara de Piña','MPF','','',NULL,'kg',0.000),('39','Cascara de Mango','MPF','','',NULL,'kg',0.000),('40','Araza','MPF','','',NULL,'kg',0.000),('41','Anon','MPF','','',NULL,'kg',0.000),('42','Coco Hojuela Acaramelado','MPP','','',NULL,'kg',0.000),('43','Curuba','MPF','','',NULL,'kg',0.000),('44','Frambruesa','MPF','','',NULL,'kg',0.000),('45','Granadilla','MPF','','',NULL,'kg',0.000),('46','Mandarina','MPF','','',NULL,'kg',0.000),('47','Mangostan','MPF','','',NULL,'kg',0.000),('48','Papayuela','MPF','','',NULL,'kg',0.000),('49','Zapote','MPF','','',NULL,'kg',0.000),('50','Almendras','MPP','','',NULL,'kg',0.000),('51','Lechuga','MPF','','',NULL,'kg',0.000),('52','Calabacin (Zuchini)','MPF','','',NULL,'kg',0.000),('53','Acelga','MPF','','',NULL,'kg',0.000),('54','Cohombro','MPF','','',NULL,'kg',0.000),('55','Habichuela','MPF','','',NULL,'kg',0.000),('56','Repollitas','MPF','','',NULL,'kg',0.000),('57','Berro','MPF','','',NULL,'kg',0.000),('58','Semilla de amapola','MPP','','',NULL,'kg',0.000),('59','Remolacha','MPF','','',NULL,'kg',0.000),('60','Uva','MPF','','',NULL,'kg',0.000),('61','Champiñones','MPF','','',NULL,'kg',0.000),('62','Pimenton','MPF','','',NULL,'kg',0.000),('63','Ahuyama','MPF','','',NULL,'kg',0.000),('64','Espinaca ','MPF','','',NULL,'kg',0.000),('65','Zanahoria','MPF','','',NULL,'kg',0.000),('66','Berenjena','MPF','','',NULL,'kg',0.000),('67','Guatila','MPF','','',NULL,'kg',0.000),('68','Rabano','MPF','','',NULL,'kg',0.000),('69','Aji','MPF','','',NULL,'kg',0.000),('70','Arverja','MPF','','',NULL,'kg',0.000),('71','Alcachofa','MPF','','',NULL,'kg',0.000),('72','Platano Harton','MPF','','',NULL,'kg',0.000),('73','Puerro','MPF','','',NULL,'kg',0.000),('74','Brocoli','MPF','','',NULL,'kg',0.000),('75','Apio','MPF','','',NULL,'kg',0.000),('76','Coliflor','MPF','','',NULL,'kg',0.000),('77','Esparragos','MPF','','',NULL,'kg',0.000),('78','Pepino','MPF','','',NULL,'kg',0.000),('79','Yacon','MPF','','',NULL,'kg',0.000),('80','Ñame','MPF','','',NULL,'kg',0.000),('81','Repollo','MPF','','',NULL,'kg',0.000),('82','Papa','MPF','','',NULL,'kg',0.000),('83','Albahaca','MPP','','',NULL,'kg',0.000),('84','Laurel','MPP','','',NULL,'kg',0.000),('85','Oregano','MPP','','',NULL,'kg',0.000),('86','Paprika 0%','MPP','','',NULL,'kg',0.000),('87','Ajo','MPP','','',NULL,'kg',0.000),('88','Comino Molido','MPP','','',NULL,'kg',0.000),('89','Cilantro','MPP','','',NULL,'kg',0.000),('90','Perejil','MPP','','',NULL,'kg',0.000),('91','Pimienta Molida (Blanca)','MPP','','',NULL,'kg',0.000),('92','Nuez Moscada','MPP','','',NULL,'kg',0.000),('93','Jengibre','MPP','','',NULL,'kg',0.000),('94','Cebolla','MPP','','',NULL,'kg',0.000),('95','Tomillo','MPP','','',NULL,'kg',0.000),('96','Semillas de Cilantro Molida','MPP','','',NULL,'kg',0.000),('97','Estragon','MPP','','',NULL,'kg',0.000),('98','Canela','MPP','','','','kg',0.000),('99','Curcuma','MPP','','',NULL,'kg',0.000),('D0310','mango trozos','MPP','','','','kg',14188.000),('D0616','fresa trozos','MPP','','','','kg',30867.000),('D203','Banano mitades','MPP','','','','kg',8283.000),('Prueba','Prueba','MPP','','','','kg',30642.000);
 /*!40000 ALTER TABLE `materiales` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -616,8 +618,10 @@ CREATE TABLE `ordenes` (
   `p_uso_hornos` decimal(5,3) NOT NULL,
   `fecha_fin` datetime NOT NULL,
   `estado` enum('abierta','cerrada','en proceso') DEFAULT NULL,
+  `fecha_produccion` datetime DEFAULT NULL,
+  `fecha_recepcion` datetime DEFAULT NULL,
   PRIMARY KEY (`orden`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -626,7 +630,7 @@ CREATE TABLE `ordenes` (
 
 LOCK TABLES `ordenes` WRITE;
 /*!40000 ALTER TABLE `ordenes` DISABLE KEYS */;
-INSERT INTO `ordenes` VALUES (2,'91499686-5','D203',200,'121','2018-05-19 00:00:00',2000000.000,0.000,'2018-05-20 00:00:00','abierta');
+INSERT INTO `ordenes` VALUES (2,'91499686-5','D203',200,'121','2018-05-19 00:00:00',2000000.000,0.000,'2018-05-20 00:00:00','abierta',NULL,NULL),(3,'98473570-2','D0616',100,'','2018-05-20 00:00:00',46000.000,0.000,'2018-05-22 00:00:00','en proceso',NULL,NULL);
 /*!40000 ALTER TABLE `ordenes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -681,6 +685,31 @@ CREATE TABLE `ordenes_costos_indirectos` (
 LOCK TABLES `ordenes_costos_indirectos` WRITE;
 /*!40000 ALTER TABLE `ordenes_costos_indirectos` DISABLE KEYS */;
 /*!40000 ALTER TABLE `ordenes_costos_indirectos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ordenes_estado`
+--
+
+DROP TABLE IF EXISTS `ordenes_estado`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ordenes_estado` (
+  `orden` int(11) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `estado` varchar(20) NOT NULL,
+  PRIMARY KEY (`orden`,`estado`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordenes_estado`
+--
+
+LOCK TABLES `ordenes_estado` WRITE;
+/*!40000 ALTER TABLE `ordenes_estado` DISABLE KEYS */;
+INSERT INTO `ordenes_estado` VALUES (2,'2018-05-20 16:14:34','abierta'),(2,'2018-05-19 15:25:01','cerrada'),(2,'2018-05-19 15:10:38','en proceso'),(3,'2018-05-20 16:13:50','en proceso');
+/*!40000 ALTER TABLE `ordenes_estado` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -754,10 +783,9 @@ CREATE TABLE `ordenes_produccion` (
   `operacion` varchar(45) DEFAULT NULL,
   `cantidad_kg` decimal(9,0) DEFAULT NULL,
   `producto_terminado` int(11) DEFAULT NULL,
-  `desde` datetime DEFAULT NULL,
-  `hasta` varchar(45) DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -766,6 +794,7 @@ CREATE TABLE `ordenes_produccion` (
 
 LOCK TABLES `ordenes_produccion` WRITE;
 /*!40000 ALTER TABLE `ordenes_produccion` DISABLE KEYS */;
+INSERT INTO `ordenes_produccion` VALUES (7,2,'1',20,1,'2018-05-19 11:39:35'),(8,2,'1',20,1,'2018-05-19 11:39:39');
 /*!40000 ALTER TABLE `ordenes_produccion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -782,10 +811,11 @@ CREATE TABLE `ordenes_registro` (
   `operacion` varchar(50) NOT NULL,
   `componente` varchar(50) NOT NULL,
   `cantidad` decimal(20,10) NOT NULL,
+  `costos` decimal(20,10) NOT NULL,
   `notas` text NOT NULL,
   `fecha` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -794,6 +824,7 @@ CREATE TABLE `ordenes_registro` (
 
 LOCK TABLES `ordenes_registro` WRITE;
 /*!40000 ALTER TABLE `ordenes_registro` DISABLE KEYS */;
+INSERT INTO `ordenes_registro` VALUES (1,2,'1','adecuacion',3.5000000000,924.0000000000,'','2018-05-19 10:55:46'),(2,3,'2','agua',450.0000000000,3600.0000000000,'','2018-05-20 14:00:39'),(3,3,'2','agua',760.0000000000,6080.0000000000,'','2018-05-20 22:00:11'),(4,3,'2','operario',32.0000000000,169120.0000000000,'','2018-05-20 16:26:42');
 /*!40000 ALTER TABLE `ordenes_registro` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1117,7 +1148,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','09bbab0a-67d1-44f8-9bb2-03fd50fbd30a',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'d6c39a9a-a6d9-4915-96bd-42b2c71b5f09',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','540765f1-e751-4b37-adff-af3cc97e614e',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','22b677e4-47bb-4241-8dd2-85aa668fbf4f',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
+INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','a812b7a0-9961-4f89-b217-dda9a615be00',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'a88d038d-3f81-4e42-9128-f0cc622903a4',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','830100e1-c845-4337-8acf-663ffdf7360f',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','4f28cfdf-650a-4a08-aec4-4df36df3feec',NULL,NULL,NULL,'','',NULL),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1237,4 +1268,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-19  2:20:25
+-- Dump completed on 2018-05-21 12:35:27
