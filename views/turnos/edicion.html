@@ -7,25 +7,33 @@ db = utils.ConnectDB()
 
 id = request.GET.id
 turno = request.GET.turno
+titulo= ''
 
-if not id:
-  redirect('principal.html')
+db.execute(""" SELECT a.idtercero , a.nombre as description FROM terceros as a """,[])
+
+row_tercero = db.fetchall()
+
+if id:
+    titulo = 'Edicion'
+    db.execute("""SELECT  a.`fecha_turno`, a.`turno`, a.`idtercero`,DATE_FORMAT(desde,'%%Y-%%m-%%dT%%T') as desde, 
+                            CONCAT(a.`idtercero`,' - ',b.nombre) as operario, DATE_FORMAT(hasta,'%%Y-%%m-%%dT%%T') as hasta
+                    FROM registro_turnos as a 
+                    LEFT OUTER JOIN terceros as b 
+                    ON a.idtercero = b.idtercero
+                    WHERE fecha_turno = %s and turno = %s""",[id,turno])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    titulo = 'Crear'
+    db.execute("DESCRIBE registro_turnos")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
 end
 
-if turno == '1':
-    desde = id+"T06:00:00"
-    hasta = id+"T14:00:00"
-elif turno == '2':
-    desde = id+"T14:00:00"
-    hasta = id+"T22:00:00"
-elif turno == '3':
-    desde = id+"T22:00:00"
-    id = (datetime.datetime.strptime(id, '%Y-%m-%d') + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-    hasta = id+"T06:00:00"
-end
        
 %>
-<h2 class="ui header">Edicion Turno:</h2>
+<h2 class="ui header">{{titulo}} Turno:</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
@@ -38,7 +46,25 @@ end
         </div>
     </div>  
 
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8" >
+<br>
+    <div class="two fields">
+            <div class="field">
+                <label>Fecha Turno</label>
+                <input type="date" name="fecha_turno"  value="{{fecha_turno}}" required>
+            </div>
+            <div class="field">
+                <label>Turno</label>
+                <select name="turno" id="turno" value="{{turno}}}" required >
+                <option value=""></option>
+                <option value="1">06:00am - 02:00pm</option>
+                <option value="2">02:00pm - 10:00pm</option>
+                <option value="3">10:00pm - 06:00am</option>
+                
+                </select>
+            </div>
+    </div>
+
     <div class="fields">
         <div class="eight wide field">
           <label>Desde</label>
@@ -51,18 +77,25 @@ end
     </div>
     <div class="field">
         <label>Operario</label>
+        
         <select class="ui search selection dropdown" id="operario" name="operario">
+             % for row in row_tercero : 
+                 <option value="{{row['idtercero']}}">{{ str(row['idtercero']) + ' - ' + row['description'] }}</option>  
+             %end
         </select>
+        
     </div>
 
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Registrar</button>   
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Gurdar</button>   
     </div>
-    <input type="hidden" name="fecha_turno" value="{{id}}">
-    <input type="hidden" name="turno" value="{{turno}}">
+    
 </form>
 
+<!--
+    <input type="hidden" name="fecha_turno" value="{{id}}">
+    <input type="hidden" name="turno" value="{{turno}}">
 <table class="ui table">
     <thead>
         <th>Fecha Turno</th>
@@ -102,7 +135,7 @@ end
         %end
     </tbody>
 </table>
-
+-->
 <script type="text/javascript">
 
     function confirmar_borrado(fecha_turno, turno, idtercero)
@@ -113,7 +146,8 @@ end
         }
     };
 
-    function modificar(desde, hasta, idtercero,nombre_tercero)
+    $('#operario').dropdown();
+ /*    function modificar(desde, hasta, idtercero,nombre_tercero)
     {
       $('input[name="desde"]').val(desde.replace(' ','T'))
       $('input[name="hasta"]').val(hasta.replace(' ','T'))
@@ -122,13 +156,18 @@ end
       $('#operario').dropdown('set text',nombre_tercero);
     };
 
+   
 
-  $('#operario').dropdown({
+ $('#operario').dropdown({
       apiSettings: {
         url: '/terceros/buscar.json?tipo=EMPL&query={query}'
       }
-  });
+  });*/
 
+  if('{{titulo}}' == 'Edicion'){
+     $('#operario').dropdown('set selected','{{idtercero}}');
+     $('#turno').val('{{turno}}');
+  }
 
   $('.ui.dropdown.optionmenu').dropdown({
         action:function(text, value){    

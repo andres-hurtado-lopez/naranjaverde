@@ -10,6 +10,8 @@ descripcion = request.params.get('descripcion')
 cif = request.params.get('cif')
 rendimiento = request.params.get('rendimiento')
 valor = request.params.get('reempaque')
+title = request.params.get('title')
+mensaje = ''
 
 if valor:
 reempaque = 1
@@ -17,8 +19,27 @@ else :
 reempaque = 0
 end
 
+if title == 'Edicion':
+
 db.execute("""REPLACE INTO `hoja_ruta`(`idmat`, `descripcion`, `cif`,`rendimiento`, `reempaque`) VALUES (%s,%s,%s,%s,%s)""",
                                      [ idmat, descripcion, cif,rendimiento,reempaque])
 db.execute('COMMIT WORK');
 
-redirect('edicion.html?id={id}'.format(id=idmat))
+else :
+
+    db.execute(""" SELECT COUNT(*) as contador FROM `hoja_ruta` WHERE `idmat` = %s """,[idmat])
+
+    row_cantidad = db.fetchone();
+
+    if row_cantidad == 0 :
+    db.execute("""REPLACE INTO `hoja_ruta`(`idmat`, `descripcion`, `cif`,`rendimiento`, `reempaque`) VALUES (%s,%s,%s,%s,%s)""",
+                                            [ idmat, descripcion, cif,rendimiento,reempaque])
+    db.execute('COMMIT WORK');
+    else :
+        idmat = ''
+        mensaje = 'El Producto ya existe en hoja de ruta'
+    end 
+
+end
+
+redirect('edicion.html?id={id}&mensaje={mensaje}&title={title}'.format(id=idmat,mensaje=mensaje,title=title))

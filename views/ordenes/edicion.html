@@ -6,8 +6,10 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.GET.id
+titulo=''
 
 if id:
+    titulo = 'Edicion'
     db.execute("""SELECT a.orden, 
                          a.cliente, 
                          a.idmat,
@@ -19,8 +21,8 @@ if id:
                          a.p_uso_hornos,
                          b.descripcion as mattext,
                          c.nombre as tertext,
-                         a.fecha_entrega,
-                         a.fecha_despacho 
+                         a.fecha_despacho,
+                         a.fecha_entrega 
                          FROM ordenes as a 
                         LEFT OUTER JOIN materiales as b
                         ON a.idmat = b.idmat
@@ -30,6 +32,7 @@ if id:
     vara = db.fetchone()
     locals().update(vara)
 else:
+    titulo = 'Crear'
     db.execute("DESCRIBE ordenes")
     for row in db:
         locals().update({row['Field']:''})
@@ -38,7 +41,7 @@ end
 
        
 %>
-<h2 class="ui header">Edicion Orden:</h2>
+<h2 class="ui header">{{titulo}} Orden:</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -50,8 +53,8 @@ end
             <div class="item" data-value="programacion_produccion.html">Programaci&oacute;n Producci&oacute;n</div>
     </div>
 </div>     
-
-<form class="ui form">
+<br>
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="field">
         <label>Orden</label>
         <input type="text" name="orden" value="{{orden}}" readonly="">

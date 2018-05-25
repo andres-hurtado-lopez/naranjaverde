@@ -16,7 +16,7 @@ db = utils.ConnectDB()
             <div class="item" data-value="edicion.html">Crear Costo</div>
         </div>
     </div>  
-    
+    <br>
 <form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
     <div class="two fields">
         <div class="field">
@@ -82,4 +82,9 @@ db = utils.ConnectDB()
         }
     };
 
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
 </script>

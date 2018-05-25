@@ -26,8 +26,8 @@ oper = request.params.get('oper')
         </div>
  </div>   
 
-
-<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
+<br>
+<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="two fields">
         <div class="field">
             <label>Selecci&oacute;n Archivo Plano</label>
@@ -46,7 +46,7 @@ oper = request.params.get('oper')
  descripcion_material = row['descripcion']
  cif = row['cif']
  %>
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
         
         <div class="field">
             <label>ID Material</label>

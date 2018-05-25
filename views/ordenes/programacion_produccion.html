@@ -81,7 +81,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
             <th>Fecha Comprometida Entrega</th>
             <th>Fecha Estimada de Finalizaci&oacute;n</th>
             <th>Fecha de Despacho</th>
-            <th>Fecha de Recepci&oacute;n</th>
+            <th>Fecha de Entrega</th>
             <th>Costo Estimado</th>
             <th>#Orden</th>
             <th>Estado</th>
@@ -105,7 +105,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                             FORMAT(a.`p_uso_hornos`,1) as p_uso_hornos, 
                             a.`fecha_fin`,
                             a.orden,
-                            a.estado
+                            a.estado,
+                            a.`fecha_despacho`, 
+                            a.`fecha_entrega`
                             FROM `ordenes` as a
                             LEFT OUTER JOIN materiales as b
                             ON a.idmat = b.idmat
@@ -129,7 +131,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                                 FORMAT(a.`p_uso_hornos`,1) as p_uso_hornos, 
                                 a.`fecha_fin`,
                                 a.orden,
-                                a.estado
+                                a.estado,
+                                a.`fecha_despacho`, 
+                                a.`fecha_entrega`
                                 FROM `ordenes` as a
                                 LEFT OUTER JOIN materiales as b
                                 ON a.idmat = b.idmat
@@ -162,11 +166,15 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 fecha_exp = ''
                 end
 
-                db.execute(""" SELECT  sum(o.cantidad_kg * h.`costo`)
-                                FROM `hoja_ruta_componentes`  as h
-                                INNER JOIN ordenes as o 
-                                ON h.idmat = o.idmat
-                                WHERE o.orden = %s  """,[row['orden']])
+                db.execute(""" SELECT sum(  if( ho.fresco = 0 , ( hc.`costo` * o.cantidad_kg ) * hr.rendimiento , ( hc.`costo` * o.cantidad_kg )  )  )as costo
+                                from hoja_ruta as hr 
+                                INNER JOIN hoja_ruta_componentes as hc
+                                ON hr.idmat = hc.idmat
+                                INNER JOIN hoja_ruta_operaciones as ho 
+                                ON hc.operacion= ho.operacion and hc.idmat = ho.idmat
+                                INNER JOIN ordenes as o
+                                ON hc.idmat = o.idmat
+                                where  o.orden = %s  """,[row['orden']])
                                 
                 row_costo = db.fetchone()
 
@@ -183,7 +191,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 <td>{{row['p_uso_hornos']}}</td>
                 <td>{{row['fecha_fin']}}</td>
                 <td>{{fecha_exp}}</td>
-                <td>row_costo</td>
+                <td>{{row['fecha_despacho']}}</td>
+                <td>{{row['fecha_entrega']}}</td>
+                <td>{{row_costo['costo']}}</td>
                 <td>{{row['orden']}}</td>
                 <td>{{row['estado']}}</td>
                 <td></td>

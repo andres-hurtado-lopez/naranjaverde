@@ -16,7 +16,7 @@ if id and operacion:
     locals().update(vara)
 else:
 
-db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco
+db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco,"" as tipo_operacion
                 FROM `hoja_ruta_operaciones`
                 WHERE `idmat` = %s """,[id])
                 valor = db.fetchone()
@@ -41,7 +41,7 @@ end
         </div>
  </div>   
 
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="field">
         <label>ID</label>
         <input type="text" name="idmat" value="{{id}}" required="" readonly>
@@ -71,12 +71,18 @@ end
             <input type="number"  step="any" name="operarios" value="{{operarios}}">
      </div>
 
-    <div class="ui toggle checkbox" >            
-            <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
-            <label>Operaci&oacute;n Procesamiento en Freco</label>
+    <div class="field">
+        <label>Tipo de Operaci&oacute;n</label>
+        <input type="text"   name="tipOperacion" id="tipOperacion" value="{{tipo_operacion}}" >
     </div>
+
+    <div class="ui toggle checkbox field" style="margin-top: 1em;margin-bottom: 2em;">            
+        <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
+        <label>Operaci&oacute;n Procesamiento en Freco</label>
+    </div>
+
     <br> <br>
-    <div class="ui buttons">
+    <div class="ui buttons" >
             <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>
             <a class="ui button" href="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
     </div>

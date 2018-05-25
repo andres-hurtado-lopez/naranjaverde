@@ -6,14 +6,17 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.GET.id
+titulo= ''
 
 if id:
+    titulo = 'Edicion'
     db.execute("""SELECT `equipo`, `descripcion`, DATE_FORMAT(fecha_adquisicion,'%%Y-%%m-%%dT%%T') as `fecha_adquisicion`, `proveedor`, `capacidad_kg`, `horas_operacion`, `horno`, `serial`, `lote_fabricacion`, `informacion_tecnica`, `numero_activo`, `foto`
     FROM equipos
     WHERE equipo = %s""",[id])
     vara = db.fetchone()
     locals().update(vara)
 else:
+    titulo = 'Crear'
     db.execute("DESCRIBE equipos")
     for row in db:
         locals().update({row['Field']:''})
@@ -22,7 +25,7 @@ end
 
        
 %>
-<h2 class="ui header">Edicion Equipo:</h2>
+<h2 class="ui header">{{titulo}} Equipo:</h2>
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
         <div class="text">Menu</div>
@@ -34,7 +37,7 @@ end
         </div>
     </div>  
 
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="field">
         <label>Equipo</label>
         <input type="text" name="equipo" value="{{equipo}}" required="">
@@ -87,7 +90,7 @@ end
             <label>Catalogo</label>
             <input type="file" name="catalogo">
         </div>
-        <div class="field">
+        <div class="field" style="margin-top: 1em;margin-left: 2em">
             <label>Cargar Catalogo</label>
             <div class="ui slider checkbox">
                 <input type="checkbox" name="cargar_catalogo">
@@ -102,7 +105,7 @@ end
             <img class="ui image" src="foto_equipo?raw_request=true&id={{equipo}}" alt="{{equipo}}">
             <input type="file" name="foto">
         </div>
-        <div class="field">
+        <div class="field" style="margin-top: 1em;margin-left: 2em">
             <label>Cargar Foto</label>
             <div class="ui slider checkbox">
                 <input type="checkbox" name="cargar_foto">
@@ -118,7 +121,7 @@ end
     </div>
 </form>
 
-<script>
+<script type="text/javascript">
      $('.ui.dropdown.optionmenu').dropdown({
         action:function(text, value){    
         window.location.href = value;}

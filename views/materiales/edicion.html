@@ -6,12 +6,15 @@ from bottle import request
 db = utils.ConnectDB()
 
 id = request.GET.id
+titulo = ''
 
 if id:
+    titulo = 'Edicion'
     db.execute("SELECT * FROM materiales WHERE idmat = %s",[id])
     vara = db.fetchone()
     locals().update(vara)
 else:
+    titulo = 'Crear'
     db.execute("DESCRIBE materiales")
     for row in db:
         locals().update({row['Field']:''})
@@ -20,7 +23,7 @@ end
 
        
 %>
-<h2 class="ui header">Edicion Material:</h2>
+<h2 class="ui header">{{titulo}} Material:</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
@@ -33,7 +36,8 @@ end
         </div>
     </div>  
 
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+    <br>
     <div class="field">
         <label>ID</label>
         <input type="text" name="idmat" value="{{idmat}}" required="">

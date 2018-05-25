@@ -11,4 +11,7 @@ operacion = request.params.get('oper')
 db.execute("""DELETE FROM `hoja_ruta_operaciones` WHERE idmat = %s and operacion = %s """,[ id,operacion])
 db.execute('COMMIT WORK');
 
+db.execute("""DELETE FROM `hoja_ruta_componentes` WHERE idmat = %s and operacion = %s """,[ id,operacion])
+db.execute('COMMIT WORK');
+
 redirect('principal_operaciones.html?id={id}'.format(id=id) )

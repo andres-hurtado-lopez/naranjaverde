@@ -22,9 +22,8 @@ id = request.params.get('id')
         <div class="item" data-value="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Operacion</div>
     </div>
 </div>   
-
-
-<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data">
+<br>
+<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="two fields">
         <div class="field">
             <label>Selecci&oacute;n Archivo Plano</label>
@@ -43,7 +42,7 @@ id = request.params.get('id')
  descripcion_material = row['descripcion']
  cif = row['cif']
  %>
-<form class="ui form">
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
         <div class="field">
             <label>ID Material</label>
             <input type="text" value="{{id}}" readonly="">

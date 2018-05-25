@@ -9,7 +9,7 @@ id = request.params.get('id')
 %>
 <h2 class="ui header">Cambio Clave usuario - {{id}}</h2>
 
-<form class="ui form" action="cambiar_clave.html" method="post">
+<form class="ui form" action="cambiar_clave.html" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="ui buttons">
       <a class="ui button" href="principal.html">Regresar</a>
       <button class="ui button">Cambiar Clave</a>
