@@ -18,11 +18,11 @@ precio_venta = request.params.get('precio_venta')
 p_uso_hornos = request.params.get('p_uso_hornos') if  request.params.get('p_uso_hornos') else 0.0
 fecha_despacho = request.params.get('fecha_despacho') if request.params.get('fecha_despacho') else None
 fecha_entrega = request.params.get('fecha_entrega') if request.params.get('fecha_entrega') else None
-
+estado = request.params.get('estado')
 
 
 db.execute("""REPLACE INTO ordenes (orden, cliente, idmat, cantidad_kg, pedido_cliente, fecha_inicio, fecha_fin, precio_venta, p_uso_hornos, estado,fecha_despacho,fecha_entrega) 
-value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[ orden, cliente,idmat,cantidad_kg,pedido_cliente,fecha_inicio,fecha_fin,precio_venta,p_uso_hornos,'abierta',fecha_despacho,fecha_entrega])
+value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[ orden, cliente,idmat,cantidad_kg,pedido_cliente,fecha_inicio,fecha_fin,precio_venta,p_uso_hornos,estado,fecha_despacho,fecha_entrega])
 db.execute('COMMIT WORK');
 
 if not orden:

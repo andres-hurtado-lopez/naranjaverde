@@ -21,8 +21,9 @@ if id:
                          a.p_uso_hornos,
                          b.descripcion as mattext,
                          c.nombre as tertext,
-                         a.fecha_despacho,
-                         a.fecha_entrega 
+                         DATE_FORMAT(a.fecha_despacho, "%%Y-%%m-%%d") as fecha_despacho,
+                         DATE_FORMAT(a.fecha_entrega, "%%Y-%%m-%%d") as fecha_entrega,
+                         a.estado
                          FROM ordenes as a 
                         LEFT OUTER JOIN materiales as b
                         ON a.idmat = b.idmat
@@ -32,11 +33,16 @@ if id:
     vara = db.fetchone()
     locals().update(vara)
 else:
+
     titulo = 'Crear'
+    
     db.execute("DESCRIBE ordenes")
     for row in db:
         locals().update({row['Field']:''})
     end
+
+    estado = 'abierto'
+
 end
 
        
@@ -59,6 +65,12 @@ end
         <label>Orden</label>
         <input type="text" name="orden" value="{{orden}}" readonly="">
     </div>
+
+    <div class="field">
+        <label>Estado</label>
+        <input type="text" name="estado" value="{{estado}}" readonly="">
+    </div>
+
     <div class="field">
         <label>Cliente</label>
         <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}" required=""> 

@@ -16,7 +16,7 @@ if id and operacion:
     locals().update(vara)
 else:
 
-db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco,"" as tipo_operacion
+db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco,"" as clase
                 FROM `hoja_ruta_operaciones`
                 WHERE `idmat` = %s """,[id])
                 valor = db.fetchone()
@@ -72,8 +72,8 @@ end
      </div>
 
     <div class="field">
-        <label>Tipo de Operaci&oacute;n</label>
-        <input type="text"   name="tipOperacion" id="tipOperacion" value="{{tipo_operacion}}" >
+        <label>Clase (Agrupar datos)</label>
+        <input type="text" name="clase" id="clase" value="{{clase}}" >
     </div>
 
     <div class="ui toggle checkbox field" style="margin-top: 1em;margin-bottom: 2em;">            

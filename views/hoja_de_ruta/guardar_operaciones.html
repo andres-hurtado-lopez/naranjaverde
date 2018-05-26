@@ -12,7 +12,7 @@ capacidad_kg_h = request.params.get('capacidad_kg_h')
 tipo = request.params.get('tipo')
 operarios = request.params.get('operarios')
 valor = request.params.get('procesamiento')
-typOperacion = request.params.get('tipOperacion')
+clase = request.params.get('clase')
 
 if valor:
 fresco = 1
@@ -20,8 +20,8 @@ else :
 fresco = 0
 end
 
-db.execute("""REPLACE INTO `hoja_ruta_operaciones`(`idmat`, `operacion`, `descripcion`, `capacidad_kg_h`, `tipo`,`operarios`, `fresco`,tipo_operacion) 
-    VALUES ( %s,%s,%s,%s,%s,%s,%s,%s )""",[ idmat, operacion, descripcion, capacidad_kg_h, tipo,operarios,fresco,typOperacion])
+db.execute("""REPLACE INTO `hoja_ruta_operaciones`(`idmat`, `operacion`, `descripcion`, `capacidad_kg_h`, `tipo`,`operarios`, `fresco`,clase) 
+    VALUES ( %s,%s,%s,%s,%s,%s,%s,%s )""",[ idmat, operacion, descripcion, capacidad_kg_h, tipo,operarios,fresco,clase])
 db.execute('COMMIT WORK');
 
 redirect('edicion_operaciones.html?id={id}&oper={oper}&title={title}&opera={operarios}'.format(id=idmat,oper=operacion,title='Edicion',operarios=operarios) )

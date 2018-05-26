@@ -77,11 +77,36 @@ row_cerrada_ayer = db.fetchone()
   <i class="calendar alternate outline icon"></i>
   Hoy
 </h4>
-  
+  <%
+    db.execute("""  SELECT  format( if( count(*) > 0 , ( sum( t1.total_deshidratado) / count(*) )  , 'N.A' )  ,2 )as capacidad_planta
+    from ordenes 
+    inner join 
+    (
+    SELECT  ifnull( sum(ho.capacidad_kg_h) , 0 ) as total_deshidratado
+                    FROM `ordenes` as o
+                    INNER JOIN hoja_ruta_operaciones ho
+                    on o.idmat = ho.idmat 
+                    WHERE ho.clase = 'DESHIDRATADO' and o.estado = 'abierta' ) as t1 """ , [])
+
+     row_capacidad_planta = db.fetchone()  
+
+     db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_terminado_hora
+     FROM `ordenes` as o
+     INNER JOIN hoja_ruta_operaciones ho
+     on o.idmat = ho.idmat 
+     INNER JOIN ordenes_produccion ore 
+     ON o.orden = ore.orden and ore.operacion= ho.operacion
+     WHERE ho.clase = 'TERMINADO'  and
+       ore.fecha BETWEEN  concat( curdate() , ' ' , SUBSTR( cast( CURTIME() as char ) , 1 , 2) , ':00:00' ) 
+                          and  concat( curdate(), ' ' ,curtime() )""", [])
+
+      row_total_adecuado_ter_hora = db.fetchone()  
+
+  %>
 <div class="ui statistics">
   <div class="statistic">
     <div class="value">
-      <i class="chart line icon"></i> 120
+      <i class="chart line icon"></i> {{row_capacidad_planta['capacidad_planta']}}
     </div>
     <div class="label">
       Capacidad max.<br>de Planta kg / h<br>( kg dia teórico / 24 h )
@@ -90,13 +115,14 @@ row_cerrada_ayer = db.fetchone()
 
   <div class="statistic">
     <div class="value">
-      <i class="battery half icon"></i> 22 %
+      <i class="battery half icon"></i>  {{ ( float( row_total_adecuado_ter_hora['total_terminado_hora'] ) / float(row_capacidad_planta['capacidad_planta'] ) * 100 )}} %
     </div>
     <div class="label">
       \% Capacidad de<br>planta utilizada
       <br>( prod u. hora / cap max.)
     </div>
   </div>
+
   <div class="statistic">
     <div class="value">
       <i class="industry icon"></i> {{row_abierta['cont_abierta']}}
@@ -105,6 +131,7 @@ row_cerrada_ayer = db.fetchone()
       Ordenes Abiertas        
     </div>
   </div>
+
   <div class="statistic">
     <div class="value">
       <i class="hourglass half icon"></i>{{row_proceso['cont_proceso']}}
@@ -121,45 +148,92 @@ row_cerrada_ayer = db.fetchone()
       Ordenes Terminadas
     </div>
   </div>
+
+
   <div class="statistic">
     <div class="value">
-      <i class="chart line icon"></i> 264
+      <i class="chart line icon"></i> {{ row_total_adecuado_ter_hora['total_terminado_hora']}}
     </div>
     <div class="label">
       Produccion Ultima <br>Hora kg 
     </div>
   </div>
 
+  <%
+  db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado_hora
+                 FROM `ordenes` as o
+                 INNER JOIN hoja_ruta_operaciones ho
+                 on o.idmat = ho.idmat 
+                 INNER JOIN ordenes_produccion ore 
+                 ON o.orden = ore.orden and ore.operacion= ho.operacion
+                 WHERE ho.clase = 'ADECUADO'  and
+                   ore.fecha BETWEEN  concat( curdate() , ' ' , SUBSTR( cast( CURTIME() as char ) , 1 , 2) , ':00:00' ) 
+                                      and  concat( curdate(), ' ' ,curtime() )""", [])
+ 
+       row_total_adecudo_hora = db.fetchone()                
+   %>
+
   <div class="statistic">
       <div class="value">
-        <i class="chart line icon"></i> 264
+        <i class="chart line icon"></i>  {{ row_total_adecudo_hora['total_adecuado_hora']}}
       </div>
       <div class="label">
         Producto Adecuado &Uacute;ltima <br>Hora kg 
       </div>
     </div>
 
+<%
+  db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado_terminado
+                 FROM `ordenes` as o
+                 INNER JOIN hoja_ruta_operaciones ho
+                 on o.idmat = ho.idmat 
+                 INNER JOIN ordenes_produccion ore 
+                 ON o.orden = ore.orden and ore.operacion= ho.operacion
+                 WHERE ho.clase = 'TERMINADO'  and
+                   ore.fecha BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')""", [])
+ 
+       row_total_adecudo_acomulado = db.fetchone()                
+   %>
+
   <div class="statistic">
     <div class="value">
-      <i class="chart area icon"></i> 264
+      <i class="chart area icon"></i> {{row_total_adecudo_acomulado['total_adecuado_terminado']}}
     </div>
     <div class="label">
       Produccion Acumulada <br> kg 
     </div>
   </div>
+  <%
+   db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado_acomulado
+                FROM `ordenes` as o
+                INNER JOIN hoja_ruta_operaciones ho
+                on o.idmat = ho.idmat 
+                INNER JOIN ordenes_produccion ore 
+                ON o.orden = ore.orden and ore.operacion= ho.operacion
+                WHERE ho.clase = 'ADECUADO'  and
+                  ore.fecha BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')""", [])
 
+      row_total_adecudo_acomulado = db.fetchone()                
+  %>
   <div class="statistic">
       <div class="value">
-        <i class="chart area icon"></i> 264
+        <i class="chart area icon"></i> {{row_total_adecudo_acomulado['total_adecuado_acomulado']}}
       </div>
       <div class="label">
         Producto Adecuado Acumulado <br> kg 
       </div>
     </div>
 
+    <%
+
+    db.execute(""" SELECT  concat( '$' , format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia   
+                  FROM ordenes_registro ore 
+                  WHERE  ore.fecha BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59') """, [])
+    row_total_dinero_xdia= db.fetchone()    
+    %>
   <div class="statistic">
     <div class="value">
-      <i class="dollar sign icon"></i> 200.3M
+      <i class="dollar sign icon"></i> {{ row_total_dinero_xdia['total_dinero_x_dia']}} M
     </div>
     <div class="label">
       Costo Acumulado <br> COP 
@@ -173,16 +247,64 @@ row_cerrada_ayer = db.fetchone()
   Ayer
 </h4>
 
+<%
+
+db.execute("""  SELECT  format( if( count(*) > 0 , ( sum( t1.total_deshidratado) / count(*) )  , 'N.A' )  ,2 )as capacidad_planta_ayer
+from ordenes 
+inner join 
+(
+SELECT  ifnull( sum(ho.capacidad_kg_h) , 0 ) as total_deshidratado
+                FROM `ordenes` as o
+    			INNER JOIN `ordenes_estado` as e
+     			ON e.estado =o.estado
+                INNER JOIN hoja_ruta_operaciones ho
+                on o.idmat = ho.idmat 
+                WHERE ho.clase = 'DESHIDRATADO' and e.estado = 'abierta' 
+				and e.`fecha` BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')) as t1 """ , [])
+
+ row_capacidad_planta_ayer = db.fetchone()  
+
+ db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado_terminado
+                FROM `ordenes` as o
+                INNER JOIN hoja_ruta_operaciones ho
+                on o.idmat = ho.idmat 
+                INNER JOIN ordenes_produccion ore 
+                ON o.orden = ore.orden and ore.operacion= ho.operacion
+                WHERE ho.clase = 'TERMINADO'  and
+                ore.fecha BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')""",[])
+
+row_total_kg = db.fetchone() 
+
+print row_capacidad_planta_ayer['capacidad_planta_ayer']
+
+if float(row_capacidad_planta_ayer['capacidad_planta_ayer'] ) > 0 :
+row_total_capacidad_utilizada = ( float(row_total_kg['total_adecuado_terminado'] )  / float(row_capacidad_planta_ayer['capacidad_planta_ayer'] ) ) * 100 
+else :
+row_total_capacidad_utilizada = 0
+end
+
+%>
+
 <div class="ui statistics">
   <div class="statistic">
     <div class="value">
-      <i class="battery half icon"></i> 22 %
+      <i class="chart line icon"></i> {{row_capacidad_planta_ayer['capacidad_planta_ayer']}}
+    </div>
+    <div class="label">
+      Capacidad max.<br>de Planta kg / h<br>( kg dia teórico / 24 h )
+    </div>
+  </div>
+
+  <div class="statistic">
+    <div class="value">
+      <i class="battery half icon"></i> {{ row_total_capacidad_utilizada }} %
     </div>
     <div class="label">
       \% Capacidad de<br>planta utilizada
       <br>( prod total / cap max)
     </div>
   </div>
+
   <div class="statistic">
     <div class="value">
       <i class="flag checkered icon"></i> {{row_cerrada_ayer['cont_cerrado_ayer']}}
@@ -192,24 +314,50 @@ row_cerrada_ayer = db.fetchone()
     </div>
   </div>
   <%
-     db.execute(""" SELECT  sum(`cantidad_kg`) as total_kg
-      FROM `ordenes_produccion` 
-      WHERE `fecha` BETWEEN CONCAT( SUBDATE(CURDATE(), 1) ,'T00:00:00') 
-          AND CONCAT( SUBDATE(CURDATE(), 1) ,'T23:59:59')""",[])
-
-      row_total_kg = db.fetchone()     
+         
   %>
   <div class="statistic">
     <div class="value">
-      <i class="chart area icon"></i> {{row_total_kg['total_kg']}}
+      <i class="chart area icon"></i> {{row_total_kg['total_adecuado_terminado']}}
     </div>
     <div class="label">
       Produccion Total <br>( kg )
     </div>
   </div>
+
+  <%
+    db.execute(""" SELECT ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado
+                  FROM `ordenes` as o
+                  INNER JOIN hoja_ruta_operaciones ho
+                  on o.idmat = ho.idmat 
+                  INNER JOIN ordenes_produccion ore 
+                  ON o.orden = ore.orden and ore.operacion= ho.operacion
+                  WHERE ho.clase = 'ADECUADO'  and
+                  ore.fecha BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')""",[])
+
+      row_total_adecuado = db.fetchone()     
+  %>
+
   <div class="statistic">
     <div class="value">
-      <i class="dollar sign icon"></i> 200.3M
+      <i class="chart area icon"></i> {{row_total_adecuado['total_adecuado']}}
+    </div>
+    <div class="label">
+      Produccion Total Adecuado <br>( kg )
+    </div>
+  </div>
+
+  
+ <%
+ 
+     db.execute(""" SELECT  concat( '$' , format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia_ayer  
+                   FROM ordenes_registro ore 
+                   WHERE  ore.fecha BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')  """, [])
+     row_total_dinero_xdia_ayer= db.fetchone()    
+ %>
+  <div class="statistic">
+    <div class="value">
+      <i class="dollar sign icon"></i>  {{ row_total_dinero_xdia_ayer['total_dinero_x_dia_ayer'] }} M
     </div>
     <div class="label">
       Costo Acumulado <br>( COP )

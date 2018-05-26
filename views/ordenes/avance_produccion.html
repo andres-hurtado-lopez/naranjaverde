@@ -3,6 +3,7 @@ import utils
 import datetime
 from bottle import request
 
+weekstart = datetime.datetime.now()
 db = utils.ConnectDB()
 
 orden = request.GET.orden
@@ -19,6 +20,11 @@ where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
 
 row_registro = db.fetchall()
 
+cliente = row_registro[0]['cliente']
+cantidad = row_registro[0]['cantidad_kg']
+material = row_registro[0]['nombre_mat']
+fecha_entrega = row_registro[0]['fecha_fin']
+
 db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
@@ -26,10 +32,13 @@ inner JOIN materiales as m
 on o.idmat = m.idmat 
 where o.estado='en proceso' Limit 100 """,[])
 
+fecha_row = weekstart.strftime('%Y-%m-%d')
+desde = '00:00:00'
+hasta = '23:00:00'
+
+
+
 %>
-
-
-
 <h2 class="ui header">Avance Producción</h2>
 
 <div class="ui fluid search selection dropdown optionmenu">
@@ -45,7 +54,7 @@ where o.estado='en proceso' Limit 100 """,[])
 
 
 <br>
-<form class="ui form" action="avance_produccion.html" method="get" accept-charset="utf-8">
+<form class="ui form" action="avance_produccion.html" method="post" accept-charset="utf-8">
     
         <div class="two fields">
                 <div class="field">
@@ -58,7 +67,7 @@ where o.estado='en proceso' Limit 100 """,[])
                 </div>    
                <div class="field">
                     <label>Cliente</label>
-                    <input type="text" name="cliente"  readonly value="{{row_registro[0]['cliente']}}">
+                    <input type="text" name="cliente" id="cliente" readonly value="{{cliente}}">
             
                 </div>
         </div>
@@ -76,7 +85,7 @@ where o.estado='en proceso' Limit 100 """,[])
                 </div>
                 <div class="field">
                         <label>Cantidad</label>
-                        <input type="text" name="cliente" readonly required="" value="{{row_registro[0]['cantidad_kg']}}">
+                        <input type="text" name="cantidad" id="cantidad" readonly required="" value="{{cantidad}}">
 
                 </div>     
         </div>        
@@ -85,12 +94,12 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                 <label>Material</label>
-                <input type="text" id="material" name="cliente" readonly value="{{row_registro[0]['nombre_mat']}}">
+                <input type="text" id="material" name="material" readonly value="{{material}}">
             </div>
 
             <div class="ui field">
                 <label>Fecha Entrega</label>
-                <input type="text" name="cliente"  readonly value="{{row_registro[0]['fecha_fin']}}">
+                <input type="text" name="fecha_entrega"  id="fecha_entrega" readonly value="{{fecha_entrega}}">
             </div>
         </div>
 
@@ -98,12 +107,12 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                 <label>Meta Turno</label>
-                <input type="text" name="turno"  >
+                <input type="text" name="turno" id="turno" >
             </div>
 
             <div class="ui field">
                 <label>fecha</label>
-                <input type="date" name="fecha" >
+                <input type="date" name="fecha_row" id="fecha_row" value="{{fecha_row}}" >
             </div>
 
             <div class="ui field">
@@ -136,7 +145,7 @@ where o.estado='en proceso' Limit 100 """,[])
 </form>
 
  <br>
-<form class="ui form" action="guardar_registro_terminado.json" method="post" >
+<form class="ui form" action="guardar_registro_terminado.json" method="post"  accept-charset="utf-8">
 
    <div class="two fields">
 
@@ -175,18 +184,22 @@ where o.estado='en proceso' Limit 100 """,[])
         <tbody>
             <% 
             
+            row_fe_ini = fecha_row +' '+ desde
+            row_fe_fin = fecha_row +' '+ hasta
+
             db.execute("""  select t1.rango,format(t1.ejecutado,1) as ejecutado,format(t3.capacidad_kg_h,1) as planeado, format( (t1.ejecutado - t3.capacidad_kg_h),1 ) as diferencia,t1.hora
                             from 
                             (SELECT  sum(`cantidad`) as ejecutado,LEFT(`fecha`,13) as rango, orden ,concat( substring(`fecha`,12,2) , ':00:00' )as hora
                             FROM `ordenes_registro`
-                            where orden  = %s and operacion = %s and fecha BETWEEN '2018-05-17 00:00:00' and '2018-05-17 23:59:59'
+                            where orden  = %s and operacion = %s and fecha BETWEEN %s and  %s
                             group by rango,hora ) as t1
                             inner join ordenes as t2
                             on t1.orden = t2.orden
                             left outer join hoja_ruta_operaciones as t3
                             on t2.idmat = t3.idmat and t3.operacion = %s """ , 
-                            [ orden, 2 , 2 ])
+                            [ orden, operacion ,row_fe_ini, row_fe_fin , operacion ])
             
+                            print orden, operacion ,row_fe_ini, row_fe_fin , operacion
 
             conteo = 0;
                for row in db:
@@ -217,6 +230,7 @@ where o.estado='en proceso' Limit 100 """,[])
 
 $('#orden').dropdown('set selected','{{orden}}');
 $('#operacion').dropdown('set selected','{{ operacion }}');
+$('#hasta').dropdown('set selected','23:00:00');
 
 $('#orden').on('change', function(){
 
