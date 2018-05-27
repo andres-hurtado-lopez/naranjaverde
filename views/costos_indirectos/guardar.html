@@ -1,0 +1,32 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+
+id = request.params.get('idind')
+descripcion = request.params.get('descripcion')
+valor = request.params.get('valor')
+desde = request.params.get('desde') if request.params.get('desde') else None
+hasta = request.params.get('hasta') if request.params.get('hasta') else None
+doc_ref = request.params.get('doc_ref')
+
+
+if not id:
+
+    db.execute("""REPLACE INTO `ordenes_costos_indirectos`( `descripcion`, `valor`, `desde`, `hasta`, `doc_ref`)
+    VALUES (%s,%s,%s,%s,%s)""",[ descripcion, valor, desde, hasta, doc_ref] )
+    db.execute('COMMIT WORK')
+
+    db.execute('SELECT LAST_INSERT_ID() AS id')
+    newid = db.fetchone()['id']
+else:
+    db.execute("""UPDATE `ordenes_costos_indirectos` SET  `descripcion` = %s, `valor` = %s, `desde` = %s, `hasta` = %s, `doc_ref`= %s WHERE idind = %s""",
+                        [ descripcion, valor, desde, hasta, doc_ref , id] )
+    db.execute('COMMIT WORK')
+    newid = id
+end
+
+redirect('edicion.html?id={id}'.format(id=newid))

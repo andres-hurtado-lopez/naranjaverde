@@ -36,6 +36,7 @@ db = utils.ConnectDB()
         <th>Valor</th>
         <th>Desde</th>
         <th>Hasta</th>
+        <th>Acciones</th>
     </thead>
     <tbody>
         <% db.execute("SELECT * FROM ordenes_costos_indirectos order by desde desc limit 50")
@@ -49,13 +50,13 @@ db = utils.ConnectDB()
             <td>{{row['hasta']}}</td>
             <td>
                 <div class="ui buttons">
-                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}')">
+                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idind']}}')">
                       <div class="hidden content">Eliminar</div>
                       <div class="visible content">
                         <i class="remove icon"></i>
                       </div>
                     </a>
-                    <a class="ui vertical animated button" href="edicion.html?id={{row['idmat']}}">
+                    <a class="ui vertical animated button" href="edicion.html?id={{row['idind']}}">
                       <div class="hidden content">Editar</div>
                       <div class="visible content">
                         <i class="edit icon"></i>

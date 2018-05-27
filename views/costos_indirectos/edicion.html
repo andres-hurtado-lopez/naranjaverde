@@ -1,0 +1,85 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+idind = request.GET.id
+titulo = ''
+
+if idind:
+    titulo = 'Edicion'
+    db.execute("SELECT * FROM ordenes_costos_indirectos WHERE idind = %s",[idind])
+    vara = db.fetchone()
+    locals().update(vara)
+else:
+    titulo = 'Crear'
+    db.execute("DESCRIBE ordenes_costos_indirectos")
+    for row in db:
+        locals().update({row['Field']:''})
+    end
+end
+
+
+       
+%>
+<h2 class="ui header">{{titulo}} Costos Indirectos:</h2>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+            <div class="item" data-value="/costos_indirectos/principal.html">Costos Indirectos</div>
+        </div>
+    </div>  
+
+<form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+    <br>
+    <div class="field">
+        <label>ID</label>
+        <input type="text" name="idind" value="{{idind}}" readonly>
+    </div>
+
+    <div class="field">
+        <label>Descripci&oacute;n</label>
+        <input type="text" name="descripcion" value="{{descripcion}}">
+    </div>
+
+    <div class="field">
+        <label>Valor</label>
+        <input type="number" step="any" name="valor" value="{{valor}}">
+    </div>
+
+    <div class="ui field">
+        <label>Desde</label>
+        <input type="date" name="desde" id="desde" value="{{desde}}" >
+    </div>
+
+    <div class="ui field">
+        <label>Hasta</label>
+        <input type="date" name="hasta" id="hasta" value="{{hasta}}" >
+    </div>
+
+    <div class="field">
+        <label>Documento Referenciado</label>
+        <input type="text" name="doc_ref" value="{{doc_ref}}" >
+    </div>
+
+    <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
+            <a class="ui button" href="edicion.html">Crear Otro</a>       
+    </div>
+</form>
+
+<script>
+
+     $('.ui.dropdown.optionmenu').dropdown({
+        action:function(text, value){    
+        window.location.href = value;}
+    })
+
+</script>

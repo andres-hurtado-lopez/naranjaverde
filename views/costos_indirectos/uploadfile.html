@@ -1,0 +1,22 @@
+<%
+import utils, csv
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+
+upload = request.files.get('archivo_plano')
+upload.save('tmp/',overwrite=True)
+
+with open( 'tmp/'+upload.filename, 'rb') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter='\t', quotechar='"')
+    for row in spamreader:
+    	if len(row) == 7:
+        	db.execute("REPLACE INTO `ordenes_costos_indirectos` (`descripcion`, `valor`, `desde`, `hasta`, `doc_ref``) VALUES (%s,%s,%s,%s,%s)",(row[0],row[1],row[2],row[3],row[4],))
+        end
+    end
+end
+
+db.execute('COMMIT WORK')
+
+redirect('principal.html')

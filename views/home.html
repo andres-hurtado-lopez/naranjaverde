@@ -55,7 +55,7 @@ row_cerrada_ayer = db.fetchone()
         <div class="item" data-value="ordenes/edicion.html">Crear Orden</div>
         <div class="item" data-value="turnos/principal.html">Control de Turnos</div>
         <div class="item" data-value="costos_indirectos/principal.html">Costos Indirectos</div>
-        <div class="item" data-value="ordenes/rep_control_produccion.html">Cuadro control producci&oacute;n</div>
+        <div class="item" data-value="ordenes/registrar_produccion_inicio.html">Cuadro control producci&oacute;n</div>
         <div class="item" data-value="equipos/principal.html">Equipos (Hornos, M&aacute;quinas)</div>
         <div class="item" data-value="hoja_de_ruta/principal.html">Hojas de Ruta</div>
         <div class="item" data-value="materiales/principal.html">Materiales (Insumos, Materia Prima, Producto Terminado)</div>
@@ -102,6 +102,12 @@ row_cerrada_ayer = db.fetchone()
 
       row_total_adecuado_ter_hora = db.fetchone()  
 
+      if float(row_capacidad_planta['capacidad_planta']) > 0 :
+         row_total_capacidad_hoy = ( float( row_total_adecuado_ter_hora['total_terminado_hora'] ) / float(row_capacidad_planta['capacidad_planta'] ) * 100 )
+      else:
+         row_total_capacidad_hoy = 0
+      end 
+
   %>
 <div class="ui statistics">
   <div class="statistic">
@@ -115,7 +121,7 @@ row_cerrada_ayer = db.fetchone()
 
   <div class="statistic">
     <div class="value">
-      <i class="battery half icon"></i>  {{ ( float( row_total_adecuado_ter_hora['total_terminado_hora'] ) / float(row_capacidad_planta['capacidad_planta'] ) * 100 )}} %
+      <i class="battery half icon"></i>  {{ row_total_capacidad_hoy  }} %
     </div>
     <div class="label">
       \% Capacidad de<br>planta utilizada

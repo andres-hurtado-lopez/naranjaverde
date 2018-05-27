@@ -1,0 +1,115 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+%>
+<h2 class="ui header">Costos Indirectos</h2>
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+        </div>
+    </div>  
+    <br>
+
+<form class="ui form" action="rep_pros_vs_real.html" method="get" enctype="multipart/form-data" acceptcharset="UTF-8">
+        <br>
+        <div class="ui field">
+                <label>Fecha Inicio Orden</label>
+        </div>
+
+        <div class="two fields">
+            
+            <div class="ui field">
+                <label>Desde</label>
+                <input type="date" name="q_desde"  >
+            </div>
+            <div class="ui field">
+                <label>Hasta</label>
+                <input type="date" name="q_hasta" >
+            </div>
+            <div class="ui field">
+                <label>&nbsp;</label>
+                <button class="ui button fluid buscar">Buscar</button>
+            </div>
+            <div class="ui field">
+                <label>&nbsp;</label>
+                <a class="ui button fluid buscar" href="rep_pros_vs_real.html">Limpiar</a>
+            </div>
+    
+        </div>
+
+</form>
+
+<table class="ui table">
+    <thead>
+        <th>Cliente</th>
+        <th>Producto</th>
+        <th>Programado</th>
+        <th>Producido a la fecha</th>
+        <th>%completado</th>
+        <th>Estado</th>
+        <th>#orden</th>
+        <th>Costos Real</th>
+        <th>Fecha Cierre</th>
+        <th>P.venta</th>
+        <th>Margen</th>
+        <th>Fecha Estimada</th>
+        <th>Dias Atrazo</th>
+    </thead>
+    <tbody>
+        <% 
+            db.execute("""SELECT  o.orden, t.`nombre`,m.descripcion,o.cantidad_kg,o.estado,o.orden
+                        FROM ordenes as o
+                        INNER JOIN `terceros` as t
+                        ON o.cliente = t.idtercero
+                        INNER JOIN materiales as m
+                        ON o.idmat = m.idmat
+                        """,[])
+           for row in db:
+        %>
+        <tr>
+            <td>{{row['nombre']}}</td>
+            <td>{{row['descripcion']}}</td>
+            <td>{{row['cantidad_kg']}}</td>
+            <td></td>
+            <td></td>
+            <td>{{row['estado']}}</td>
+            <td>{{row['orden']}} </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+        </tr>
+        %end
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $('.search.button')
+  .api({
+    url: 'http://www.google.com?q={value}'
+  });
+
+    function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar.html?id='+id;
+        }
+    };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
+</script>

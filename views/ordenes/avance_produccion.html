@@ -9,6 +9,14 @@ db = utils.ConnectDB()
 orden = request.GET.orden
 operacion = request.GET.operacion
 
+print 'fecha',request.GET.fecha_row 
+
+fecha_row = request.GET.fecha_row  if request.GET.fecha_row else weekstart.strftime('%Y-%m-%d')
+desde =  request.GET.desde  if request.GET.desde else '00:00:00'
+hasta =  request.GET.hasta if request.GET.hasta else '23:00:00'
+
+
+
 db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion as nombre_mat,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion as nombre_ope
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
@@ -20,6 +28,7 @@ where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
 
 row_registro = db.fetchall()
 
+print row_registro
 cliente = row_registro[0]['cliente']
 cantidad = row_registro[0]['cantidad_kg']
 material = row_registro[0]['nombre_mat']
@@ -31,10 +40,6 @@ on o.cliente=t.idtercero
 inner JOIN materiales as m
 on o.idmat = m.idmat 
 where o.estado='en proceso' Limit 100 """,[])
-
-fecha_row = weekstart.strftime('%Y-%m-%d')
-desde = '00:00:00'
-hasta = '23:00:00'
 
 
 
@@ -54,12 +59,12 @@ hasta = '23:00:00'
 
 
 <br>
-<form class="ui form" action="avance_produccion.html" method="post" accept-charset="utf-8">
+<form class="ui form" >
     
         <div class="two fields">
                 <div class="field">
                     <label>Orden</label>
-                    <select class="ui search selection dropdown" id="orden" name="orden" >
+                    <select class="ui search selection dropdown" id="orden" name="orden" value="{{orden}}"  >
                         % for row in db :  
                         <option value="{{row['orden']}}">{{ str(row['orden'])  }}</option>
                         %end
@@ -76,7 +81,7 @@ hasta = '23:00:00'
                 <div class="ui field">
                         <label>Operacion</label>
                        
-                        <select class="ui search selection dropdown" id="operacion" name="operacion" >  
+                        <select class="ui search selection dropdown" id="operacion" name="operacion"  >  
                                 % for row in row_registro :   
                                 <option value="{{row['operacion']}}" >{{ str( row['operacion'] ) + ' - '+row['nombre_ope']}} </option>
                                 %end
@@ -107,7 +112,7 @@ hasta = '23:00:00'
 
             <div class="ui field">
                 <label>Meta Turno</label>
-                <input type="text" name="turno" id="turno" >
+                <input type="text" name="turno" id="turno"  >
             </div>
 
             <div class="ui field">
@@ -139,7 +144,7 @@ hasta = '23:00:00'
         
 
          <div class="ui buttons">
-            <button class="ui button" type="submit" >Consultar</button>    
+            <button class="ui button" type="submit" id="consultar" >Consultar</button>    
         </div>
         <br>
 </form>
@@ -251,6 +256,24 @@ $('#orden').on('change', function(){
     $('#operacion').val();
 
 })
+
+$('#consultar').on('click', function(){
+    
+    var s =$('#orden').val();
+    var g = $('#operacion').val();
+    var rr = $('#desde').val();
+    var rrq = $('#hasta').val();
+    var rrq = $('#fecha_row').val();
+
+    if( $('#orden').val() != null && $('#operacion').val() != null ){
+
+         window.location.href = 'avance_produccion.html?orden='+$('#orden').val()+'&operacion='+$('#operacion').val()+'&fecha_row='+$('#fecha_row').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val();
+    }else{
+
+        alert('por favor seleccionar orden y operacion.');
+    }
+
+ });  
 
 $('#operacion').on('change', function(){
 
