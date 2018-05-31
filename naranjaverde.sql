@@ -622,7 +622,7 @@ CREATE TABLE `ordenes` (
   `fecha_despacho` datetime DEFAULT NULL,
   `fecha_entrega` datetime DEFAULT NULL,
   PRIMARY KEY (`orden`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -631,7 +631,7 @@ CREATE TABLE `ordenes` (
 
 LOCK TABLES `ordenes` WRITE;
 /*!40000 ALTER TABLE `ordenes` DISABLE KEYS */;
-INSERT INTO `ordenes` VALUES (2,'91499686-5','D203',200,'121','2018-05-19 00:00:00',2000000.000,0.000,'2018-05-20 00:00:00','abierta',NULL,NULL),(3,'98473570-2','D0616',100,'66558','2018-05-20 00:00:00',4600000.000,0.000,'2018-05-18 00:00:00','en proceso','2018-05-26 00:00:00',NULL);
+INSERT INTO `ordenes` VALUES (2,'91499686-5','D203',200,'121','2018-05-19 00:00:00',2000000.000,0.000,'2018-05-20 00:00:00','abierta',NULL,NULL),(3,'98473570-2','D0616',100,'66558','2018-05-20 00:00:00',4600000.000,0.000,'2018-05-18 00:00:00','cerrada','2018-05-26 00:00:00',NULL),(4,'91499686-5','D0616',100,'23423','2018-05-30 00:00:00',300000.000,0.000,'2018-06-01 00:00:00','en proceso','2018-05-30 00:00:00','2018-06-01 00:00:00');
 /*!40000 ALTER TABLE `ordenes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -711,7 +711,7 @@ CREATE TABLE `ordenes_estado` (
 
 LOCK TABLES `ordenes_estado` WRITE;
 /*!40000 ALTER TABLE `ordenes_estado` DISABLE KEYS */;
-INSERT INTO `ordenes_estado` VALUES (2,'2018-05-20 16:14:34','abierta'),(2,'2018-05-19 15:25:01','cerrada'),(2,'2018-05-19 15:10:38','en proceso'),(3,'2018-05-27 11:45:15','en proceso');
+INSERT INTO `ordenes_estado` VALUES (2,'2018-05-20 16:14:34','abierta'),(2,'2018-05-19 15:25:01','cerrada'),(2,'2018-05-19 15:10:38','en proceso'),(3,'2018-05-31 02:37:08','cerrada'),(3,'2018-05-27 11:45:15','en proceso'),(4,'2018-05-31 02:37:03','en proceso');
 /*!40000 ALTER TABLE `ordenes_estado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -788,7 +788,7 @@ CREATE TABLE `ordenes_produccion` (
   `producto_terminado` int(11) DEFAULT NULL,
   `fecha` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -797,7 +797,7 @@ CREATE TABLE `ordenes_produccion` (
 
 LOCK TABLES `ordenes_produccion` WRITE;
 /*!40000 ALTER TABLE `ordenes_produccion` DISABLE KEYS */;
-INSERT INTO `ordenes_produccion` VALUES (7,2,'1',20,1,'2018-05-19 11:39:35'),(8,2,'1',20,1,'2018-05-19 11:39:39'),(9,3,'2',20,0,'2018-05-27 11:50:33');
+INSERT INTO `ordenes_produccion` VALUES (7,2,'1',20,1,'2018-05-19 11:39:35'),(8,2,'1',20,1,'2018-05-19 11:39:39'),(9,3,'2',20,0,'2018-05-27 11:50:33'),(10,4,'2',20,0,'2018-05-31 04:42:20'),(11,4,'2',20,0,'2018-05-31 04:42:28'),(12,4,'2',20,0,'2018-05-31 04:42:35'),(13,4,'2',20,0,'2018-05-31 04:42:48'),(14,4,'2',20,0,'2018-05-31 04:43:22');
 /*!40000 ALTER TABLE `ordenes_produccion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1151,7 +1151,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','a812b7a0-9961-4f89-b217-dda9a615be00',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'80f78959-3422-45f6-b320-3597daf17d5c',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','830100e1-c845-4337-8acf-663ffdf7360f',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','4f28cfdf-650a-4a08-aec4-4df36df3feec',NULL,NULL,NULL,'','',NULL),('ttttt',NULL,'ttt','tt','tt','222','22','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cca'),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
+INSERT INTO `users` VALUES ('admonanv','$2b$12$GFx7nQ/hrJ2aabsY2fBwYegyeFdbJVt3GJMHDpi7W5v10IHRVxGhW','Juan David Osorio','contabilidad@narnajaverde.com','','3218527363','','1','R',NULL,NULL,NULL,NULL,'3218527363','',NULL),('ahurtado','$2b$12$9ka/b3u6AhTQhBjQ3RFkKOfa16xmxoWihhlw5eFAvUm2RIZ9A.Zhm','Andres Hurtado Lopez','andres.hurtado.lopez@gmail.com','Calle 12 # 23-16','+57 6 3443804\n+57 313 746 6668','prueba de las notas','1','R','8f4a4ec2-0838-4958-8cdb-b5c4d8631361',NULL,NULL,NULL,'+57 6 3443804\n+57 313 746 6668','',NULL),('chenao','$2b$12$tNcgLs.J2W2mZrrctMua/uSGe577G7xKgizqiRqDXIZlcrpUrKqUm','Consuel Henao','','','3226547063','','1','R',NULL,NULL,NULL,NULL,'3226547063','',NULL),('cvalencia','$2b$12$fDTZMOY7Mee/OgZoYSgrzeIzpMig8dgt8a/dmSCqHa3rwPVCs1lji','carlos alberto valencia','','','','','1','R',NULL,NULL,NULL,NULL,'','',''),('ggaviria','$2b$12$h0RWsLZF/X/pOiFEBiFteeQjaeljWGgDfGDxFUZgZcUzkKjX7BnhS','german gaviria ','','','','','1','R','06ed702e-673b-4119-97e1-3ce2db946996',NULL,NULL,NULL,'','','mantenimiento '),('hviscue','$2b$12$KA1tNTMfZHfOfEGMPOsJIupEwXAozj9goKR9T5MN9.rI3GbZqPOGS','hector viscue','ddjasd@hotmail.com','','','','1',NULL,'80f78959-3422-45f6-b320-3597daf17d5c',NULL,NULL,NULL,NULL,NULL,''),('jcarmona','$2b$12$P7kIWd8T31EwVLc3MKBPceNFdpupqY9CRNlmFviwFMXCUqcqb3ryy','Julian Carmona','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('jgrisales','$2b$12$47ja/TNjSKS9gLKIT4A4MObqOKmFFZPy6RvxXnL7TvrKMMvR0CSGK','jacqueline grisales rodriguez','j.grisales@naranjaverde.com','','','','1','R','a6bab65e-9315-473e-909b-b993343d3bca',NULL,NULL,NULL,'','','mantenimiento'),('jrojas','$2b$12$KGCKfxFxlhxOQl/RWUtCu.2KHdzL2Evl2OpPFeevmVMW0tZYPIDmW','Janeth Rojas','','','3218527661','','1','R',NULL,NULL,NULL,NULL,'3218527661','',NULL),('lmartinez','$2b$12$y2oIWGvqv/WmGhLbEKneWOPZsjGmmlFjxzJFnTbVcfI70yDuC72Iy','Luisa Fernanda Martinez','produccion@naranjaverde.com','','3218527661','','1','R','fa72a2e2-10b5-4115-b20b-7f77878cb025',NULL,NULL,NULL,'3218527661','',NULL),('mmejia','$2b$12$J7cNC42K8w44bROH5zK1kOiHHT9zX6Onm7spYknSKFCmEoVZcGpIy','Martin Mejia','gerencia@naranjaverde.com','','','','1','R','830100e1-c845-4337-8acf-663ffdf7360f',NULL,NULL,NULL,'','',NULL),('pcastaño','$2b$12$KtpjOgo9b5ECLKmQrjcaeO7/0zVvDn//WXV6LvI1ShZbvWY5mcP8C','Paola Castaño','desarrollo@naranjaverde.com','','','','1','R','4f28cfdf-650a-4a08-aec4-4df36df3feec',NULL,NULL,NULL,'','',NULL),('ttttt',NULL,'ttt','tt','tt','222','22','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'cca'),('vmarin','$2b$12$vZFEfijLim/HnIvTA5EYZ.uaZcHnSwwQndJgcxfWpemPQlgrWjJ1S','Viviana Marín','','','3226547063','','1','R','92166341-4b47-45d9-84c0-93f653e327ea',NULL,NULL,NULL,'3226547063','',NULL),('xherera',NULL,'Xiomara Herrera','calidad@naranjaverde.com','','','','1','R',NULL,NULL,NULL,NULL,'','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1271,4 +1271,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-30 20:55:48
+-- Dump completed on 2018-05-31  4:45:53
