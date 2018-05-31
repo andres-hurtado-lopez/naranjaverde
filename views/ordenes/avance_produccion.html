@@ -194,8 +194,8 @@ where o.estado='en proceso' Limit 100 """,[])
 
             db.execute("""  select t1.rango,format(t1.ejecutado,1) as ejecutado,format(t3.capacidad_kg_h,1) as planeado, format( (t1.ejecutado - t3.capacidad_kg_h),1 ) as diferencia,t1.hora
                             from 
-                            (SELECT  sum(`cantidad`) as ejecutado,LEFT(`fecha`,13) as rango, orden ,concat( substring(`fecha`,12,2) , ':00:00' )as hora
-                            FROM `ordenes_registro`
+                            (SELECT  sum(op.`cantidad_kg`) as ejecutado,LEFT(op.`fecha`,13) as rango, op.orden ,concat( substring(op.`fecha`,12,2) , ':00:00' )as hora
+                            FROM `ordenes_produccion` op
                             where orden  = %s and operacion = %s and fecha BETWEEN %s and  %s
                             group by rango,hora ) as t1
                             inner join ordenes as t2
