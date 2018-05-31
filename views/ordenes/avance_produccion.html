@@ -250,7 +250,8 @@ $('#orden').on('change', function(){
 
             $('#operacion').dropdown();
             $('#operacion').selectmenu("refresh");
-
+            $('#ordenh').val($('#orden').val());
+            $('#operacionh').val($('#operacion').val());
     },'json');
 
     $('#operacion').val();
@@ -276,7 +277,11 @@ $('#consultar').on('click', function(){
  });  
 
 $('#operacion').on('change', function(){
-
+    
+    
+    
+    $('#ordenh').val($('#orden').val());
+    $('#operacionh').val($('#operacion').val());
     /*
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
             $('#operacion').empty();
