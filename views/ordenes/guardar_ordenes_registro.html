@@ -30,4 +30,4 @@ value (%s,%s,%s,%s,%s,%s,%s)""",[ orden, operacion,componente,cantidad,costos_or
 db.execute('COMMIT WORK')
 
 
-redirect('registro_trabajo_planta.html')
+redirect('registro_trabajo_planta.html?orden={orden}&operacion={operacion}'.format(orden=orden,operacion=operacion))

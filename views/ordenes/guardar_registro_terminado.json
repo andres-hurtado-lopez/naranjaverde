@@ -23,6 +23,8 @@ db.execute(""" INSERT INTO `ordenes_produccion`( `orden`, `operacion`, `cantidad
 
 db.execute('commit')
 
+
+
 redirect('avance_produccion.html?orden={orden}&operacion={operacion}'.format(orden=orden,operacion=operacion))
 
 

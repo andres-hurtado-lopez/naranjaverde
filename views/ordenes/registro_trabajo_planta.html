@@ -5,6 +5,9 @@ from bottle import request
 
 db = utils.ConnectDB()
 
+orden = request.GET.orden
+operacion = request.GET.operacion
+
 db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg` 
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
@@ -36,7 +39,7 @@ where o.estado='en proceso' Limit 100 """,[])
     
         <div class="ui field">
           <label>Orden</label>
-          <select class="ui search selection dropdown" id="orden" name="orden" >
+          <select class="ui search selection dropdown" id="orden" name="orden" value={{orden}}>
               % for row in db :  
               <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
               %end
@@ -45,7 +48,7 @@ where o.estado='en proceso' Limit 100 """,[])
 
         <div class="ui field">
                 <label>Operacion</label>
-                <select class="ui search selection dropdown" id="operacion" name="operacion" required="" >                  
+                <select class="ui search selection dropdown" id="operacion" name="operacion" required=""  value={{operacion}}>                  
                  </select>
         </div>
 
@@ -130,8 +133,8 @@ where o.estado='en proceso' Limit 100 """,[])
 
 <script>
 
-$('#orden').on('change', cargar_operacion);
 
+$('#orden').on('change', cargar_operacion);
 $('#operacion').on('change', cargar_componente); 
 
 function confirmar_borrado(id){
@@ -175,7 +178,7 @@ function cargar_operacion(){
             }, this);
             
             $('#operacion').dropdown();
-
+            $('#operacion').dropdown('set selected','{{operacion}}');
             cargar_componente();
 
     },'json');
@@ -200,5 +203,7 @@ function cargar_componente(){
 }
 
 cargar_operacion();
+
+
 
 </script>
