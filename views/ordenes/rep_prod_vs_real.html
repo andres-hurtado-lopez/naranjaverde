@@ -71,6 +71,20 @@ db = utils.ConnectDB()
                         INNER JOIN materiales as m
                         ON o.idmat = m.idmat
                         """,[])
+
+                        SELECT  o.orden, t.`nombre`,m.descripcion,o.cantidad_kg,o.estado,o.orden,ifnull( sum(ore.cantidad_kg) , 0 ) as total_adecuado_terminado
+                        FROM ordenes as o
+                        INNER JOIN `terceros` as t
+                        ON o.cliente = t.idtercero
+                        INNER JOIN materiales as m
+                        ON o.idmat = m.idmat
+                        inner join hoja_ruta_operaciones ho
+                        on o.idmat = ho.idmat 
+                        INNER JOIN ordenes_produccion ore 
+                        ON o.orden = ore.orden and ore.operacion= ho.operacion
+                        WHERE ho.clase = 'TERMINADO'
+                        group by  o.orden, t.`nombre`
+                        
            for row in db:
         %>
         <tr>

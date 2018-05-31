@@ -1,0 +1,306 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+weekstart = datetime.datetime.now()
+db = utils.ConnectDB()
+
+orden = request.GET.orden
+operacion = request.GET.operacion
+
+print 'fecha',request.GET.fecha_row 
+
+fecha_row = request.GET.fecha_row  if request.GET.fecha_row else weekstart.strftime('%Y-%m-%d')
+desde =  request.GET.desde  if request.GET.desde else '00:00:00'
+hasta =  request.GET.hasta if request.GET.hasta else '23:00:00'
+
+
+
+db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion as nombre_mat,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion as nombre_ope
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+inner join hoja_ruta_operaciones as h
+ON o.idmat = h.idmat
+where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
+
+row_registro = db.fetchall()
+
+print row_registro
+cliente = row_registro[0]['cliente']
+cantidad = row_registro[0]['cantidad_kg']
+material = row_registro[0]['nombre_mat']
+fecha_entrega = row_registro[0]['fecha_fin']
+
+db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+where o.estado='en proceso' Limit 100 """,[])
+
+
+
+%>
+<h2 class="ui header">Avance Producción</h2>
+
+<div class="ui fluid search selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="">Menu</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+        <div class="item" data-value="registro_trabajo_planta.html">Registro de Produccion</div>
+    </div>
+</div>
+
+
+<br>
+<form class="ui form" >
+    
+        <div class="two fields">
+                <div class="field">
+                    <label>Orden</label>
+                    <select class="ui search selection dropdown" id="orden" name="orden" value="{{orden}}"  >
+                        % for row in db :  
+                        <option value="{{row['orden']}}">{{ str(row['orden'])  }}</option>
+                        %end
+                    </select>
+                </div>    
+               <div class="field">
+                    <label>Cliente</label>
+                    <input type="text" name="cliente" id="cliente" readonly value="{{cliente}}">
+            
+                </div>
+        </div>
+
+        <div class="two fields">
+                <div class="ui field">
+                        <label>Operacion</label>
+                       
+                        <select class="ui search selection dropdown" id="operacion" name="operacion"  >  
+                                % for row in row_registro :   
+                                <option value="{{row['operacion']}}" >{{ str( row['operacion'] ) + ' - '+row['nombre_ope']}} </option>
+                                %end
+                        </select>
+                       
+                </div>
+                <div class="field">
+                        <label>Cantidad</label>
+                        <input type="text" name="cantidad" id="cantidad" readonly required="" value="{{cantidad}}">
+
+                </div>     
+        </div>        
+
+        <div class="two fields">
+
+            <div class="ui field">
+                <label>Material</label>
+                <input type="text" id="material" name="material" readonly value="{{material}}">
+            </div>
+
+            <div class="ui field">
+                <label>Fecha Entrega</label>
+                <input type="text" name="fecha_entrega"  id="fecha_entrega" readonly value="{{fecha_entrega}}">
+            </div>
+        </div>
+
+        <div class="two fields">
+
+            <div class="ui field">
+                <label>Meta Turno</label>
+                <input type="text" name="turno" id="turno"  >
+            </div>
+
+            <div class="ui field">
+                <label>fecha</label>
+                <input type="date" name="fecha_row" id="fecha_row" value="{{fecha_row}}" >
+            </div>
+
+            <div class="ui field">
+                <label>Desde</label>
+
+                <select class="ui search selection dropdown" id="desde" name="desde" > 
+                    % for row in ['{0:02d}'.format(i)+':00:00' for i in range(24) ] :  
+                    <option value="{{ row }}">{{ row }}</option>
+                    %end
+                </select>
+
+            </div>
+
+            <div class="ui field">
+                <label>Hasta</label>
+                <select class="ui search selection dropdown" id="hasta" name="hasta" >  
+                    % for row in ['{0:02d}'.format(i)+':00:00' for i in range(24) ] :  
+                        <option value="{{ row }}">{{    row  }}</option>
+                    %end
+                </select>
+            </div>
+        </div>
+
+        
+
+         <div class="ui buttons">
+            <button class="ui button" type="submit" id="consultar" >Consultar</button>    
+        </div>
+        <br>
+</form>
+
+ <br>
+<form class="ui form" action="guardar_registro_terminado.json" method="post"  accept-charset="utf-8">
+
+   <div class="two fields">
+
+        <div class="field">
+            <label>Producido</label>
+            <input type="number" name="producido"  required="" step="any" >
+        </div>  
+
+        <div class="ui toggle checkbox" style="margin-left: 2em;margin-top: 2em;">
+                <input type="checkbox" name="terminado" id="terminado">
+                <label>Producto Terminado</label>
+        </div>
+
+
+        <input type="hidden" name="orden" id="ordenh" value="{{orden }}">
+        <input type="hidden" name="operacion" id="operacionh" value="{{operacion }}">
+
+    </div>     
+
+    <div class="ui buttons">
+        <button class="ui button" type="submit"  >Registrar</button>    
+    </div>
+</form>
+
+<br>
+
+<div class="ui container" style="overflow: auto; height: 23em;">
+    <table class="ui table">
+        <thead style="position: -webkit-sticky; position: sticky; top:0;">
+            <th>hora</th>
+            <th>Planeado</th>
+            <th>Ejecutado</th>
+            <th>Acomulado</th>
+            <th>Diferencias</th>
+        </thead>
+        <tbody>
+            <% 
+            
+            row_fe_ini = fecha_row +' '+ desde
+            row_fe_fin = fecha_row +' '+ hasta
+
+            db.execute("""  select t1.rango,format(t1.ejecutado,1) as ejecutado,format(t3.capacidad_kg_h,1) as planeado, format( (t1.ejecutado - t3.capacidad_kg_h),1 ) as diferencia,t1.hora
+                            from 
+                            (SELECT  sum(`cantidad`) as ejecutado,LEFT(`fecha`,13) as rango, orden ,concat( substring(`fecha`,12,2) , ':00:00' )as hora
+                            FROM `ordenes_registro`
+                            where orden  = %s and operacion = %s and fecha BETWEEN %s and  %s
+                            group by rango,hora ) as t1
+                            inner join ordenes as t2
+                            on t1.orden = t2.orden
+                            left outer join hoja_ruta_operaciones as t3
+                            on t2.idmat = t3.idmat and t3.operacion = %s """ , 
+                            [ orden, operacion ,row_fe_ini, row_fe_fin , operacion ])
+            
+                            print orden, operacion ,row_fe_ini, row_fe_fin , operacion
+
+            conteo = 0;
+               for row in db:
+
+               if conteo == 1:
+                  acomulado = acomulado + float(row['ejecutado'])
+               else:
+                 acomulado = float(row['ejecutado'])
+                 conteo =1
+               end  
+            %>
+            <tr>
+                <td>{{row['hora']}}</td>
+                <td>{{row['planeado']}}</td>
+                <td>{{row['ejecutado']}}</td>
+                <td>{{acomulado}}</td>
+                <td>{{row['diferencia']}}</td>
+
+                
+            </tr>
+            %end
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+
+$('#orden').dropdown('set selected','{{orden}}');
+$('#operacion').dropdown('set selected','{{ operacion }}');
+$('#hasta').dropdown('set selected','23:00:00');
+
+$('#orden').on('change', function(){
+
+    
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+0, function( data ) {
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.descripcion+'</option>');
+
+            }, this);
+
+            $('#operacion').dropdown();
+            $('#operacion').selectmenu("refresh");
+
+    },'json');
+
+    $('#operacion').val();
+
+})
+
+$('#consultar').on('click', function(){
+    
+    var s =$('#orden').val();
+    var g = $('#operacion').val();
+    var rr = $('#desde').val();
+    var rrq = $('#hasta').val();
+    var rrq = $('#fecha_row').val();
+
+    if( $('#orden').val() != null && $('#operacion').val() != null ){
+
+         window.location.href = 'avance_produccion.html?orden='+$('#orden').val()+'&operacion='+$('#operacion').val()+'&fecha_row='+$('#fecha_row').val()+'&desde='+$('#desde').val()+'&hasta='+$('#hasta').val();
+    }else{
+
+        alert('por favor seleccionar orden y operacion.');
+    }
+
+ });  
+
+$('#operacion').on('change', function(){
+
+    /*
+    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
+            $('#operacion').empty();
+            data.results.forEach(function(element) {
+                
+                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.componente+'</option>');
+
+            }, this);
+
+            $('#operacion').dropdown();
+            $('#operacion').selectmenu("refresh");
+
+    },'json');
+
+    $('#operacion').val();*/
+
+})
+
+
+
+$('.ui.dropdown.optionmenu').dropdown({
+      
+	action:function(text, value){        
+	window.location.href = value;     
+	 }
+    })
+</script>

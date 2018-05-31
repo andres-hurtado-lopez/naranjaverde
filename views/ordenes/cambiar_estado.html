@@ -7,6 +7,7 @@ db = utils.ConnectDB()
 
 orden = request.params.get('id')
 estado = request.params.get('estado')
+home = request.params.get('home')
 
 db.execute("""UPDATE ordenes set estado = %s WHERE orden = %s""",[ estado, orden])
 db.execute('COMMIT WORK')
@@ -15,4 +16,8 @@ fecha = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 db.execute("""REPLACE INTO ordenes_estado (`orden`, `fecha`, `estado`) values (%s,%s,%s) """,[orden,fecha,estado])
 db.execute('COMMIT WORK')
 
-redirect('programacion_produccion.html')
+if home:
+    redirect('/home.html')
+else:
+    redirect('programacion_produccion.html')
+end

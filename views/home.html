@@ -2,6 +2,7 @@
 import utils
 import datetime
  db =utils.ConnectDB()
+ db_pr =utils.ConnectDB()
 
 
  weekstart = datetime.datetime.now()
@@ -228,14 +229,14 @@ row_cerrada_ayer = db.fetchone()
 
     <%
 
-    db.execute(""" SELECT  concat( '$' , format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia   
+    db.execute(""" SELECT  concat( format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia   
                   FROM ordenes_registro ore 
                   WHERE  ore.fecha BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59') """, [])
     row_total_dinero_xdia= db.fetchone()    
     %>
   <div class="statistic">
     <div class="value">
-      <i class="dollar sign icon"></i> {{ row_total_dinero_xdia['total_dinero_x_dia']}} M
+      <i class="dollar sign icon"></i> {{ row_total_dinero_xdia['total_dinero_x_dia']}} MM
     </div>
     <div class="label">
       Costo Acumulado <br> COP 
@@ -352,14 +353,14 @@ end
   
  <%
  
-     db.execute(""" SELECT  concat( '$' , format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia_ayer  
+     db.execute(""" SELECT  concat( format(  ( ifnull( sum(ore.costos) , 0 ) /1000000 )  , 2  )  )as total_dinero_x_dia_ayer  
                    FROM ordenes_registro ore 
                    WHERE  ore.fecha BETWEEN  concat( SUBDATE(CURDATE(), 1),'T00:00:00') and concat(  SUBDATE(CURDATE(), 1) ,'T23:59:59')  """, [])
      row_total_dinero_xdia_ayer= db.fetchone()    
  %>
   <div class="statistic">
     <div class="value">
-      <i class="dollar sign icon"></i>  {{ row_total_dinero_xdia_ayer['total_dinero_x_dia_ayer'] }} M
+      <i class="dollar sign icon"></i>  {{ row_total_dinero_xdia_ayer['total_dinero_x_dia_ayer'] }} MM
     </div>
     <div class="label">
       Costo Acumulado <br>( COP )
@@ -389,7 +390,7 @@ end
            
 
 
-            db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
+          db.execute(""" SELECT o.`orden`,DATE_FORMAT( o.`fecha_fin`, '%%Y-%%m-%%d') as fecha_fin,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
                             FROM `ordenes` as o
                             INNER JOIN terceros as t
                             ON o.cliente =t.idtercero
@@ -400,6 +401,22 @@ end
 
 
           for row in db:
+
+          db_pr.execute(""" SELECT  format( ifnull( sum(`costos`) , 0 ) , 0) as costos
+                            FROM `ordenes_registro` 
+                            WHERE `orden` = %s """ , [row['orden']])
+
+          row_costo = db_pr.fetchone()   
+
+          db_pr.execute(""" SELECT  format( ifnull( sum(op.`cantidad_kg`) / min(o.cantidad_kg) * 100 , 0 )  , 0)  as progreso, format( ifnull( sum(op.`cantidad_kg`) , 0 ) , 2 ) as progreso_kg
+                          FROM ordenes o 
+                          INNER JOIN `ordenes_produccion` as op
+                          ON o.orden=op.orden
+                          INNER join hoja_ruta_operaciones ho
+                          ON op.operacion = ho.operacion and o.idmat = ho.idmat
+                          where ho.clase = 'TERMINADO'  and  o.`orden` = %s """ , [row['orden']])
+
+          row_progreso = db_pr.fetchone()                
         %>
         <tr>
             <td>{{ row['idtercero'] }}</td>
@@ -408,23 +425,29 @@ end
             <td>{{ row['descripcion'] }}</td>
             <td>{{ row['cantidad_kg'] }}</td>
             <td>
-                <div class="ui indicating progress" data-percent="">
+                <div class="ui indicating progress" data-percent="{{ row_progreso['progreso'] }} ">
                     <div class="bar"></div>
-                    <div class="label">% ( kg)</div>
+                    <div class="label">{{ row_progreso['progreso'] }}%   ({{ row_progreso['progreso_kg'] }}  kg) </div>
                 </div>
             </td>
             <td>{{ row['fecha_fin'] }}</td>
-            <td>$23.232.433</td>
+            <td>{{ row_costo['costos'] }}</td>
             <td>
-                <a href="" class="ui button">4</a>
+                <a href="ordenes/edicion.html?id={{ row['orden'] }}" class="ui button">{{ row['orden'] }}</a>
             </td>
             <td>
                 <div class="ui buttons">
-                    <a href="" class="ui button">
-                        <i class="stop icon"></i>
+                    <a href="ordenes/cambiar_estado.html?id={{row['orden']}}&estado=cerrada&home=1" class="ui button vertical animated button">
+                        <div class="hidden content">Cerrar</div>
+                        <div class="visible content">
+                            <i class="stop icon"></i>
+                          </div>
                     </a>
-                    <a href="" class="ui button">
-                        <i class="pause icon"></i>
+                    <a href="ordenes/cambiar_estado.html?id={{row['orden']}}&estado=abierta&home=1" class="ui button vertical animated button">
+                        <div class="hidden content">Pausar</div>
+                        <div class="visible content">
+                            <i class="pause icon"></i>
+                          </div>
                     </a>                    
                 </div>
             </td>
@@ -452,14 +475,9 @@ end
     </thead>
     <tbody>
         <%
-        #db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
-         #             round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
-          #            FROM ordenes o
-           #           where o.estado = 'en proceso' """,[])
 
-           #row['total_porcentaje']  row['kg'] }}
 
-          db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
+          db.execute(""" SELECT o.`orden`,DATE_FORMAT(o.`fecha_fin`, '%%Y-%%m-%%d') as fecha_fin ,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
                           FROM `ordenes` as o
                           INNER JOIN terceros as t
                           ON o.cliente =t.idtercero
@@ -468,8 +486,25 @@ end
                           WHERE o.estado = 'abierta' """ , [])
 
 
-
         for row in db:
+
+          db_pr.execute(""" SELECT  format( ifnull( sum(`costos`) , 0 ) , 0) as costos
+                            FROM `ordenes_registro` 
+                            WHERE `orden` = %s """ , [row['orden']])
+
+          row_costo = db_pr.fetchone()   
+
+          db_pr.execute(""" SELECT  format( ifnull( sum(op.`cantidad_kg`) / min(o.cantidad_kg) * 100 , 0 )  , 0)  as progreso, format( ifnull( sum(op.`cantidad_kg`) , 0 ) , 2 ) as progreso_kg
+                            FROM ordenes o 
+                            INNER JOIN `ordenes_produccion` as op
+                            ON o.orden=op.orden
+                            INNER join hoja_ruta_operaciones ho
+                            ON op.operacion = ho.operacion and o.idmat = ho.idmat
+                            where ho.clase = 'TERMINADO'  and  o.`orden` = %s """ , [row['orden']])
+
+          row_progreso = db_pr.fetchone()  
+
+
       %>
         <tr>
             <td>{{ row['idtercero'] }}</td>
@@ -478,23 +513,29 @@ end
             <td>{{ row['descripcion'] }}</td>
             <td>{{ row['cantidad_kg'] }}</td>
             <td>
-                <div class="ui indicating progress" data-percent="20">
+                <div class="ui indicating progress" data-percent="{{ row_progreso['progreso'] }}">
                     <div class="bar"></div>
-                    <div class="label">20% (44.6kg)</div>
+                    <div class="label">{{ row_progreso['progreso'] }}%   ( {{ row_progreso['progreso_kg'] }}  kg)</div>
                 </div>
             </td>
             <td>{{ row['fecha_fin'] }}</td>
-            <td>$23.232.433</td>
+            <td>{{ row_costo['costos'] }}</td>
             <td>
-                <a href="" class="ui button">3</a>
+                <a href="ordenes/edicion.html?id={{ row['orden'] }}" class="ui button">{{ row['orden'] }}</a>
             </td>
             <td>
                 <div class="ui buttons">
-                    <a href="" class="ui button">
-                        <i class="play icon"></i>
+                    <a href="ordenes/cambiar_estado.html?id={{row['orden']}}&estado=en+proceso&home=1" class="ui button vertical animated button">
+                        <div class="hidden content">Procesar</div>
+                        <div class="visible content">
+                          <i class="play icon"></i>
+                        </div>
                     </a>
-                    <a href="" class="ui button">
-                        <i class="stop icon"></i>
+                    <a href="ordenes/cambiar_estado.html?id={{row['orden']}}&estado=cerrada&home=1" class="ui button vertical animated button">
+                        <div class="hidden content">Cerrar</div>
+                        <div class="visible content">
+                          <i class="stop icon"></i>
+                        </div>
                     </a>                 
                 </div>
             </td>
@@ -522,28 +563,39 @@ end
     </thead>
     <tbody>
         <%
-        #db.execute("""select (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) as kg,
-         #             round ( ( ( (SELECT sum(`cantidad_kg`) FROM `ordenes_produccion` as ot WHERE ot.orden = o.orden) *100  )  / o.cantidad_kg) , 1) as total_porcentaje
-          #            FROM ordenes o
-           #           where o.estado = 'en proceso' """,[])
 
-           #row['total_porcentaje']  row['kg'] }}
-
-
-          db.execute(""" SELECT o.`orden`,o.`fecha_fin`,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`
-                          FROM `ordenes` as o
-                          INNER JOIN terceros as t
-                          ON o.cliente =t.idtercero
-                          INNER JOIN materiales as m
-                          ON o.idmat = m.idmat
-                          INNER JOIN `ordenes_estado` as e
-                          ON e.estado =o.estado
-                          WHERE e.estado = 'abierta' and
-                          `fecha` BETWEEN  concat( SUBDATE(CURDATE(), 1) ,'T00:00:00') and concat(CURDATE(),'T23:59:59')""" , [])
+          db.execute(""" SELECT o.`orden`,DATE_FORMAT(o.fecha_fin, '%%Y-%%m-%%d') as  fecha_fin,o.`cantidad_kg`,t.nombre,t.idtercero,m.`idmat`,m.`descripcion`, ifnull( DATE_FORMAT(o.fecha_entrega, '%%Y-%%m-%%d') , '' ) as fecha_entrega
+                        FROM `ordenes` as o
+                        INNER JOIN terceros as t
+                        ON o.cliente =t.idtercero
+                        INNER JOIN materiales as m
+                        ON o.idmat = m.idmat
+                        INNER JOIN `ordenes_estado` as e
+                        ON e.estado =o.estado
+                        WHERE e.estado = 'cerrada' and
+                        `fecha` BETWEEN  concat( SUBDATE(CURDATE(), 1) ,'T00:00:00') and concat(CURDATE(),'T23:59:59')
+                        GROUP by o.`orden`""" , [])
 
 
 
         for row in db:
+
+        db_pr.execute(""" SELECT  format( ifnull( sum(`costos`) , 0 ) , 0) as costos
+                          FROM `ordenes_registro` 
+                          WHERE `orden` = %s """ , [row['orden']])
+
+        row_costo = db_pr.fetchone()   
+
+        db_pr.execute(""" SELECT  format( ifnull( sum(op.`cantidad_kg`) / min(o.cantidad_kg) * 100 , 0 )  , 0)  as progreso, format( ifnull( sum(op.`cantidad_kg`) , 0 ) , 2 ) as progreso_kg
+                          FROM ordenes o 
+                          INNER JOIN `ordenes_produccion` as op
+                          ON o.orden=op.orden
+                          INNER join hoja_ruta_operaciones ho
+                          ON op.operacion = ho.operacion and o.idmat = ho.idmat
+                          where ho.clase = 'TERMINADO'  and  o.`orden` = %s """ , [row['orden']])
+
+        row_progreso = db_pr.fetchone()  
+
       %>
         <tr>
             <td>{{ row['idtercero'] }}</td>
@@ -552,10 +604,10 @@ end
             <td>{{ row['descripcion'] }}</td>
             <td>{{ row['cantidad_kg'] }}</td>
             <td>{{ row['fecha_fin'] }}</td>
-            <td>2018-05-24</td>
-            <td>$23.232.433</td>
+            <td>{{ row['fecha_entrega'] }}</td>
+            <td>{{ row_costo['costos'] }}</td>
             <td>
-                <a href="" class="ui button">2</a>
+                <a href="ordenes/edicion.html?id={{ row['orden'] }}" class="ui button">{{ row['orden'] }}</a>
             </td>
         </tr>
        %end 
