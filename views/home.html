@@ -9,21 +9,13 @@ import datetime
  fecha_hoy = weekstart.strftime('%Y-%m-%d')
 
  db.execute("""SELECT count(*) as cont_abierta 
-               FROM `ordenes_estado` as e
-               INNER JOIN ordenes as o
-               ON e.estado =o.estado
-               WHERE 
-               `fecha` BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')
-               and e.`estado` = 'abierta' """,[ ])
+               FROM `ordenes`
+               WHERE `estado` = 'abierta' """,[ ])
  row_abierta = db.fetchone()
 
  db.execute("""SELECT count(*) as cont_proceso
-                FROM `ordenes_estado` as e
-                INNER JOIN ordenes as o
-                ON e.estado =o.estado
-                WHERE 
-                `fecha` BETWEEN  concat(CURDATE(),'T00:00:00') and concat(CURDATE(),'T23:59:59')
-                and e.`estado` = 'en proceso' """,[ ])
+                FROM `ordenes` 
+                WHERE `estado` = 'en proceso' """,[ ])
 row_proceso = db.fetchone()
 
  db.execute("""SELECT count(*) as cont_cerrado 
