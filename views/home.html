@@ -4,6 +4,10 @@ import datetime
  db =utils.ConnectDB()
 
 
+ weekstart = datetime.datetime.now()
+
+ fecha_hoy = weekstart.strftime('%Y-%m-%d')
+
  db.execute("""SELECT count(*) as cont_abierta 
                FROM `ordenes_estado` as e
                INNER JOIN ordenes as o
@@ -55,7 +59,7 @@ row_cerrada_ayer = db.fetchone()
         <div class="item" data-value="ordenes/edicion.html">Crear Orden</div>
         <div class="item" data-value="turnos/principal.html">Control de Turnos</div>
         <div class="item" data-value="costos_indirectos/principal.html">Costos Indirectos</div>
-        <div class="item" data-value="ordenes/registrar_produccion_inicio.html">Cuadro control producci&oacute;n</div>
+        <div class="item" data-value="ordenes/control_produccion.html">Cuadro control producci&oacute;n</div>
         <div class="item" data-value="equipos/principal.html">Equipos (Hornos, M&aacute;quinas)</div>
         <div class="item" data-value="hoja_de_ruta/principal.html">Hojas de Ruta</div>
         <div class="item" data-value="materiales/principal.html">Materiales (Insumos, Materia Prima, Producto Terminado)</div>
@@ -72,7 +76,7 @@ row_cerrada_ayer = db.fetchone()
 </div>
 
 
-<h2 class="ui header">Control Producci&oacute;n - Resumen 2018-05-15</h2>
+<h2 class="ui header">Control Producci&oacute;n - Resumen {{fecha_hoy}}</h2>
 <h4 class="ui horizontal divider header">
   <i class="calendar alternate outline icon"></i>
   Hoy
@@ -131,19 +135,19 @@ row_cerrada_ayer = db.fetchone()
 
   <div class="statistic">
     <div class="value">
-      <i class="industry icon"></i> {{row_abierta['cont_abierta']}}
+      <i class="industry icon"></i> {{row_proceso['cont_proceso'] }}
     </div>
     <div class="label">
-      Ordenes Abiertas        
+      Ordenes en Proceso        
     </div>
   </div>
 
   <div class="statistic">
     <div class="value">
-      <i class="hourglass half icon"></i>{{row_proceso['cont_proceso']}}
+      <i class="hourglass half icon"></i>{{row_abierta['cont_abierta']}}
     </div>
     <div class="label">
-      Ordenes en Espera
+      Ordenes Abiertas
     </div>
   </div>
   <div class="statistic">
