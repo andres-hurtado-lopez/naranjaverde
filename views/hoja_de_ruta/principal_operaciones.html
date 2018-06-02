@@ -23,7 +23,7 @@ id = request.params.get('id')
     </div>
 </div>   
 <br>
-<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+<form class="ui form" action="" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="two fields">
         <div class="field">
             <label>Selecci&oacute;n Archivo Plano</label>
@@ -91,7 +91,7 @@ id = request.params.get('id')
              <td>{{row['clase']}}</td>
             <td>
                 <div class="ui buttons">
-                    <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}">
+                    <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{ str( row['operacion'] +' - '+row['descripcion']) }}">
                         <div class="hidden content">Compon.</div>
                         <div class="visible content">
                         <i class="cubes icon"></i>

@@ -11,7 +11,8 @@ componente = request.GET.comp
 title = request.GET.title
 
 if id and oper and componente and title != 'Crear' :
-    db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,oper,componente])
+    idopera = oper[0:1]
+    db.execute("SELECT * FROM hoja_ruta_componentes WHERE idmat = %s and operacion = %s and componente = %s",[id,idopera,componente])
     vara = db.fetchone()
     locals().update(vara)
 else:
@@ -67,25 +68,28 @@ end
             </select>
         </div>
         <div class="field">
-            <label>Costo</label>
-            <input type="number" step="any" name="costo" value="{{costo}}">
-        </div>
-        <div class="field">
-            <label>Unidad</label>
-            <select name="unidad" id="unidades">
-                    <option value="kg">kg</option>
-                    <option value="un">un</option>
-                    <option value="l">l</option>
-                    <option value="m">m</option>
-                    <option value="h">h</option>
-                    <option value="ml">ml</option>
-            </select>
-            
-        </div>
-        <div class="field">
                 <label>Cantidad</label>
                 <input type="number" step="any" name="cantidad" value="{{cantidad}}" required="" >
         </div>
+        <div class="field">
+                <label>Unidad</label>
+                <select name="unidad" id="unidades">
+                        <option value="kg">kg</option>
+                        <option value="un">un</option>
+                        <option value="l">l</option>
+                        <option value="m">m</option>
+                        <option value="h">h</option>
+                        <option value="ml">ml</option>
+                </select>
+                
+        </div>
+        <div class="field">
+            <label>Costo</label>
+            <input type="number" step="any" name="costo" value="{{costo}}">
+        </div>
+        
+      
+        
     </div>
 <br>
     <div class="ui buttons">

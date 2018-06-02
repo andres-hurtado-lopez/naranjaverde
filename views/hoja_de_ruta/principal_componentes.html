@@ -27,7 +27,7 @@ oper = request.params.get('oper')
  </div>   
 
 <br>
-<form class="ui form" action="uploadfile.html" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+<form class="ui form" action="" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <div class="two fields">
         <div class="field">
             <label>Selecci&oacute;n Archivo Plano</label>
@@ -54,7 +54,7 @@ oper = request.params.get('oper')
             <input type="text" value="{{id}}" readonly="">
         </div>
         <div class="field">
-                <label>Operacion</label>
+                <label>Operaci&oacute;n</label>
                 <input type="text" value="{{oper}}" readonly="">
         </div>
         <div class="field">
@@ -78,12 +78,15 @@ oper = request.params.get('oper')
         <th>Acción</th>
     </thead>
     <tbody>
-        <% db.execute("""SELECT *  
+        <%
+        
+          operaciones = oper[0:1]
+           db.execute("""SELECT c.`idmat`, c.`operacion`, c.`componente`, c.`tipo`, c.`costo`, c.`unidad`, c.`cantidad`,a.descripcion,a.operacion 
                         FROM  hoja_ruta_operaciones as a
                         inner join hoja_ruta_componentes as c
                         on a.operacion = c.operacion and a.idmat=c.idmat
                         WHERE a.idmat = %s
-                        and a.operacion = %s """,(id,oper ) )
+                        and a.operacion = %s """,[id, operaciones] )
            for row in db:
         %>
         <tr>
@@ -100,7 +103,7 @@ oper = request.params.get('oper')
                         <i class="remove icon"></i>
                       </div>
                     </a>
-                    <a class="ui vertical animated button" href="edicion_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}&comp={{row['componente']}}&title={{'Edicion'}}">
+                    <a class="ui vertical animated button" href="edicion_componentes.html?id={{row['idmat']}}&oper={{str(row['operacion']+ ' - '+row['descripcion'] ) }}&comp={{row['componente']}}&title={{'Edicion'}}">
                       <div class="hidden content">Editar</div>
                       <div class="visible content">
                         <i class="edit icon"></i>

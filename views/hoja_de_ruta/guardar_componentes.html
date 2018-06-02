@@ -14,7 +14,7 @@ unidad = request.params.get('unidad')
 cantidad = request.params.get('cantidad')
 
 db.execute("""REPLACE INTO `hoja_ruta_componentes`(`idmat`, `operacion`, `componente`, `tipo`, `costo`, `unidad`, `cantidad`) 
-    VALUES (%s,%s,%s,%s,%s,%s,%s)""",[ idmat, operacion, componente, tipo, costo, unidad, cantidad])
+    VALUES (%s,%s,%s,%s,%s,%s,%s)""",[ idmat, operacion[0:1], componente, tipo, costo, unidad, cantidad])
 db.execute('COMMIT WORK');
 
 redirect('edicion_componentes.html?id={id}&oper={oper}&comp={comp}&title={title}'.format(id=idmat,oper=operacion,comp=componente,title='Edicion'))
