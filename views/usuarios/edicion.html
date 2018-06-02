@@ -10,7 +10,11 @@ titulo = ''
 
 if id:
     titulo = 'Edicion'
-    db.execute("SELECT * FROM users WHERE user = %s",[id])
+    db.execute("""SELECT `user`, `password`, ifnull(`full_name`,'') as full_name, ifnull(`email`, '') as email, 
+                ifnull(`contact_address`,'') as contact_address, ifnull(`telephone`,0) as telephone, 
+                ifnull(`notes`,'') as notes, `status`, `type`, `session_key`, `session_stamp`, `session_data`, 
+                `password_recover_id`, `data_group`, `user_data_group`, ifnull(`department`,'') as department 
+                 FROM users WHERE user = %s""",[id])
     vara = db.fetchone()
     locals().update(vara)
 else:
@@ -38,38 +42,45 @@ end
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <br>
-    <div class="field">
-        <label>Usuario</label>
-        <input type="text" name="user" value="{{user}}" required="">
+    <div class="two fields">
+        <div class="field">
+            <label>Usuario</label>
+            <input type="text" name="user" value="{{user}}" required="">
+        </div>
+        <div class="field">
+            <label>Nombre Completo</label>
+            <input type="text" name="full_name" required="" value="{{full_name}}"></textarea>
+        </div>
+        <div class="field">
+            <label>Email</label>
+            <input type="text" name="email" value="{{email}}" required="" placeholder="ejemplo@hotmail.com">
+        </div>
     </div>
-    <div class="field">
-        <label>Nombre Completo</label>
-        <textarea name="full_name" required="">{{full_name}}</textarea>
-    </div>
-    <div class="field">
-        <label>Email</label>
-        <input type="text" name="email" value="{{email}}" required="" >
-    </div>
-    <div class="field">
-        <label>Direcci&oacute;n</label>
-        <textarea name="contact_address">{{contact_address}}</textarea>
-    </div>
-    <div class="field">
-        <label>Telefono</label>
-        <textarea name="telephone">{{telephone}}</textarea>
+    <div class="two fields">
+        <div class="field">
+            <label>Direcci&oacute;n</label>
+            <input type="text" name="contact_address" value="{{contact_address}}"></textarea>
+        </div>
+        <div class="field">
+            <label>Telefono</label>
+            <input type="number" name="telephone" value="{{telephone}}"></textarea>
+        </div>
+        
+        <div class="field">
+            <label>Departamento</label>
+            <input type="text" name="department" value="{{department}}" >
+        </div>
     </div>
     <div class="field">
         <label>Notas</label>
         <textarea name="notes">{{notes}}</textarea>
     </div>
-    <div class="field">
-        <label>Departamento</label>
-        <input type="text" name="department" value="{{department}}" >
-    </div>
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>      
+    </div>
+    <div class="ui buttons">
+            <a class="ui button" href="edicion.html">Crear Otro</a>   
     </div>
 </form>
 

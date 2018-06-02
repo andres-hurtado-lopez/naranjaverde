@@ -39,7 +39,8 @@ db = utils.ConnectDB()
         <th>Acciones</th>
     </thead>
     <tbody>
-        <% db.execute("SELECT * FROM ordenes_costos_indirectos order by desde desc limit 50")
+        <% db.execute("""SELECT `idind`, ifnull( `descripcion`, '') as descripcion, ifnull(`valor`, 0) as valor, ifnull(`desde`,'') as desde, ifnull(`hasta` , '') as hasta, ifnull(`doc_ref`,'') as doc_ref 
+                       FROM `ordenes_costos_indirectos` order by desde desc limit 50""",[])
            for row in db:
         %>
         <tr>

@@ -38,35 +38,42 @@ end
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <br>
-    <div class="field">
-        <label>ID</label>
-        <input type="text" name="idtercero" value="{{idtercero}}" required="">
+
+    <div class="two fields"> 
+        <div class="field">
+            <label>ID</label>
+            <input type="text" name="idtercero" value="{{idtercero}}" required="">
+        </div>
+        <div class="field">
+            <label>Descripci&oacute;n</label>
+            <input type="text" name="nombre" value="{{nombre}}" required="" >
+        </div>
     </div>
-    <div class="field">
-        <label>Descripci&oacute;n</label>
-        <input type="text" name="nombre" value="{{nombre}}" required="" >
-    </div>
-    <div class="field">
-        <label>salario</label>
-        <input type="number" name="salario" value="{{salario}}" step="any">
+    <div class="two fields"> 
+        <div class="field">
+            <label>Salario</label>
+            <input type="number" name="salario" value="{{salario}}" step="any">
+        </div>
+        <div class="field">
+            <label>Tipo</label>
+            <select name="tipo" required="">
+                <option value=""></option>
+                <option value="PROV">Proveedor</option>
+                <option value="CLNT">Cliente</option>
+                <option value="EMPL">Empleado</option>
+            </select>
+        </div>
     </div>
     <div class="field">
         <label>Notas</label>
         <textarea name="notas">{{notas}}</textarea>
     </div>
-    <div class="field">
-        <label>Tipo</label>
-        <select name="tipo" required="">
-            <option value=""></option>
-            <option value="PROV">Proveedor</option>
-            <option value="CLNT">Cliente</option>
-            <option value="EMPL">Empleado</option>
-        </select>
-    </div>
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>  
+    </div>
+    <div class="ui buttons">
+            <a class="ui button" href="edicion.html">Crear Otro</a>    
     </div>
 </form>
 

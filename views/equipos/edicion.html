@@ -38,53 +38,71 @@ end
     </div>  
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
-    <div class="field">
-        <label>Equipo</label>
-        <input type="text" name="equipo" value="{{equipo}}" required="">
+
+    <div class="two fields">
+        <div class="field">
+            <label>Equipo</label>
+            <input type="text" name="equipo" value="{{equipo}}" required="">
+        </div>
+        
+        <div class="field">
+            <label>Fecha adquisici&oacute;n</label>
+            <input type="datetime-local" name="fecha_adquisicion" value="{{fecha_adquisicion}}">
+        </div>
     </div>
-    <div class="field">
-        <label>Descripcion</label>
-        <textarea name="descripcion" required="">{{descripcion}}</textarea>
+
+    <div class="two fields">
+        <div class="field">
+            <label>Proveedor</label>
+            <input type="text" name="proveedor" value="{{proveedor}}">
+        </div>
+        <div class="field">
+            <label>Capacidad kg</label>
+            <input type="number" name="capacidad_kg" value="{{capacidad_kg}}" step="any" >
+        </div>
+        <div class="field">
+            <label>Horas Operaci&oacute;n</label>
+            <input type="number" name="horas_operacion" value="{{horas_operacion}}" step="any" >
+        </div>
     </div>
-    <div class="field">
-        <label>Fecha adquisicion</label>
-        <input type="datetime-local" name="fecha_adquisicion" value="{{fecha_adquisicion}}">
+
+    <div class="two fields">
+        <div class="field">
+            <label>Numero Activo</label>
+            <input type="text" name="numero_activo" value="{{numero_activo}}">
+        </div>
+        <div class="field">
+            <label>Lote Fabricaci&oacute;n</label>
+            <input type="text" name="lote_fabricacion" value="{{lote_fabricacion}}">
+        </div>
+        <div class="field">
+            <label>Serial</label>
+            <input type="text" name="serial" value="{{serial}}">
+        </div>
+        <div class="field">
+            <label>Horno</label>
+            <select name="horno">
+                <option value="">no</option>
+                <option value="X"{{ ' selected="" ' if horno == 'X' else ''}}>si</option>
+            </select>
+        </div>
+
     </div>
-    <div class="field">
-        <label>Proveedor</label>
-        <input type="text" name="proveedor" value="{{proveedor}}">
+
+    <div class="two fields">
+        <div class="field">
+            <label>Descripci&oacute;n</label>
+            <textarea name="descripcion" required="">{{descripcion}}</textarea>
+        </div>
+
+        <div class="field">
+            <label>Informaci&oacute;n Tecnica</label>
+            <textarea name="informacion_tecnica">{{informacion_tecnica}}</textarea>
+        </div>
+        
     </div>
-    <div class="field">
-        <label>Capacidad kg</label>
-        <input type="number" name="capacidad_kg" value="{{capacidad_kg}}" step="any" >
-    </div>
-    <div class="field">
-        <label>Horas Operacion</label>
-        <input type="number" name="horas_operacion" value="{{horas_operacion}}" step="any" >
-    </div>
-    <div class="field">
-        <label>Horno</label>
-        <select name="horno">
-            <option value="">no</option>
-            <option value="X"{{ ' selected="" ' if horno == 'X' else ''}}>si</option>
-        </select>
-    </div>
-    <div class="field">
-        <label>Serial</label>
-        <input type="text" name="serial" value="{{serial}}">
-    </div>
-    <div class="field">
-        <label>Lote Fabricacion</label>
-        <input type="text" name="lote_fabricacion" value="{{lote_fabricacion}}">
-    </div>
-    <div class="field">
-        <label>Informacion Tecnica</label>
-        <textarea name="informacion_tecnica">{{informacion_tecnica}}</textarea>
-    </div>
-    <div class="field">
-        <label>Numero Activo</label>
-        <input type="text" name="numero_activo" value="{{numero_activo}}">
-    </div>
+    
+    
     <div class="two fields">
         <div class="field">
             <label>Catalogo</label>
@@ -117,8 +135,12 @@ end
 
     <div class="ui buttons">
             <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST" formenctype="multipart/form-data">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+                 
     </div>
+    <div class="ui buttons">
+            <a class="ui button" href="edicion.html">Crear Otro</a> 
+    </div>
+    <br>
 </form>
 
 <script type="text/javascript">

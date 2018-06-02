@@ -39,39 +39,48 @@ end
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <br>
-    <div class="field">
-        <label>ID</label>
-        <input type="text" name="idind" value="{{idind}}" readonly>
+
+    <div class="two fields">
+        <div class="field">
+            <label>ID</label>
+            <input type="text" name="idind" value="{{idind}}" readonly>
+        </div>
+
+        <div class="field">
+            <label>Descripci&oacute;n</label>
+            <input type="text" name="descripcion" value="{{descripcion}}">
+        </div>
+
+        <div class="field">
+            <label>Valor</label>
+            <input type="number" step="any" name="valor" value="{{valor}}">
+        </div>
     </div>
 
-    <div class="field">
-        <label>Descripci&oacute;n</label>
-        <input type="text" name="descripcion" value="{{descripcion}}">
-    </div>
+    <div class="two fields">
+        <div class="ui field">
+            <label>Desde</label>
+            <input type="date" name="desde" id="desde" value="{{desde}}" >
+        </div>
 
-    <div class="field">
-        <label>Valor</label>
-        <input type="number" step="any" name="valor" value="{{valor}}">
-    </div>
+        <div class="ui field">
+            <label>Hasta</label>
+            <input type="date" name="hasta" id="hasta" value="{{hasta}}" >
+        </div>
 
-    <div class="ui field">
-        <label>Desde</label>
-        <input type="date" name="desde" id="desde" value="{{desde}}" >
+        <div class="field">
+            <label>Documento Referenciado</label>
+            <input type="text" name="doc_ref" value="{{doc_ref}}" >
+        </div>
     </div>
-
-    <div class="ui field">
-        <label>Hasta</label>
-        <input type="date" name="hasta" id="hasta" value="{{hasta}}" >
-    </div>
-
-    <div class="field">
-        <label>Documento Referenciado</label>
-        <input type="text" name="doc_ref" value="{{doc_ref}}" >
+    <br>
+    <div class="ui buttons">
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
+                 
     </div>
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+        <a class="ui button" href="edicion.html">Crear Otro</a>  
     </div>
 </form>
 

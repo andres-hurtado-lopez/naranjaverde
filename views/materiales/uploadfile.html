@@ -6,6 +6,8 @@ db = utils.ConnectDB()
 
 
 upload = request.files.get('archivo_plano')
+
+if upload :
 upload.save('tmp/',overwrite=True)
 
 with open( 'tmp/'+upload.filename, 'rb') as csvfile:
@@ -19,4 +21,5 @@ end
 
 db.execute('COMMIT WORK')
 
+end
 redirect('principal.html')

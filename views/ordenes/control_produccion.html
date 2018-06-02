@@ -16,6 +16,20 @@ desde =  request.GET.desde  if request.GET.desde else '00:00:00'
 hasta =  request.GET.hasta if request.GET.hasta else '23:00:00'
 
 
+db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
+FROM `ordenes` as o inner join terceros  as t
+on o.cliente=t.idtercero
+inner JOIN materiales as m
+on o.idmat = m.idmat 
+where o.estado='en proceso' Limit 100 """,[])
+
+row_orden = db.fetchall()
+
+print len(row_orden) 
+
+if len(row_orden) != 0 :
+
+row_query =  orden  if orden else row_orden[0]['orden']
 
 db.execute(""" SELECT CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion as nombre_mat,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin,o.idmat,h.operacion, h.descripcion as nombre_ope
 FROM `ordenes` as o inner join terceros  as t
@@ -24,27 +38,30 @@ inner JOIN materiales as m
 on o.idmat = m.idmat 
 inner join hoja_ruta_operaciones as h
 ON o.idmat = h.idmat
-where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ orden ])
+where o.estado='en proceso' and o.`orden` = %s Limit 100 """,[ row_query ])
 
 row_registro = db.fetchall()
 
-print row_registro
 cliente = row_registro[0]['cliente']
 cantidad = row_registro[0]['cantidad_kg']
 material = row_registro[0]['nombre_mat']
 fecha_entrega = row_registro[0]['fecha_fin']
 
-db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg`,o.fecha_fin  
-FROM `ordenes` as o inner join terceros  as t
-on o.cliente=t.idtercero
-inner JOIN materiales as m
-on o.idmat = m.idmat 
-where o.estado='en proceso' Limit 100 """,[])
+
+else :
+    cliente = 0
+    cantidad = 0
+    material = 0
+    fecha_entrega = 0
+
+end
+
+
 
 
 
 %>
-<h2 class="ui header">Avance Producción</h2>
+<h2 class="ui header">Control Producción</h2>
 
 <div class="ui fluid search selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -53,7 +70,6 @@ where o.estado='en proceso' Limit 100 """,[])
     <div class="menu">
         <div class="item" data-value="">Menu</div>
         <div class="item" data-value="/home.html">Inicio</div>
-        <div class="item" data-value="registro_trabajo_planta.html">Registro de Produccion</div>
     </div>
 </div>
 
@@ -65,7 +81,7 @@ where o.estado='en proceso' Limit 100 """,[])
                 <div class="field">
                     <label>Orden</label>
                     <select class="ui search selection dropdown" id="orden" name="orden" value="{{orden}}"  >
-                        % for row in db :  
+                        % for row in row_orden :  
                         <option value="{{row['orden']}}">{{ str(row['orden'])  }}</option>
                         %end
                     </select>
@@ -107,7 +123,7 @@ where o.estado='en proceso' Limit 100 """,[])
                 <input type="text" name="fecha_entrega"  id="fecha_entrega" readonly value="{{fecha_entrega}}">
             </div>
         </div>
-
+<!--
         <div class="two fields">
 
             <div class="ui field">
@@ -141,8 +157,8 @@ where o.estado='en proceso' Limit 100 """,[])
             </div>
         </div>
 
-        
-
+    -->  
+    <br>
          <div class="ui buttons">
             <button class="ui button" type="submit" id="consultar" >Consultar</button>    
         </div>
@@ -150,6 +166,7 @@ where o.estado='en proceso' Limit 100 """,[])
 </form>
 
  <br>
+ <!--
 <form class="ui form" action="guardar_registro_terminado.json" method="post"  accept-charset="utf-8">
 
    <div class="two fields">
@@ -174,7 +191,7 @@ where o.estado='en proceso' Limit 100 """,[])
         <button class="ui button" type="submit"  >Registrar</button>    
     </div>
 </form>
-
+-->
 <br>
 
 <div class="ui container" style="overflow: auto; height: 23em;">
@@ -232,15 +249,15 @@ where o.estado='en proceso' Limit 100 """,[])
 
 <script>
 
-
+console.log('qqqq');
 $('#orden').dropdown('set selected','{{orden}}');
 $('#operacion').dropdown('set selected','{{ operacion }}');
 $('#hasta').dropdown('set selected','23:00:00');
 
 $('#orden').on('change', function(){
 
-    
-    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+0, function( data ) {
+   $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+0, function( data ) {
+
             $('#operacion').empty();
             data.results.forEach(function(element) {
                 
@@ -249,13 +266,31 @@ $('#orden').on('change', function(){
             }, this);
 
             $('#operacion').dropdown();
-            $('#operacion').selectmenu("refresh");
+            
+            $('#cliente').val();
+            $('#cantidad').val();
+            $('#material').val();
+            
+            $.get( "/ordenes/buscar_control_orden.json?orden="+$('#orden').val(), function( data1 ) {
+
+                data1.results.forEach(function(element) {
+                
+                   $('#cliente').val(element.cliente);
+                   $('#cantidad').val(element.cantidad);
+                   $('#material').val(element.material);
+                   $('#fecha_entrega').val(element.fecha_entrega);
+
+                }, this);
+                
+            },'json');
 
     },'json');
 
-    $('#operacion').val();
+    
 
-})
+});
+
+
 
 $('#consultar').on('click', function(){
     
@@ -275,25 +310,7 @@ $('#consultar').on('click', function(){
 
  });  
 
-$('#operacion').on('change', function(){
 
-    /*
-    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
-            $('#operacion').empty();
-            data.results.forEach(function(element) {
-                
-                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.componente+'</option>');
-
-            }, this);
-
-            $('#operacion').dropdown();
-            $('#operacion').selectmenu("refresh");
-
-    },'json');
-
-    $('#operacion').val();*/
-
-})
 
 
 
@@ -303,4 +320,5 @@ $('.ui.dropdown.optionmenu').dropdown({
 	window.location.href = value;     
 	 }
     })
+
 </script>

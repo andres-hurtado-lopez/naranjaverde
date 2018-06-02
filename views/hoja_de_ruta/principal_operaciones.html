@@ -9,7 +9,7 @@ id = request.params.get('id')
 
 %>
 
-<h2 class="ui header">Hoja de Ruta : Operacion.</h2>
+<h2 class="ui header">Hoja de Ruta : Operaci&oacute;n.</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
@@ -19,7 +19,7 @@ id = request.params.get('id')
         <div class="item" data-value="">Menu</div>
         <div class="item" data-value="/home.html">Inicio</div>
         <div class="item" data-value="principal.html">Hoja de Ruta</div>
-        <div class="item" data-value="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Operacion</div>
+        <div class="item" data-value="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Operaci&oacute;n</div>
     </div>
 </div>   
 <br>
@@ -43,6 +43,8 @@ id = request.params.get('id')
  cif = row['cif']
  %>
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+    <br>
+    <div class="two fields"> 
         <div class="field">
             <label>ID Material</label>
             <input type="text" value="{{id}}" readonly="">
@@ -55,7 +57,9 @@ id = request.params.get('id')
             <label>CIF</label>
             <input type="text" value="{{'{:20,.2f}'.format(cif)}}" readonly="">
         </div>
+    </div>        
 </form>
+<br>
 <table class="ui table">
     <thead>
         <th>Operacion</th>

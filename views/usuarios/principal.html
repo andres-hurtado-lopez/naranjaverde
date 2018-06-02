@@ -30,7 +30,8 @@ db = utils.ConnectDB()
         <th>Acción</th>
     </thead>
     <tbody>
-        <% db.execute("SELECT * FROM users")
+        <% db.execute("""SELECT `user`, `password`, ifnull(`full_name`,'') as full_name, ifnull(`email`, '') as email, ifnull(`contact_address`,'') as contact_address, ifnull(`telephone`,0) as telephone, ifnull(`notes`,'') as notes, `status`, `type`, `session_key`, `session_stamp`, `session_data`, `password_recover_id`, `data_group`, `user_data_group`, ifnull(`department`,'') as department 
+                          FROM `users`""",[])
            for row in db:
         %>
         <tr>

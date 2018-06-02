@@ -42,7 +42,8 @@ db = utils.ConnectDB()
         <th>Acci&oacute;n</th>
     </thead>
     <tbody>
-        <% db.execute("SELECT * FROM terceros")
+        <% db.execute(""" SELECT `idtercero`, `nombre`,ifnull( `salario` , 0) as salario, ifnull(`notas`, '') as notas, `tipo` 
+                        FROM `terceros` LIMIT 40""",[])
            for row in db:
         %>
         <tr>

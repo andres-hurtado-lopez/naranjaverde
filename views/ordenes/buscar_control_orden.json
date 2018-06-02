@@ -1,0 +1,28 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+orden = request.GET.orden
+
+db.execute(""" SELECT  CONCAT( o.cliente,' - ', t.nombre ) as cliente , o.`orden`,m.descripcion as material,
+                        cast(o.`fecha_inicio` as char(50) ) as fecha_inicio,
+                         cast( o.`cantidad_kg` as char(20)  ) as cantidad, cast(o.fecha_fin as char(50)) as fecha_entrega,o.idmat
+                        FROM `ordenes` as o inner join terceros  as t
+                        on o.cliente=t.idtercero
+                        inner JOIN materiales as m
+                        on o.idmat = m.idmat 
+                        inner join hoja_ruta_operaciones as h
+                        ON o.idmat = h.idmat
+                        where o.estado='en proceso' and o.`orden` = %s
+                        group by cliente """,[ orden ])
+
+rows = db.fetchall() 
+
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}

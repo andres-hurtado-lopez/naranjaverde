@@ -38,52 +38,62 @@ end
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <br>
-    <div class="field">
-        <label>ID</label>
-        <input type="text" name="idmat" value="{{idmat}}" required="">
-    </div>
-    <div class="field">
-        <label>Descripci&oacute;n</label>
-        <input type="text" name="descripcion" value="{{descripcion}}">
-    </div>
-    <div class="field">
-        <label>Grupo 1</label>
-        <select id="grupo1" name="grupo1" >
-                <option value="MPP">MPP - Producto Terminado</option>
-                <option value="MPF">MPF - Materia Prima para Fabricaciion</option>
-                <option value="Insu">Insu - Insumo</option> 
-        </select>
+    <div class="two fields">
+        <div class="field">
+            <label>ID</label>
+            <input type="text" name="idmat" value="{{idmat}}" required="">
+        </div>
+        <div class="field">
+            <label>Descripci&oacute;n</label>
+            <input type="text" name="descripcion" value="{{descripcion}}">
+        </div>
 
     </div>
-    <div class="field">
-        <label>Grupo 2</label>
-        <input type="text" name="grupo2" value="{{grupo2}}">
+    <div class="two fields">
+        <div class="field">
+            <label>Unidad</label>
+            <select name="unidad" id="unidades">
+                    <option value="kg">kg</option>
+                    <option value="un">un</option>
+                    <option value="l">l</option>
+                    <option value="m">m</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Costo</label>
+            <input type="text" name="costo" value="{{costo}}" required="" >
+        </div>
     </div>
-    <div class="field">
-        <label>Grupo 3</label>
-        <input type="text" name="grupo3" value="{{grupo3}}">
-    </div>
-    <div class="field">
-        <label>Grupo 4</label>
-        <input type="text" name="grupo4" value="{{grupo4}}">
-    </div>
-    <div class="field">
-        <label>Unidad</label>
-        <select name="unidad" id="unidades">
-                <option value="kg">kg</option>
-                <option value="un">un</option>
-                <option value="l">l</option>
-                <option value="m">m</option>
-        </select>
-    </div>
-    <div class="field">
-        <label>Costo</label>
-        <input type="text" name="costo" value="{{costo}}" required="" >
+
+    <div class="two fields">
+        <div class="field">
+            <label>Grupo 1</label>
+            <select id="grupo1" name="grupo1" >
+                    <option value="MPP">MPP - Producto Terminado</option>
+                    <option value="MPF">MPF - Materia Prima para Fabricaciion</option>
+                    <option value="Insu">Insu - Insumo</option> 
+            </select>
+
+        </div>
+        <div class="field">
+            <label>Grupo 2</label>
+            <input type="text" name="grupo2" value="{{grupo2}}">
+        </div>
+        <div class="field">
+            <label>Grupo 3</label>
+            <input type="text" name="grupo3" value="{{grupo3}}">
+        </div>
+        <div class="field">
+            <label>Grupo 4</label>
+            <input type="text" name="grupo4" value="{{grupo4}}">
+        </div>
     </div>
 
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>         
+    </div>
+    <div class="ui buttons">
+            <a class="ui button" href="edicion.html">Crear Otro</a> 
     </div>
 </form>
 

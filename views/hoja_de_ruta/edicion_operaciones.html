@@ -42,49 +42,64 @@ end
  </div>   
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
-    <div class="field">
-        <label>ID</label>
-        <input type="text" name="idmat" value="{{id}}" required="" readonly>
-    </div>
-    <div class="field">
-        <label>Operaci&oacute;n</label>
-        <input type="text"   name="operacion" value="{{operacion}}" readonly>
-    </div>
-    <div class="field">
-        <label>Descripci&oacute;n</label>
-        <input type="text" name="descripcion" value="{{descripcion}}" required="" >
-    </div>
-    <div class="field">
-        <label>Capacidad (kg / h / hombre) </label>
-        <input type="number"  step="any" name="capacidad_kg_h" value="{{capacidad_kg_h}}">
-    </div>
-    <div class="field">
-        <label>Tipo</label>
-        <select  name="tipo" >
-           <option value="TUR" {{'selected' if tipo=='TUR' else ''}}>Turnos</option>
-           <option value="MAQ" {{'selected' if tipo=='MAQ' else ''}}>Maquinaria</option>
-        </select>
+
+    <br>
+    <div class="two fields">
+        <div class="field">
+            <label>ID</label>
+            <input type="text" name="idmat" value="{{id}}" required="" readonly>
+        </div>
+        <div class="field">
+            <label>Operaci&oacute;n</label>
+            <input type="text"   name="operacion" value="{{operacion}}" readonly>
+        </div>
     </div>
 
-    <div class="field">
-            <label>Operarios </label>
-            <input type="number"  step="any" name="operarios" value="{{operarios}}">
-     </div>
-
-    <div class="field">
-        <label>Clase (Agrupar datos)</label>
-        <input type="text" name="clase" id="clase" value="{{clase}}" >
+    <div class="two fields">
+        <div class="field">
+            <label>Descripci&oacute;n</label>
+            <input type="text" name="descripcion" value="{{descripcion}}" required="" >
+        </div>
+        <div class="field">
+            <label>Capacidad (kg / h / hombre) </label>
+            <input type="number"  step="any" name="capacidad_kg_h" value="{{capacidad_kg_h}}">
+        </div>
     </div>
 
-    <div class="ui toggle checkbox field" style="margin-top: 1em;margin-bottom: 2em;">            
-        <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
-        <label>Operaci&oacute;n Procesamiento en Freco</label>
+    <div class="two fields">
+        <div class="field">
+            <label>Tipo</label>
+            <select  name="tipo" >
+            <option value="TUR" {{'selected' if tipo=='TUR' else ''}}>Turnos</option>
+            <option value="MAQ" {{'selected' if tipo=='MAQ' else ''}}>Maquinaria</option>
+            </select>
+        </div>
+
+        <div class="field">
+                <label>Operarios </label>
+                <input type="number"  step="any" name="operarios" value="{{operarios}}">
+        </div>
+    </div>
+
+    <div class="two fields">
+        <div class="ui toggle checkbox field" style="margin-top: 2em;">            
+              <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
+              <label>Operaci&oacute;n Procesamiento en Freco</label>
+        </div>
+        <div class="field">
+            <label>Clase (Agrupar datos)</label>
+            <input type="text" name="clase" id="clase" value="{{clase}}" >
+        </div>
+
+        
     </div>
 
     <br> <br>
     <div class="ui buttons" >
-            <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>  
+    </div>
+    <div class="ui buttons" >
+            <a class="ui button" href="edicion_operaciones.html?id={{id}}&title={{'Crear'}}">Crear Otro</a>
     </div>
 </form>
 

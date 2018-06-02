@@ -39,55 +39,63 @@ end
 
 
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
-    <div class="field">
-        <label>ID</label>
-        <input type="text" name="idmat" value="{{id}}" required="" readonly>
-    </div>
-    <div class="field">
-        <label>Operaci&oacute;n</label>
-        <input type="text" name="operacion" value="{{oper}}" readonly>
-    </div>
-    <div class="field">
-        <label>Componente</label>
-        <input type="text" name="componente" value="{{componente}}" required="" >
-    </div>
-    <div class="field">
-        <label>Tipo</label>
-        <select  name="tipo" >
-                <option value="MO" {{'selected' if tipo=='MO' else ''}}>Mano de Obra</option>
-                <option value="MP" {{'selected' if tipo=='MP' else ''}}>Materia Prima</option>
-                <option value="MQ" {{'selected' if tipo=='MQ' else ''}}>Maquinaria</option>
-                <option value="LP" {{'selected' if tipo=='LP' else ''}}>Muestras</option>
-                <option value="IN" {{'selected' if tipo=='IN' else ''}}>Insumo</option>
-        </select>
-    </div>
-    <div class="field">
-        <label>Costo</label>
-        <input type="number" step="any" name="costo" value="{{costo}}">
-    </div>
-    <div class="field">
-        <label>Unidad</label>
-        <select name="unidad" id="unidades">
-                <option value="kg">kg</option>
-                <option value="un">un</option>
-                <option value="l">l</option>
-                <option value="m">m</option>
-                <option value="h">h</option>
-                <option value="ml">ml</option>
-        </select>
-        
-    </div>
-    <div class="field">
-            <label>Cantidad</label>
-            <input type="number" step="any" name="cantidad" value="{{cantidad}}" required="" >
+    <br>
+    <div class="two fields">
+        <div class="field">
+            <label>ID</label>
+            <input type="text" name="idmat" value="{{id}}" required="" readonly>
+        </div>
+        <div class="field">
+            <label>Operaci&oacute;n</label>
+            <input type="text" name="operacion" value="{{oper}}" readonly>
+        </div>
     </div>
 
+    <div class="two fields">
+        <div class="field">
+            <label>Componente</label>
+            <input type="text" name="componente" value="{{componente}}" required="" >
+        </div>
+        <div class="field">
+            <label>Tipo</label>
+            <select  name="tipo" >
+                    <option value="MO" {{'selected' if tipo=='MO' else ''}}>Mano de Obra</option>
+                    <option value="MP" {{'selected' if tipo=='MP' else ''}}>Materia Prima</option>
+                    <option value="MQ" {{'selected' if tipo=='MQ' else ''}}>Maquinaria</option>
+                    <option value="LP" {{'selected' if tipo=='LP' else ''}}>Muestras</option>
+                    <option value="IN" {{'selected' if tipo=='IN' else ''}}>Insumo</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Costo</label>
+            <input type="number" step="any" name="costo" value="{{costo}}">
+        </div>
+        <div class="field">
+            <label>Unidad</label>
+            <select name="unidad" id="unidades">
+                    <option value="kg">kg</option>
+                    <option value="un">un</option>
+                    <option value="l">l</option>
+                    <option value="m">m</option>
+                    <option value="h">h</option>
+                    <option value="ml">ml</option>
+            </select>
+            
+        </div>
+        <div class="field">
+                <label>Cantidad</label>
+                <input type="number" step="any" name="cantidad" value="{{cantidad}}" required="" >
+        </div>
+    </div>
+<br>
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar_componentes.html" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}&oper={{oper}}&comp={{componente}}">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar_componentes.html" formmethod="POST">Guardar</button>                  
+    </div>
+    <div class="ui buttons">
+        <a class="ui button" href="edicion_componentes.html?id={{id}}&title={{'Crear'}}&oper={{oper}}&comp={{componente}}">Crear Otro</a>       
     </div>
 </form>
-
+<br>
 
 <script>
 

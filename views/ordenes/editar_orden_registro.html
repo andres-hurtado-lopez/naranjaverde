@@ -49,6 +49,8 @@ row_componente = db.fetchall()
 
 %>
 
+<h2 class="ui header">Editar Registro de Producci&oacute;n</h2>
+
 <div class="ui search fluid selection dropdown optionmenu">
     <input type="hidden" name="opciones">
     <div class="text">Menu</div>
@@ -56,15 +58,20 @@ row_componente = db.fetchall()
     <div class="menu">
         <div class="item" data-value="">Menu</div>
         <div class="item" data-value="/home.html">Inicio</div>
-        <div class="item" data-value="ordenes/registro_trabajo_planta.html">Registro Trabajo de Planta</div>
+        <div class="item" data-value="registro_trabajo_planta.html">Registro Trabajo de Planta</div>
     </div>
 </div>        
 
 <br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
+       
+    
+        <div class="ui field">
+            <label>ID</label>
+            <input type="number" step="any" name="id_edit"   value="{{row_registro['id']}}" readonly>
+        </div>
 
-        <input type="number" step="any" name="id_edit"   value="{{row_registro['id']}}" >
-
+   <div class="two fields">    
         <div class="ui field">
           <label>Orden</label>
           <select class="ui search selection dropdown" id="orden" name="orden" >
@@ -75,7 +82,7 @@ row_componente = db.fetchall()
         </div>
 
         <div class="ui field">
-                <label>Operacion</label>
+                <label>Operaci&oacute;n</label>
                 <select class="ui search selection dropdown" id="operacion" name="operacion" >      
                         % for row in row_operacion :  
                         <option value="{{row['operacion']}}">{{ row['operacion'] + ' - ' + str(row['descripcion'])  }}</option>
@@ -91,19 +98,23 @@ row_componente = db.fetchall()
                         %end            
                  </select>
         </div>
+    </div>
 
+    <div class="two fields"> 
         <div class="ui field">
                 <label>Cantidad</label>
                 <input type="number" step="any" name="cantidad"  required="" value="{{row_registro['cantidad']}}" >
         </div>
         <div class="ui field">
+                <label>Fecha y Hora</label>
+                <input type="datetime-local" name="fecha" value="{{ row_registro['fecha'] }}"  >
+        </div>    
+    </div>   
+        <div class="ui field">
             <label>Notas</label>
             <textarea  name="nota" >{{ row_registro['notas'] }}</textarea>
         </div>
-        <div class="ui field">
-            <label>Fecha y Hora</label>
-            <input type="datetime-local" name="fecha" value="{{ row_registro['fecha'] }}"  >
-        </div>
+        
         <br>
         <div class="ui buttons">
             <button class="ui button" type="submit" formmethod="POST" formaction="editar_or_registro.html">Editar</button>     

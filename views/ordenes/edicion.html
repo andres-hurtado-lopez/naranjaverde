@@ -61,70 +61,85 @@ end
 </div>     
 <br>
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
-    <div class="field">
-        <label>Orden</label>
-        <input type="text" name="orden" value="{{orden}}" readonly="">
+
+    <div class="two fields">
+        <div class="field">
+            <label>Orden</label>
+            <input type="text" name="orden" value="{{orden}}" readonly="">
+        </div>
+
+        <div class="field">
+            <label>Estado</label>
+            <input type="text" name="estado" value="{{estado}}" readonly="">
+        </div>
     </div>
 
-    <div class="field">
-        <label>Estado</label>
-        <input type="text" name="estado" value="{{estado}}" readonly="">
+    <div class="two fields">
+        <div class="field">
+            <label>Cliente</label>
+            <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}" required=""> 
+            </select>
+        </div>
+        <div class="field">
+            <label>Referencia</label>
+            <select class="ui search selection dropdown" id="idmat" name="idmat" value="{{idmat}}" required="" > 
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Cantidad</label>
+            <input type="number" step="any" name="cantidad_kg" value="{{cantidad_kg}}" required="">
+        </div>
     </div>
 
-    <div class="field">
-        <label>Cliente</label>
-        <select class="ui search selection dropdown" id="cliente" name="cliente" value="{{cliente}}" required=""> 
-        </select>
-    </div>
-    <div class="field">
-        <label>Referencia</label>
-        <select class="ui search selection dropdown" id="idmat" name="idmat" value="{{idmat}}" required="" > 
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Cantidad</label>
-        <input type="number" step="any" name="cantidad_kg" value="{{cantidad_kg}}" required="">
-    </div>
-
-    <div class="field">
-        <label># Pedido Cliente</label>
-        <input type="text" name="pedido_cliente" value="{{pedido_cliente}}">
-        </select>
-    </div>
-    <div class="field">
-        <label>Fecha Inicio</label>
-        <input type="date" name="fecha_inicio" value="{{fecha_inicio}}" required="">
-    </div>
-    <div class="field">
-        <label>Fecha Comprometida de entrega</label>
-        <input type="date" name="fecha_fin" value="{{fecha_fin}}" required="">
+    <div class="two fields">
+        <div class="field">
+            <label># Pedido Cliente</label>
+            <input type="text" name="pedido_cliente" value="{{pedido_cliente}}">
+            </select>
+        </div>
+        <div class="field">
+            <label>Fecha Inicio</label>
+            <input type="date" name="fecha_inicio" value="{{fecha_inicio}}" required="">
+        </div>
+        <div class="field">
+            <label>Fecha Comprometida de entrega</label>
+            <input type="date" name="fecha_fin" value="{{fecha_fin}}" required="">
+        </div>
     </div>
 
-    <div class="field">
-        <label>Fecha Produccion</label>
-        <input type="date" name="fecha_despacho" value="{{fecha_despacho}}">
-    </div>
-    
-    <div class="field">
-        <label>Fecha Entrega</label>
-        <input type="date" name="fecha_entrega" value="{{fecha_entrega}}" >
-    </div>  
+    <div class="two fields">
+        <div class="field">
+            <label>Fecha Produccion</label>
+            <input type="date" name="fecha_despacho" value="{{fecha_despacho}}">
+        </div>
+        
+        <div class="field">
+            <label>Fecha Entrega</label>
+            <input type="date" name="fecha_entrega" value="{{fecha_entrega}}" >
+        </div>  
 
-    <div class="field">
-        <label>Precio de Venta</label>
-        <input type="number" step="any" name="precio_venta" value="{{precio_venta}}" required="" >
-    </div>
+        <div class="field">
+            <label>Precio de Venta</label>
+            <input type="number" step="any" name="precio_venta" value="{{precio_venta}}" required="" >
+        </div>
 
-    <div class="field">
-        <label>Uso Hornos</label>
-        <input type="number" step="any" name="p_uso_hornos" value="{{p_uso_hornos}}">
+        <div class="field">
+            <label>Uso Hornos</label>
+            <input type="number" step="any" name="p_uso_hornos" value="{{p_uso_hornos}}">
+        </div>
     </div>
+    <br>
 
     <div class="ui buttons">
         <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>
-        <a class="ui button" href="edicion.html">Crear Otro</a>       
+              
     </div>
+    <label>&nbsp;</label>
+    <div class="ui buttons">
+        <a class="ui button" href="edicion.html">Crear Otro</a> 
+    </div>
+
 </form>
 <script type="text/javascript">
 

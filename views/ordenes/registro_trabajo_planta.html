@@ -37,39 +37,44 @@ where o.estado='en proceso' Limit 100 """,[])
 <br>
 <form class="ui form" action="programacion_produccion.html" method="get" accept-charset="utf-8">
     
-        <div class="ui field">
-          <label>Orden</label>
-          <select class="ui search selection dropdown" id="orden" name="orden" value={{orden}}>
-              % for row in db :  
-              <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
-              %end
-            </select>
-        </div>
+     <div class="two fields">
 
-        <div class="ui field">
-                <label>Operacion</label>
-                <select class="ui search selection dropdown" id="operacion" name="operacion" required=""  value={{operacion}}>                  
-                 </select>
-        </div>
+            <div class="ui field">
+            <label>Orden</label>
+            <select class="ui search selection dropdown" id="orden" name="orden" value={{orden}}>
+                % for row in db :  
+                <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
+                %end
+                </select>
+            </div>
 
-        <div class="ui field">
-                <label>Componentes</label>
-                <select class="ui search selection dropdown" id="componente" name="componente" required="" >                  
-                 </select>
-        </div>
+            <div class="ui field">
+                    <label>Operaci&oacute;n</label>
+                    <select class="ui search selection dropdown" id="operacion" name="operacion" required=""  value={{operacion}}>                  
+                    </select>
+            </div>
 
+            <div class="ui field">
+                    <label>Componentes</label>
+                    <select class="ui search selection dropdown" id="componente" name="componente" required="" >                  
+                    </select>
+            </div>
+    </div>
+    <div class="two fields">
         <div class="ui field">
                 <label>Cantidad</label>
                 <input type="number" step="any" name="cantidad"  required="" >
         </div>
         <div class="ui field">
-                <label>Notas</label>
-                <textarea  name="nota"   ></textarea>
+                <label>Fecha y Hora</label>
+                <input type="datetime-local" name="fecha" value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}"  >
         </div>
+    </div>
         <div class="ui field">
-            <label>Fecha y Hora</label>
-            <input type="datetime-local" name="fecha" value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}"  >
+             <label>Notas</label>
+              <textarea  name="nota"   ></textarea>
         </div>
+        
         <br>
         <div class="ui buttons">
             <button class="ui button" type="submit" formmethod="POST" formaction="guardar_ordenes_registro.html">Ingresar</button>     
@@ -78,7 +83,7 @@ where o.estado='en proceso' Limit 100 """,[])
 </form>
 
 <div class="ui buttons">
-    <button class="ui button" type="submit" id="avance">Avance de Produccion</button>     
+    <button class="ui button" type="submit" id="avance">Avance de Producci&oacute;n</button>     
 </div>
 <br> <br>
 

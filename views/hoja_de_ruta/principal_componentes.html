@@ -47,7 +47,8 @@ oper = request.params.get('oper')
  cif = row['cif']
  %>
 <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
-        
+        <br>
+    <div class="two fields">
         <div class="field">
             <label>ID Material</label>
             <input type="text" value="{{id}}" readonly="">
@@ -64,7 +65,9 @@ oper = request.params.get('oper')
             <label>CIF</label>
             <input type="text" value="{{'{:20,.2f}'.format(cif)}}" readonly="">
         </div>
+    </div>
 </form>
+<br>
 <table class="ui table">
     <thead>
         <th>Componente</th>

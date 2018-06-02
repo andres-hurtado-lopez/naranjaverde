@@ -249,14 +249,28 @@ $('#orden').on('change', function(){
             }, this);
 
             $('#operacion').dropdown();
-            $('#operacion').selectmenu("refresh");
             $('#ordenh').val($('#orden').val());
             $('#operacionh').val($('#operacion').val());
+
+               
+            $.get( "/ordenes/buscar_control_orden.json?orden="+$('#orden').val(), function( data1 ) {
+
+                data1.results.forEach(function(element) {
+                
+                   $('#cliente').val(element.cliente);
+                   $('#cantidad').val(element.cantidad);
+                   $('#material').val(element.material);
+                   $('#fecha_entrega').val(element.fecha_entrega);
+
+                }, this);
+                
+            },'json');
+            
     },'json');
 
     $('#operacion').val();
 
-})
+});
 
 $('#consultar').on('click', function(){
     
@@ -275,31 +289,6 @@ $('#consultar').on('click', function(){
     }
 
  });  
-
-$('#operacion').on('change', function(){
-    
-    
-    
-    $('#ordenh').val($('#orden').val());
-    $('#operacionh').val($('#operacion').val());
-    /*
-    $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param="+1+"&oper"+$('#componente').val(), function( data ) {
-            $('#operacion').empty();
-            data.results.forEach(function(element) {
-                
-                $('#operacion').append('<option value="'+element.operacion+'">'+element.operacion+' - '+element.componente+'</option>');
-
-            }, this);
-
-            $('#operacion').dropdown();
-            $('#operacion').selectmenu("refresh");
-
-    },'json');
-
-    $('#operacion').val();*/
-
-})
-
 
 
 $('.ui.dropdown.optionmenu').dropdown({
