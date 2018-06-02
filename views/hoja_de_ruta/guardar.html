@@ -31,7 +31,7 @@ else :
 
     row_cantidad = db.fetchone();
 
-    if row_cantidad == 0 :
+    if row_cantidad['contador'] == 0 :
     db.execute("""REPLACE INTO `hoja_ruta`(`idmat`, `descripcion`, `cif`,`rendimiento`, `reempaque`) VALUES (%s,%s,%s,%s,%s)""",
                                             [ idmat, descripcion, cif,rendimiento,reempaque])
     db.execute('COMMIT WORK');
