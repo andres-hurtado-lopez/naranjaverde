@@ -28,7 +28,7 @@ db = utils.ConnectDB()
     <th>Costo</th>       
 </thead>
 <tbody>
-    <% db.execute("""SELECT a.idmat, d.descripcion, sum(ifnull(c.costo,0)) as costo 
+    <% db.execute("""SELECT a.idmat, d.descripcion, format( sum(ifnull(c.costo,0)) , 2 ) as costo 
                     FROM hoja_ruta as a
                     LEFT OUTER JOIN  hoja_ruta_operaciones as b
                     ON a.idmat = b.idmat
