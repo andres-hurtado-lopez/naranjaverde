@@ -91,7 +91,7 @@ id = request.params.get('id')
              <td>{{row['clase']}}</td>
             <td>
                 <div class="ui buttons">
-                    <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{ str( row['operacion']) +' - '+ str(row['descripcion']) }}">
+                    <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{ row['operacion'] +u' - '+ row['descripcion'] }}">
                         <div class="hidden content">Compon.</div>
                         <div class="visible content">
                         <i class="cubes icon"></i>

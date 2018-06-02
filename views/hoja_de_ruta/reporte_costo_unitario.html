@@ -1,0 +1,62 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+%>
+
+<h2 class="ui header">Reporte Costo Unitario Hoja de Ruta:</h2>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>           
+        </div>
+</div>  
+
+<br>
+
+<table class="ui table">
+<thead>
+    <th>Id</th>
+    <th>Descripción</th>
+    <th>Costo</th>       
+</thead>
+<tbody>
+    <% db.execute("""SELECT a.idmat, d.descripcion, sum(ifnull(c.costo,0)) as costo 
+                    FROM hoja_ruta as a
+                    LEFT OUTER JOIN  hoja_ruta_operaciones as b
+                    ON a.idmat = b.idmat
+                    LEFT OUTER JOIN hoja_ruta_componentes as c
+                    ON b.idmat = c.idmat and b.operacion = c.operacion
+                    LEFT OUTER JOIN materiales as d
+                    ON a.idmat = d.idmat
+                    group by a.idmat, d.descripcion""",[])
+
+       for row in db:
+    %>
+    <tr>
+        <td>{{row['idmat']}}</td>
+        <td>{{row['descripcion']}}</td>
+        <td>{{row['costo']}}</td>
+          
+    </tr>
+    %end
+</tbody>
+</table>
+
+<script type="text/javascript">
+    
+        $('.ui.progress').progress();
+        $('.ui.dropdown.optionmenu').dropdown({
+          action:function(text, value){
+            window.location.href = value;
+          }
+        })
+    
+    </script>

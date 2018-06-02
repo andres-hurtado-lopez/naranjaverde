@@ -103,7 +103,7 @@ oper = request.params.get('oper')
                         <i class="remove icon"></i>
                       </div>
                     </a>
-                    <a class="ui vertical animated button" href="edicion_componentes.html?id={{row['idmat']}}&oper={{str(row['operacion'])+ ' - '+str(row['descripcion'] ) }}&comp={{row['componente']}}&title={{'Edicion'}}">
+                    <a class="ui vertical animated button" href="edicion_componentes.html?id={{row['idmat']}}&oper={{ row['operacion']+ u' - '+ row['descripcion'] }}&comp={{row['componente']}}&title={{'Edicion'}}">
                       <div class="hidden content">Editar</div>
                       <div class="visible content">
                         <i class="edit icon"></i>
