@@ -72,7 +72,7 @@ id = request.params.get('id')
         <th>Acción</th>       
     </thead>
     <tbody>
-        <% db.execute("""SELECT `idmat`, `operacion`, `descripcion`, (`capacidad_kg_h` * `operarios` ) as capacidad_kg_h, `tipo`, `operarios`, `fresco`, `clase`  
+        <% db.execute("""SELECT `idmat`, `operacion`, `descripcion`, format( (`capacidad_kg_h` * `operarios` ) ,2 ) as capacidad_kg_h, `tipo`, `operarios`, `fresco`, `clase`  
                         FROM hoja_ruta_operaciones WHERE idmat = %s""",(id,))
            for row in db:
         %>
