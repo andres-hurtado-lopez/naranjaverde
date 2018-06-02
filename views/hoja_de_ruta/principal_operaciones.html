@@ -68,10 +68,12 @@ id = request.params.get('id')
         <th>Tipo</th>
         <th>#Operarios por operaci&oacute;n</th>
         <th>Pro - fresco</th>
+        <th>Clase</th>
         <th>Acción</th>       
     </thead>
     <tbody>
-        <% db.execute("SELECT * FROM hoja_ruta_operaciones WHERE idmat = %s",(id,))
+        <% db.execute("""SELECT `idmat`, `operacion`, `descripcion`, (`capacidad_kg_h` * `operarios` ) as capacidad_kg_h, `tipo`, `operarios`, `fresco`, `clase`  
+                        FROM hoja_ruta_operaciones WHERE idmat = %s""",(id,))
            for row in db:
         %>
         <tr>
@@ -79,13 +81,14 @@ id = request.params.get('id')
             <td>{{row['descripcion']}}</td>
             <td>{{row['capacidad_kg_h']}}</td>
             <td>{{row['tipo']}}</td>
-            <td>{{row['operarios']}}</td>
+            <td>{{row['operarios']}}</td>            
             <td>
                     <div class="ui {{'checked' if row['fresco'] != 0 else ''}}    checkbox" >
                         <input type="checkbox" {{ 'checked=""' if row['fresco'] != 0 else '' }} disabled="disabled" >
                         <label></label>
                     </div>
              </td>
+             <td>{{row['clase']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}&oper={{row['operacion']}}">
