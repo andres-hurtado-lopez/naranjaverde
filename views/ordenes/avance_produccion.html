@@ -159,7 +159,7 @@ where o.estado='en proceso' Limit 100 """,[])
             <input type="number" name="producido"  required="" step="any" >
         </div>  
 
-        <div class="ui toggle checkbox" style="margin-left: 2em;margin-top: 2em;">
+        <div class="ui toggle checkbox" style="margin-left: 2em;margin-top: 2em;margin-bottom: 2em;">
                 <input type="checkbox" name="terminado" id="terminado">
                 <label>Producto Terminado</label>
         </div>
@@ -169,7 +169,7 @@ where o.estado='en proceso' Limit 100 """,[])
         <input type="hidden" name="operacion" id="operacionh" value="{{operacion }}">
 
     </div>     
-
+<br>
     <div class="ui buttons">
         <button class="ui button" type="submit"  >Registrar</button>    
     </div>
@@ -177,9 +177,9 @@ where o.estado='en proceso' Limit 100 """,[])
 
 <br>
 
-<div class="ui container" style="overflow: auto; height: 23em;">
+<div class="ui container" >
     <table class="ui table">
-        <thead style="position: -webkit-sticky; position: sticky; top:0;">
+        <thead >
             <th>hora</th>
             <th>Planeado</th>
             <th>Ejecutado</th>
