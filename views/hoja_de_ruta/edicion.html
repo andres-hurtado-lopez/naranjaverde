@@ -53,7 +53,8 @@ end
 
             <label>Busqueda producto</label>
 
-            <select class="ui search selection dropdown" id="material" name="material" >
+            <select class="ui search selection dropdown" id="material" name="material" required="" >
+                    <option value=""></option>
                     % for row in resul_material :  
                     <option value="{{row['idmat']}}">{{ row['descripcion'] }}</option>
                     %end
@@ -85,8 +86,10 @@ end
         <input type="number" name="cif" value="{{cif}}" required="" step="any">
     </div>
     <div class="ui buttons">
-            <button class="ui button" type="submit" formaction="guardar.html?title={{title}}" formmethod="POST">Guardar</button>
-            <a class="ui button" href="edicion.html">Crear Otro</a>       
+            <button class="ui button" type="submit" formaction="guardar.html?title={{title}}" formmethod="POST">Guardar</button>       
+    </div>
+    <div class="ui buttons">
+        <a class="ui button" href="edicion.html">Crear Otro</a>  
     </div>
 </form>
 <script type="text/javascript">

@@ -88,7 +88,13 @@ end
         </div>
         <div class="field">
             <label>Clase (Agrupar datos)</label>
-            <input type="text" name="clase" id="clase" value="{{clase}}" >
+            <select  name="clase" >
+                    <option value="" {{'selected' if clase=='' else ''}}></option>
+                    <option value="ADECUADO" {{'selected' if clase=='ADECUADO' else ''}}>ADECUADO</option>
+                    <option value="DESHIDRATADO" {{'selected' if clase=='DESHIDRATADO' else ''}}>DESHIDRATADO</option>
+                    <option value="TERMINADO" {{'selected' if clase=='TERMINADO' else ''}}>TERMINADO</option>
+            </select>
+           <!-- <input type="text" name="clase" id="clase" value="{{clase}}" >-->
         </div>
 
         
