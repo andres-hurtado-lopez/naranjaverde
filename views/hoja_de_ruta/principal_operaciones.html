@@ -69,19 +69,29 @@ id = request.params.get('id')
         <th>#Operarios por operaci&oacute;n</th>
         <th>Pro - fresco</th>
         <th>Clase</th>
+        <th>Costo</th>
         <th>Acción</th>       
     </thead>
     <tbody>
-        <% db.execute("""SELECT `idmat`, `operacion`, `descripcion`, format( (`capacidad_kg_h` * `operarios` ) ,2 ) as capacidad_kg_h, `tipo`, `operarios`, `fresco`, `clase`  
-                        FROM hoja_ruta_operaciones WHERE idmat = %s""",(id,))
+        <% db.execute("""SELECT ho.`idmat`, ho.`operacion`, ho.`descripcion`,
+                        format( (ho.`capacidad_kg_h` * ho.`operarios` ) ,2 ) as capacidad_kg_h, ho.`tipo`, 
+                        ho.`operarios`, ho.`fresco`, ho.`clase`,format( ifnull(t1.costo_operacion , 0) ,2 ) as costo_operacion
+                        FROM hoja_ruta_operaciones as ho
+                        LEFT OUTER JOIN ( select  idmat,operacion,ifnull(sum(costo * cantidad) , 0) as costo_operacion 
+                        from hoja_ruta_componentes 
+                        group by  idmat,operacion ) as t1
+                        on t1.idmat=ho.idmat and t1.operacion =ho.operacion
+                        WHERE ho.idmat = %s""",(id,))
            for row in db:
+
         %>
         <tr>
             <td>{{row['operacion']}}</td>
             <td>{{row['descripcion']}}</td>
             <td>{{row['capacidad_kg_h']}}</td>
             <td>{{row['tipo']}}</td>
-            <td>{{row['operarios']}}</td>            
+            <td>{{row['operarios']}}</td>   
+            <td style="text-align: right;">$ {{row['costo_operacion']}}</td>          
             <td>
                     <div class="ui {{'checked' if row['fresco'] != 0 else ''}}    checkbox" >
                         <input type="checkbox" {{ 'checked=""' if row['fresco'] != 0 else '' }} disabled="disabled" >

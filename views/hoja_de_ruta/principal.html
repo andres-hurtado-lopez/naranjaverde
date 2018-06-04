@@ -42,8 +42,8 @@ db = utils.ConnectDB()
         <tr>
             <td>{{row['producto']}}</td>
             <td>{{row['descripcion']}}</td>
-            <td>{{'{:20,.2f}'.format( row['std'] )  }}</td>
-            <td>{{'{:20,.2f}'.format( row['cif'] ) }}</td>
+            <td style="text-align: right;">$ {{'{:20,.2f}'.format( row['std'] )  }}</td>
+            <td style="text-align: right;">$ {{'{:20,.2f}'.format( row['cif'] ) }}</td>
             <td>
                 <div class="ui buttons">
                 <!--   <a class="ui vertical animated button" href="principal_componentes.html?id={{row['idmat']}}">
