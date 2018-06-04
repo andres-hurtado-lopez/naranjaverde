@@ -1,0 +1,7 @@
+<%
+import utils, csv
+from bottle import request, redirect
+
+pagina = request.params.get('pagina')
+
+redirect(pagina)

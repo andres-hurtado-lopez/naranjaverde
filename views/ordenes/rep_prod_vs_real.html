@@ -5,7 +5,7 @@ from bottle import request
 
 db = utils.ConnectDB()
 %>
-<h2 class="ui header">Costos Indirectos</h2>
+<h2 class="ui header">Reporte Producico vs Real</h2>
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
         <div class="text">Menu</div>
@@ -64,13 +64,27 @@ db = utils.ConnectDB()
     </thead>
     <tbody>
         <% 
-            db.execute("""SELECT  o.orden, t.`nombre`,m.descripcion,o.cantidad_kg,o.estado,o.orden
-                        FROM ordenes as o
-                        INNER JOIN `terceros` as t
-                        ON o.cliente = t.idtercero
-                        INNER JOIN materiales as m
-                        ON o.idmat = m.idmat
-                        """,[])
+            db.execute("""SELECT  o.orden, t.`nombre`,m.descripcion,o.cantidad_kg,o.estado,o.orden,ore.producido_fecha,
+                      ( ifnull( ore.producido_fecha , 0 ) / o.cantidad_kg *100 ) as total_completado,sum( ifnull( format( org.costos , 0) , 0 ) )as costos,
+                      ho.operacion,cp.componente,o.fecha_entrega,o.precio_venta
+                      FROM ordenes as o
+                      INNER JOIN `terceros` as t
+                      ON o.cliente = t.idtercero
+                      INNER JOIN materiales as m
+                      ON o.idmat = m.idmat  
+                      inner join hoja_ruta_operaciones ho
+                      on o.idmat = ho.idmat and ho.clase = 'TERMINADO'
+                      inner join hoja_ruta_componentes cp
+                      on ho.operacion= cp.operacion and cp.idmat=ho.idmat
+                      left OUTER join ordenes_registro as org
+                      ON o.orden=org.orden and  org.operacion= ho.operacion and org.componente=cp.componente 
+                      LEFT OUTER JOIN (  
+                         select   sum(ifnull(cantidad_kg , 0)  ) as producido_fecha,orden,operacion
+                         from ordenes_produccion  
+                          group by orden,operacion
+                      ) as ore
+                      on o.orden = ore.orden and ore.operacion= ho.operacion
+                      group by   o.orden, t.`nombre`,m.descripcion,o.cantidad_kg,o.estado,o.orden,ore.producido_fecha,ho.operacion,cp.componente,total_completado  """,[])
 
                      
                         
@@ -80,13 +94,13 @@ db = utils.ConnectDB()
             <td>{{row['nombre']}}</td>
             <td>{{row['descripcion']}}</td>
             <td>{{row['cantidad_kg']}}</td>
-            <td></td>
-            <td></td>
+            <td>{{row['producido_fecha']}}</td>
+            <td>{{row['total_completado']}}</td>
             <td>{{row['estado']}}</td>
             <td>{{row['orden']}} </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>{{row['fecha_entrega']}}</td>
+            <td>{{row['precio_venta']}}</td>
             <td></td>
             <td></td>
             <td></td>
