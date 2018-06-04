@@ -74,14 +74,15 @@ oper = request.params.get('oper')
         <th>Tipo</th>
         <th>Cant.Unit.</th>
         <th>Unidad</th>
-        <th>Costo Estandar</th>
+        <th>Costo Unitario</th>
+        <th>Costo Componente</th>
         <th>Acción</th>
     </thead>
     <tbody>
         <%
         
           operaciones = oper[0:1]
-           db.execute("""SELECT c.`idmat`, c.`operacion`, c.`componente`, c.`tipo`, c.`costo`, c.`unidad`, c.`cantidad`,a.descripcion,a.operacion 
+           db.execute("""SELECT c.`idmat`, c.`operacion`, c.`componente`, c.`tipo`,format( c.`costo`,2 ) as costo, c.`unidad`,format( (c.`costo` * c.`cantidad`) ,2 ) as costo_componente, c.`cantidad`,a.descripcion,a.operacion 
                         FROM  hoja_ruta_operaciones as a
                         inner join hoja_ruta_componentes as c
                         on a.operacion = c.operacion and a.idmat=c.idmat
@@ -92,9 +93,10 @@ oper = request.params.get('oper')
         <tr>
             <td>{{row['componente']}}</td>
             <td>{{row['tipo']}}</td>
-            <td>{{row['cantidad']}}</td>
+            <td style="text-align: right;">{{row['cantidad']}}</td>
             <td>{{row['unidad']}}</td>
-            <td>{{row['costo']}}</td>
+            <td style="text-align: right;">$ {{row['costo']}}</td>
+            <td style="text-align: right;">$ {{row['costo_componente']}}</td>
             <td>
                 <div class="ui buttons">
                     <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['idmat']}}','{{row['operacion']}}','{{row['componente']}}')">
