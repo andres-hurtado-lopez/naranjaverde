@@ -4,6 +4,8 @@ import datetime
 from bottle import request
 
 db = utils.ConnectDB()
+db1 = utils.ConnectDB()
+db2 = utils.ConnectDB()
 
 %>
 
@@ -25,7 +27,16 @@ db = utils.ConnectDB()
 <thead>
     <th>Id</th>
     <th>Descripción</th>
-    <th>Costo</th>       
+    <th>Costo Producto Terminado</th>     
+    <th>Operaci&oacute;n</th>
+    <th>Descripci&oacute;n</th>
+    <th>Costo Operaci&oacute;n</th>
+    <th>Componente</th>
+    <th>Cantidad</th>
+    <th>Unidad</th>
+    <th>Costo Unitario</th>
+    <th>Costo Componente</th>
+
 </thead>
 <tbody>
     <% db.execute("""SELECT a.idmat, d.descripcion, format( sum(ifnull(c.`costo` * c.`cantidad`,0)) , 2 ) as costo 
@@ -39,13 +50,76 @@ db = utils.ConnectDB()
                     group by a.idmat, d.descripcion""",[])
 
        for row in db:
-    %>
+    %> 
     <tr>
         <td>{{row['idmat']}}</td>
         <td>{{row['descripcion']}}</td>
         <td>{{row['costo']}}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
           
     </tr>
+    <%
+
+       db1.execute("""SELECT ho.`idmat`, ho.`operacion`, ho.`descripcion`,
+                    format( (ho.`capacidad_kg_h` * ho.`operarios` ) ,2 ) as capacidad_kg_h, ho.`tipo`, 
+                    ho.`operarios`, ho.`fresco`, ho.`clase`,format( ifnull(t1.costo_operacion , 0) ,2 ) as costo_operacion
+                    FROM hoja_ruta_operaciones as ho
+                    LEFT OUTER JOIN ( select  idmat,operacion,ifnull(sum(costo * cantidad) , 0) as costo_operacion 
+                    from hoja_ruta_componentes 
+                    group by  idmat,operacion ) as t1
+                    on t1.idmat=ho.idmat and t1.operacion =ho.operacion
+                    WHERE ho.idmat = %s""",[ row['idmat'] ])
+
+      for row1 in db1:
+      %> 
+      <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{row1['operacion']}}</td>
+          <td>{{row1['descripcion']}}</td>
+          <td>{{row1['costo_operacion']}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+            
+      </tr>
+      <%
+    
+         db2.execute("""SELECT c.`idmat`, c.`operacion`, c.`componente`, c.`tipo`,format( c.`costo`,2 ) as costo, c.`unidad`,format( (c.`costo` * c.`cantidad`) ,2 ) as costo_componente, c.`cantidad`,a.descripcion,a.operacion 
+                      FROM  hoja_ruta_operaciones as a
+                      inner join hoja_ruta_componentes as c
+                      on a.operacion = c.operacion and a.idmat=c.idmat
+                      WHERE a.idmat = %s
+                      and a.operacion = %s 
+                      order by c.operacion """,[ row1['idmat'], row1['operacion'] ] )
+         for row2 in db2:
+      %>
+       <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{row2['componente']}}</td>
+            <td>{{row2['cantidad']}}</td>
+            <td>{{row2['unidad']}}</td>
+            <td>{{row2['costo']}}</td>
+            <td>{{row2['costo_componente']}}</td>
+            
+        </tr>
+      %end  
+     %end
     %end
 </tbody>
 </table>

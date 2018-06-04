@@ -1,0 +1,840 @@
+<%
+rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+setdefault('docmat','')
+setdefault('fecha_recepcion','')
+setdefault('hora_recepcion','')
+setdefault('idasoc','')
+setdefault('idasoc_txt','')
+setdefault('idmat','')
+setdefault('idmat_txt','')
+setdefault('lote_material_proveedor','')
+setdefault('factura_proveedor','')
+setdefault('tipo_empaque','')
+setdefault('estiba','')
+setdefault('bruto','')
+setdefault('tara','')
+setdefault('dotacion_personal','')
+setdefault('estado_vehiculo_paredes','')
+setdefault('estado_vehiculo_piso','')
+setdefault('estado_vehiculo_techo','')
+setdefault('elementos_extranos','')
+setdefault('est_unid_empaque','')
+setdefault('libre_infest_plag','')
+setdefault('insp_mat_prim','')
+setdefault('insp_mat_color','')
+setdefault('insp_mat_olor','')
+setdefault('insp_mat_sabor','')
+setdefault('insp_mat_elem_extra','')
+setdefault('insp_mat_madurez','')
+setdefault('insp_epm_color','')
+setdefault('insp_epm_olor','')
+setdefault('insp_epm_selle','')
+setdefault('insp_epm_calibre','')
+setdefault('insp_epm_elem_extra','')
+setdefault('factura_recibida','')
+setdefault('producto_aprobado','')
+setdefault('cantidad_kg_factura','0.0')
+setdefault('precio_factura','')
+setdefault('observaciones','')
+setdefault('acciones_correctivas','')
+setdefault('orden','')
+setdefault('tipo_documento','')
+setdefault('sub_tipo_documento','')
+setdefault('unidad','')
+setdefault('weighdata',[])
+setdefault('idalm','')
+setdefault('otros_pesos_tara','')
+   
+%>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-12">
+
+      
+      <fieldset class="form-group">
+        <button form="frm_principal" class="btn btn-primary guardar" data-method="{{method}}">Guardar</button>
+        <button form="frm_principal" class="btn btn-primary volver">Volver a Menu</button>
+        <button form="frm_principal" class="btn btn-primary crear_otro">Crear Otro Documento Nuevo</button>
+	<label for="">Ultimas Entradas Realizadas</label>
+	<div class="table-responsive">
+	  <table class="table table-bordered">
+	    <thead>
+	      <th>Documento</th>
+	      <th>Fecha</th>
+	      <th colspan="2">Material</th>
+	      <th colspan="2">Cantidad</th>
+	      <th>Autor</th>
+	    </thead>
+	    <tbody>
+	      <%
+		db = ConnectDB()
+		db.execute("""SELECT a.docmat, 
+			      a.fecha, 
+			      c.idmat, 
+			      c.descripcion as idmat_txt,
+			      a.cantidad_kg,
+			      a.unidad,
+			      a.autor 
+			      FROM documentos_material as a
+			      LEFT OUTER JOIN materiales as c
+			      ON a.idmat = c.idmat
+			      WHERE tipo_documento = 'E'
+			      ORDER BY docmat DESC
+			      LIMIT 4""")
+		for row in db.fetchall():
+		%>
+	      <tr><td>{{row['docmat']}}</td><td>{{row['fecha']}}</td><td>{{row['idmat']}}</td><td>{{row['idmat_txt']}}</td><td>{{row['cantidad_kg']}}</td><td>{{row['unidad']}}</td><td>{{row['autor']}}</td></tr>
+	      <% end %>
+	    </tbody>
+	  </table>
+	</div>
+
+        <legend>Datos Principales</legend>
+        <label for="docmat">Tipo de Entrada</label>
+        <select form="frm_principal" name="sub_tipo_documento" id="sub_tipo_documento" class="form-control custom-select">
+          <option value=""></option>
+          <option value="MPF">Materia Prima Fresca</option>
+          <option value="MPP">Materia Prima Procesada</option>
+          <option value="I">Insumos</option>
+        </select>
+        <label for="docmat">Almacen al que entra</label>
+        <select class="form-control custom-select" id="idalm">
+	  <option></option>
+          <%
+            db1 = ConnectDB()
+            count = db1.execute('SELECT * FROM almacenes')
+	    row = db1.fetchone()
+            while row:
+            %>
+          <option value="{{ row['idalm'] }}">{{ row['idalm'] + ' - ' + row['descripcion'] }}</option>
+          <%
+                row = db1.fetchone()
+	    end
+            %>
+        </select>
+        <label for="docmat">#N&uacute;mero entrada de Almac&eacute;n</label>
+        <input form="frm_principal" class="form-control" name="docmat" id="docmat" readonly="" value="{{ docmat }}"/>
+        <label for="fecha_recepcion">Fecha Recepcion</label>
+        <input form="frm_principal" class="form-control" name="fecha_recepcion" id="fecha_recepcion" value="{{ fecha_recepcion }}"/>
+        <label for="hora_recepcion">Hora Recepcion</label>
+        <input form="frm_principal" class="form-control" name="hora_recepcion" id="hora_recepcion" value="{{ hora_recepcion}}"/>
+        <label for="">Producto</label>
+        <input form="frm_principal" class="form-control" name="producto" id="producto" value="{{ idmat }}"/>
+        <input form="frm_principal" class="form-control" name="producto" id="producto_descripcion" value="{{ idmat_txt }}" readonly/>
+        <label for="">#Tipo Empaque</label>
+        <select form="frm_principal" name="tipo_empaque" id="tipo_empaque" class="form-control custom-select">
+          <option></option>
+          <option>Canastilla</option>
+          <option>Guacal</option>
+          <option>Bulto</option>
+          <option>Granel</option>
+        </select>
+
+      </fieldset>
+      <fieldset class="form-group">
+        <legend>Proveedor</legend>
+        <button form="frm_principal" class="btn btn-primary" id="prov_data_doc_ant">Llenar datos documento anterior</button><br><br>
+
+        <label for="">Proveedor</label>
+        <input form="frm_principal" class="form-control" name="proveedor" id="proveedor" value="{{ idasoc }}"/>
+        <input form="frm_principal" class="form-control" name="proveedor" id="proveedor_descripcion" value="{{ idasoc_txt }}" readonly/>
+        <label for="">#Orden de Compra</label>
+        <input form="frm_principal" class="form-control" name="orden" id="orden" value="{{ orden}}"/>
+        <label for="">#Factura Proveedor</label>
+        <input form="frm_principal" class="form-control" name="factura_proveedor" id="factura_proveedor" value="{{ factura_proveedor}}"/>
+        <label for="">Cantidad Factura</label>
+        <input form="frm_principal" class="form-control" name="cantidad_kg_factura" id="cantidad_kg_factura" value="{{ cantidad_kg_factura}}"/>
+
+        <label for="">Unidad Cantidad Factura</label>
+
+        <select id="unidad" class="form-control">
+          <option value="kg">kg</option>
+          <option value="un">Unidad</option>
+          <option value="g">g</option>
+          <option value="ton">ton</option>
+          <option value="l">l</option>
+          <option value="cm3">cm3</option>
+          <option value="ml">ml</option>
+          <option value="m3">m3</option>
+          <option value="gal">gal</option>
+        </select>
+
+
+        <label for="">Diferencia cant. fact. Vs cant. pesada kg</label>
+        <input form="frm_principal" class="form-control" name="diff_peso_neto_kg" id="diff_peso_neto_kg" readonly/>
+        <label for="">Precio Factura</label>
+        <input form="frm_principal" class="form-control" name="precio_factura" id="precio_factura" value="{{ precio_factura}}"/>
+        <label for="">#Lote Material Proveedor</label>
+        <input form="frm_principal" class="form-control" name="lote_material_proveedor" id="lote_material_proveedor" value="{{ lote_material_proveedor}}"/>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <legend>Pesos</legend>
+        <label># Estiba</label>
+        <input form="frm_pesos" class="form-control" name="estiba" id="estiba" value="{{ estiba }}"/>
+        <label>Peso Bruto kg</label>
+        <input form="frm_pesos" class="form-control" name="bruto" id="bruto" value="{{ bruto }}">
+        <label>Tara kg</label>
+        <input form="frm_pesos" class="form-control" name="tara" id="tara" value="{{ tara }}">
+        <button class="btn btn-primary" form="frm_pesos" id="agregar_peso">Agregar</button>
+        <button class="btn btn-primary" form="frm_pesos" id="eliminar_peso">Eliminar</button>
+
+        <table class="table" id="pesos">
+          <tr>
+            <th><input type="checkbox"></th>
+            <th>#Estiba</th>
+            <th>Bruto kg</th>
+            <th>Tara kg</th>
+            <th>Neto kg</th>
+            
+          </tr>
+          % for row in weighdata:
+          <tr class="valores" data-estiba="{{row['estiba']}}">
+            <td><input type="checkbox" data-estiba="{{row['estiba']}}"></td>
+            <td scope="row">{{row['estiba']}}</td>
+            <td>{{row['bruto']}}</td>
+            <td>{{row['tara']}}</td>
+            <td>{{ str(float(row['bruto']) - float(row['tara'])) }}</td>
+          </tr>
+          % end
+        </table>
+        <label>Otros Pesos de Tara en Kg (Peso Cajas y Canastillas)</label>
+
+        <label>Total Peso Neto</label>
+	<div class="rows">
+	  <div class="col-xs-6">
+            <input form="frm_pesos" class="form-control" name="otros_pesos_tara" id="otros_pesos_tara" value="{{ otros_pesos_tara }}"/>
+	  </div>
+	  <div class="col-xs-3">
+            <input form="frm_pesos" class="form-control" name="agregar_peso_valor" id="agregar_peso_valor"/>
+	  </div>
+	  <div class="col-xs-3">
+            <button id="agregar_peso_c">Agregar Peso</button>
+	  </div>
+	</div>
+      </fieldset>
+      <input form="frm_pesos" class="form-control" name="total_peso_neto" id="total_peso_neto" readonly/>
+
+      <fieldset  class="form-group" id="grupo_transporte">
+        <legend>Inspeccion Calidad Transporte</legend>
+        <table class="table">
+          <tr>
+            <td></td>
+            <td>C</td>
+            <td>NC</td>
+            <td>NA</td>
+          </tr>
+          <tr>
+            <td><label>Dotacion Personal</label></td>
+            <td><input from="frm_principal" type="radio" class="form-check-input" name="dotacion_personal" id="dotacion_personal_C" value="C"  {{ checkradio(dotacion_personal,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="dotacion_personal" id="dotacion_personal_N" value="N"  {{ checkradio(dotacion_personal,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="dotacion_personal" id="dotacion_personal_A" value="A"  {{ checkradio(dotacion_personal,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Estado del Vehiculo (Piso)</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_piso" id="estado_vehiculo_piso_C" value="C" {{ checkradio(estado_vehiculo_piso,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_piso" id="estado_vehiculo_piso_N" value="N" {{ checkradio(estado_vehiculo_piso,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_piso" id="estado_vehiculo_piso_A" value="A" {{ checkradio(estado_vehiculo_piso,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Estado del Vehiculo (Paredes)</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_paredes" id="estado_vehiculo_paredes_C" value="C" {{ checkradio(estado_vehiculo_paredes,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_paredes" id="estado_vehiculo_paredes_N" value="N" {{ checkradio(estado_vehiculo_paredes,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_paredes" id="estado_vehiculo_paredes_A" value="A" {{ checkradio(estado_vehiculo_paredes,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Estado del Vehiculo (Techo)</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_techo" id="estado_vehiculo_techo_C" value="C" {{ checkradio(estado_vehiculo_techo,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_techo" id="estado_vehiculo_techo_N" value="N" {{ checkradio(estado_vehiculo_techo,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="estado_vehiculo_techo" id="estado_vehiculo_paredes_A" value="A" {{ checkradio(estado_vehiculo_techo,'A') }}></td>
+          </tr>
+
+          <tr>
+            <td><label>Elementos Extraños</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="elementos_extranos" id="elementos_extranos_C" value="C" {{ checkradio(elementos_extranos,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="elementos_extranos" id="elementos_extranos_N" value="N" {{ checkradio(elementos_extranos,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="elementos_extranos" id="elementos_extranos_A" value="A" {{ checkradio(elementos_extranos,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Estado Unidades Empaque</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="est_unid_empaque" id="est_unid_empaque_C" value="C" {{ checkradio(est_unid_empaque,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="est_unid_empaque" id="est_unid_empaque_N" value="N" {{ checkradio(est_unid_empaque,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="est_unid_empaque" id="est_unid_empaque_A" value="A" {{ checkradio(est_unid_empaque,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Libre Infestacion Plagas</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="libre_infest_plag" id="libre_infest_plag_C" value="C" {{ checkradio(libre_infest_plag,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="libre_infest_plag" id="libre_infest_plag_N" value="N" {{ checkradio(libre_infest_plag,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="libre_infest_plag" id="libre_infest_plag_A" value="A" {{ checkradio(libre_infest_plag,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Inspeccion calidad materia prima</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_prim" id="insp_mat_prim_C" value="C" {{ checkradio(insp_mat_prim,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_prim" id="insp_mat_prim_N" value="N" {{ checkradio(insp_mat_prim,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_prim" id="insp_mat_prim_A" value="A" {{ checkradio(insp_mat_prim,'A') }}></td>
+          </tr>
+
+        </table>
+        
+      </fieldset>
+      <fieldset class="form-group" id="grupo_materia_prima">
+        <legend>Inspeccion Calidad Materia Prima</legend>
+        <table class="table">
+          <tr>
+            <td></td>
+            <td>C</td>
+            <td>NC</td>
+            <td>NA</td>
+          </tr>
+          <tr>
+            <td><label>Color</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_color" id="insp_mat_color_C" value="C" {{ checkradio(insp_mat_color,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_color" id="insp_mat_color_N" value="N" {{ checkradio(insp_mat_color,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_color" id="insp_mat_color_A" value="A" {{ checkradio(insp_mat_color,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Olor</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_olor" id="insp_mat_olor_C" value="C" {{ checkradio(insp_mat_olor,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_olor" id="insp_mat_olor_N" value="N" {{ checkradio(insp_mat_olor,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_olor" id="insp_mat_olor_A" value="A" {{ checkradio(insp_mat_olor,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Sabor</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_sabor" id="insp_mat_sabor_C" value="C" {{ checkradio(insp_mat_sabor,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_sabor" id="insp_mat_sabor_N" value="N" {{ checkradio(insp_mat_sabor,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_sabor" id="insp_mat_sabor_A" value="A" {{ checkradio(insp_mat_sabor,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Elementos Extra&ntilde;os</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_elem_extra" id="insp_mat_elem_extra_C" value="C" {{ checkradio(insp_mat_elem_extra,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_elem_extra" id="insp_mat_elem_extra_N" value="N" {{ checkradio(insp_mat_elem_extra,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_mat_elem_extra" id="insp_mat_elem_extra_A" value="A" {{ checkradio(insp_mat_elem_extra,'A') }}></td>
+          </tr>
+
+          <tr>
+            <td><label>Madurez</label></td>
+            <td colspan="2">
+              <select form="frm_principal" name="insp_mat_madurez" id="insp_mat_madurez" class="form-control custom-select">
+                <option>
+                <option>Verde
+                <option>Pintona
+                <option>Madura
+                <option>Sobre Madura
+              </select>
+            </td>
+          </tr>
+
+         </table>       
+      </fieldset>
+
+      <fieldset class="form-group" id="grupo_empaque">
+        <legend>Inspeccion Empaque</legend>
+        <table class="table">
+          <tr>
+            <td></td>
+            <td>C</td>
+            <td>NC</td>
+            <td>NA</td>
+          </tr>
+          <tr>
+            <td><label>Color</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_color" id="insp_epm_color_C" value="C" {{ checkradio(insp_epm_color,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_color" id="insp_epm_color_N" value="N" {{ checkradio(insp_epm_color,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_color" id="insp_epm_color_A" value="A" {{ checkradio(insp_epm_color,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Olor</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_olor" id="insp_epm_olor_C" value="C" {{ checkradio(insp_epm_olor,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_olor" id="insp_epm_olor_N" value="N" {{ checkradio(insp_epm_olor,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_olor" id="insp_epm_olor_A" value="A" {{ checkradio(insp_epm_olor,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Selle</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_selle" id="insp_epm_selle_C" value="C" {{ checkradio(insp_epm_selle,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_selle" id="insp_epm_saborselle_N" value="N" {{ checkradio(insp_epm_selle,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_selle" id="insp_epm_saborselle_A" value="A" {{ checkradio(insp_epm_selle,'A') }}></td>
+          </tr>
+          <tr>
+            <td><label>Calibre</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_calibre" id="insp_epm_calibre_C" value="C" {{ checkradio(insp_epm_calibre,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_calibre" id="insp_epm_calibre_N" value="N" {{ checkradio(insp_epm_calibre,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_calibre" id="insp_epm_calibre_A" value="A" {{ checkradio(insp_epm_calibre,'A') }}></td>
+          </tr>
+
+
+          <tr>
+            <td><label>Elementos Extra&ntilde;os</label></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_elem_extra" id="insp_epm_elem_extra_C" value="C" {{ checkradio(insp_epm_elem_extra,'C') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_elem_extra" id="insp_epm_elem_extra_N" value="N" {{ checkradio(insp_epm_elem_extra,'N') }}></td>
+            <td><input form="frm_principal" type="radio" class="form-check-input" name="insp_epm_elem_extra" id="insp_epm_elem_extra_A" value="A" {{ checkradio(insp_epm_elem_extra,'A') }}></td>
+          </tr>
+         </table>       
+      </fieldset>
+      <fieldset class="form-group">
+        <legend>Textos Ampliados</legend>
+        
+        <label>Observaciones</label>
+        <textarea class="form-control" rows="5" id="observaciones">{{observaciones}}</textarea>
+        <label>Acci&oacute;nes Correctivas</label>
+        <textarea class="form-control" rows="5" id="acciones_correctivas">{{acciones_correctivas}}</textarea>
+      </fieldset>
+
+
+        <button form="frm_principal" class="btn btn-primary guardar" data-method="{{method}}">Guardar</button>
+        <button form="frm_principal" class="btn btn-primary volver">Volver a Menu</button>
+        <button form="frm_principal" class="btn btn-primary crear_otro">Crear Otro Documento Nuevo</button>        
+    </div>
+    <div class="col-xs-1"></div>
+  </div>
+</div>
+
+<script>
+
+  //////////////////////////////////////////////
+  // Definirlos motores buscadores de materiales
+  ////////////////////////////////////////////////
+  var productos = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: '/web/entrada_materiales/consultar_materiales?query=%QUERY',
+      wildcard: '%QUERY',
+    }
+  });
+
+  var insumos = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: '/web/entrada_materiales/consultar_insumos?query=%QUERY',
+      wildcard: '%QUERY',
+    }
+  });
+
+  
+  ////////////////////////////////////////////////////
+  //Seleccionar datos de los controles que sean <select>
+  ////////////////////////////////////////////////////
+  $('#tipo_empaque').val('{{ tipo_empaque }}');
+  $('#insp_mat_madurez').val('{{ insp_mat_madurez }}');
+  $('#unidad').val('{{ unidad }}');
+  $('#idalm').val('{{ idalm }}');
+
+  ////////////////////////////////////////////////////
+  // Esconder todas las secciones opcionales
+  // que no esten activas para el tipo de documento
+  // actual
+  ////////////////////////////////////////////////////
+  $('#sub_tipo_documento').val('{{sub_tipo_documento}}');
+  eval_sub_tipo_documento('{{sub_tipo_documento}}');
+
+  ////////////////////////////
+  // Acciones a los botones
+  ///////////////////////////
+  $('#agregar_peso').on('click',function(){
+
+       form_data = {
+         estiba:$('#estiba').val(),
+         bruto:$('#bruto').val(),
+         tara:$('#tara').val()
+       }
+
+       if(form_data.estiba == '' || form_data.bruto == '' || form_data.tara == '')
+       {
+           alert('Debe diligenciar todos los datos para poder agregar la estiba');
+           return;
+       }
+  
+       HTTP_POST_JSON({
+           wait_msg: 'Agregando...',
+           url:'/web/entrada_materiales/guardar_peso',
+           data: form_data,
+           done: function(data){
+
+                 //////////////////////////
+                 // Agregar nueva linea
+                 /////////////////////////
+                 $('#pesos tbody').append('          <tr class="valores" data-estiba="'+ $('#estiba').val() +'">\
+            <td><input type="checkbox" data-estiba="'+$('#estiba').val()+'"></td>\
+            <td scope="row">'+$('#estiba').val()+'</td>\
+            <td>'+$('#bruto').val()+'</td>\
+            <td>'+$('#tara').val()+'</td>\
+            <td>'+data+'</td>\
+            </tr>');
+
+                 ////////////////////////////////////////
+                 // Limpiar campos de llenado de datos
+                 ////////////////////////////////////////
+                 $('#estiba').val('');
+                 $('#bruto').val('');
+                 $('#tara').val('');
+
+                 //////////////////////////
+                 // Recalcular pesos en campos
+                 // de totales y diferencias
+                 /////////////////////////
+                 eval_calculos_pesos();
+  
+           },
+           fail: function(){
+                 alert('Error al intentar guardar estiba');
+           }
+        });  
+  });
+
+
+  $('#eliminar_peso').on('click',function(){
+
+    var para_borrar = [];
+    $('#pesos input[type="checkbox"]').each(function(){
+      if ($(this).prop('checked') == true)
+      {
+        para_borrar.push($(this).attr('data-estiba'));
+      }
+    });
+
+
+    if(para_borrar.length > 0)
+    {
+        HTTP_POST_JSON({
+           wait_msg: 'Eliminando...',
+           url:'/web/entrada_materiales/remover_peso',
+           data: {listado: JSON.stringify(para_borrar)},
+           done: function(data){
+
+             //////////////////////////////
+             // Eliminar filas seleccionada
+             //////////////////////////////
+             $('#pesos input[type="checkbox"]').each(function(){
+               if ($(this).prop('checked') == true)
+               {
+                 $(this).parent().parent().remove();
+               }
+             });
+
+             //////////////////////////
+             // Recalcular pesos en campos
+             // de totales y diferencias
+             /////////////////////////
+             eval_calculos_pesos();
+           },
+           fail: function(){
+                 alert('Error al intentar eliminar estibas');
+           }
+        });
+  
+    }
+  
+  });
+
+  $('.volver').on('click',function(){
+    window.location.href = '/web/entrada_materiales';
+  });
+
+  $('.crear_otro').on('click',function(){
+    window.location.href = '/web/entrada_materiales/crear_entrada_material';
+  });
+
+  function eval_quality(field)
+  {
+
+    return $('#'+field+'_C').prop('checked') == true ? 'C' : ( $('#'+field+'_N').prop('checked') == true ? 'N' : 'A');
+
+  }
+
+  $('.guardar').on('click',function(){
+
+    form_data = {
+                   docmat : $('#docmat').val(),
+                   fecha_recepcion : $('#fecha_recepcion').val(),
+                   hora_recepcion : $('#hora_recepcion').val(),
+                   proveedor : $('#proveedor').val(),
+                   producto : $('#producto').val(),
+                   lote_material_proveedor : $('#lote_material_proveedor').val(),
+                   factura_proveedor : $('#factura_proveedor').val(),
+                   tipo_empaque : $('#tipo_empaque').val(),
+                   dotacion_personal: eval_quality('dotacion_personal'),
+                   estado_vehiculo_piso: eval_quality('estado_vehiculo_piso'),
+                   estado_vehiculo_paredes: eval_quality('estado_vehiculo_paredes'),
+                   estado_vehiculo_techo: eval_quality('estado_vehiculo_techo'),
+                   elementos_extranos: eval_quality('elementos_extranos'),
+                   est_unid_empaque: eval_quality('est_unid_empaque'),
+                   libre_infest_plag: eval_quality('libre_infest_plag'),
+                   insp_mat_prim: eval_quality('insp_mat_prim'),
+                   insp_mat_color: eval_quality('insp_mat_color'),
+                   insp_mat_olor: eval_quality('insp_mat_olor'),
+                   insp_mat_sabor: eval_quality('insp_mat_sabor'),
+                   insp_mat_elem_extra: eval_quality('insp_mat_elem_extra'),
+                   insp_mat_madurez: $('#insp_mat_madurez').val(),
+                   insp_epm_color: eval_quality('insp_epm_color'),
+                   insp_epm_olor: eval_quality('insp_epm_olor'),
+                   insp_epm_selle: eval_quality('insp_epm_selle'),
+                   insp_epm_calibre: eval_quality('insp_epm_calibre'),
+                   insp_epm_elem_extra: eval_quality('insp_epm_elem_extra'),
+                   factura_recibida: $('#factura_recibida').val(),
+                   producto_aprobado: '',
+                   cantidad_kg_factura: $('#cantidad_kg_factura').val(),
+                   precio_factura: $('#precio_factura').val(),
+                   observaciones: $('#observaciones').val(),
+                   acciones_correctivas: $('#acciones_correctivas').val(),
+                   orden: $('#orden').val(),
+                   tipo_documento : $('#sub_tipo_documento').val() != 'I' ? 'E' : 'I',
+                   sub_tipo_documento: $('#sub_tipo_documento').val(),
+                   unidad: $('#unidad').val(),
+                   idalm: $('#idalm').val(),
+                   otros_pesos_tara: $('#otros_pesos_tara').val()
+  
+    };
+
+    if($('.guardar').attr('data-method') == 'PUT')
+    {
+    
+       HTTP_PUT_JSON({
+          wait_msg: 'Creando...',
+          url:'/web/entrada_materiales/entrada_material',
+          data: form_data,
+          done: function(data){
+                localStorage.setItem("ultima_entrada_material", data);
+                window.location.href = '/web/entrada_materiales/entrada_material?id='+data
+          },
+          fail: function(failObj){
+                $.unblockUI();
+                alert('Error al intentar guardar la entrada de material: '+failObj.responseText);
+          }
+       });
+    
+    }else{
+
+        HTTP_POST_JSON({
+           wait_msg: 'Guardando...',
+           url:'/web/entrada_materiales/entrada_material',
+           data: form_data,
+           done: function(data){
+                 localStorage.setItem("ultima_entrada_material", data);
+                 window.location.href = '/web/entrada_materiales/entrada_material?id='+data
+           },
+           fail: function(failObj){
+                 $.unblockUI();
+                 alert('Error al intentar guardar la entrada de material: '+failObj.responseText);
+           }
+        });
+
+     }
+  
+  });
+
+
+  var proveedores = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+      url: '/web/entrada_materiales/consultar_asociados?query=%QUERY',
+      wildcard: '%QUERY',
+    }
+  });
+  
+  $('#proveedor').typeahead(null, {
+    name: 'best-pictures',
+    display: 'id',
+    source: proveedores,
+    hint: true,
+    highlight: true,
+    minLength: 1,
+    limit:20,
+    templates: {
+      empty: '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>No hay resultados para la busqueda</strong></div>',
+      suggestion: function(param){ return '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>'+param.value+'</strong> – '+param.id+'</div>'; }
+    }
+  });
+
+  $('#proveedor').on('typeahead:selected', function(evt, item) {
+    $('#proveedor_descripcion').val(item.value);
+  });
+  
+  $('#producto').typeahead(null, {
+    name: 'best-pictures',
+    display: 'id',
+    source: productos,
+    hint: true,
+    highlight: true,
+    minLength: 1,
+    limit:20,
+    templates: {
+      empty: '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>No hay resultados para la busqueda</strong></div>',
+      suggestion: function(param){ return '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>'+param.value+'</strong> – '+param.id+'</div>'; }
+    }
+  });
+ $('#producto').on('typeahead:selected', function(evt, item) {
+    $('#producto_descripcion').val(item.value);
+  })
+
+  console.log('finalizar...');
+
+  function eval_sub_tipo_documento(sub_tipo)
+  {
+
+    if(sub_tipo == '')
+      return;
+
+    if($('#producto').typeahead)
+       $('#producto').typeahead('destroy');
+  
+    $('#producto').typeahead(null, {
+      name: 'best-pictures',
+      display: 'id',
+      source: sub_tipo == 'I' ? insumos : productos,
+      hint: true,
+      highlight: true,
+      minLength: 1,
+      limit:20,
+      templates: {
+        empty: '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>No hay resultados para la busqueda</strong></div>',
+        suggestion: function(param){ return '<div style="background: #ffffff; border-color: black; border-style: solid; border-width: 1px;"><strong>'+param.value+'</strong> – '+param.id+'</div>'; }
+      }
+    });
+
+    $('#producto').on('typeahead:selected', function(evt, item) {
+      $('#producto_descripcion').val(item.value);
+    });
+
+  
+    if(sub_tipo == 'MPF')
+    {
+      $('#grupo_empaque').hide();
+      $('#grupo_transporte').show();
+      $('#grupo_materia_prima').show();
+    }
+    else if (sub_tipo == 'MPP')
+    {
+      $('#grupo_empaque').hide();
+      $('#grupo_transporte').show();
+      $('#grupo_materia_prima').show();
+    }
+    else if(sub_tipo == 'I')
+    {
+      $('#grupo_empaque').show();
+      $('#grupo_transporte').hide();
+      $('#grupo_materia_prima').hide();
+    }
+    else
+    {
+      $('#grupo_empaque').hide();
+      $('#grupo_transporte').hide();
+      $('#grupo_materia_prima').hide();
+    }
+
+  }
+
+  function eval_calculos_pesos()
+  {
+    ////////////////////////////
+    // calcular suma pesos netos
+    ////////////////////////////
+    var total_neto = 0.0;
+    var otros_pesos_tara = 0.0;
+    otros_pesos_tara = parseFloat($('#otros_pesos_tara').val());
+
+    if(!otros_pesos_tara)
+      otros_pesos_tara = 0.0;
+
+    $('#pesos tr.valores').each(function(){
+
+      total_neto += parseFloat($(this).find('td').eq(4).text());
+
+    });
+
+    if(total_neto)
+      $('#total_peso_neto').val(total_neto - otros_pesos_tara);
+
+    ////////////////////////////
+    // calcular diferencia entre
+    // neto y la cantidad reportada
+    // en la factura
+    ////////////////////////////
+    var cantidad_factura = parseFloat($('#cantidad_kg_factura').val());
+    var diferencia = cantidad_factura - total_neto;
+
+    if(diferencia || diferencia === 0)
+      $('#diff_peso_neto_kg').val(diferencia);
+
+  }
+
+  $('#sub_tipo_documento').on('change',function(){
+
+      eval_sub_tipo_documento($(this).val())
+
+  });
+
+  $('#otros_pesos_tara').on('change',function(){
+  
+      eval_calculos_pesos();
+
+  });
+
+
+  $('#cantidad_kg_factura').on('change',function(){
+  
+      eval_calculos_pesos();
+
+  });
+
+  $('#prov_data_doc_ant').on('click',function(){
+
+        form_data = {id: localStorage.getItem("ultima_entrada_material")}
+
+  
+        HTTP_GET_JSON({
+           wait_msg: 'Guardando...',
+           url:'/web/entrada_materiales/entrada_material_json',
+           data: form_data,
+           done: function(data){
+  
+               if(data)
+               {
+                   $('#orden').val(data.orden);
+                   $('#factura_proveedor').val(data.factura_proveedor);
+                   $('#lote_material_proveedor').val(data.lote_material_proveedor);
+                   $('#proveedor_descripcion').val(data.idasoc_txt);
+                   $('#proveedor').val(data.idasoc);
+  
+               }
+           },
+           fail: function(){
+                 alert('Falla al intentar cargar datos proveedor documento anterior');
+           }
+        });
+
+  
+                                           
+  });
+
+  $('#agregar_peso_c').on('click',function(){
+        debugger;
+        try
+        {
+            if(isNaN(parseFloat($("#otros_pesos_tara").val())))
+            {
+                $("#otros_pesos_tara").val('0.0');
+            }
+            var valor = parseFloat($('#agregar_peso_valor').val()) + parseFloat($("#otros_pesos_tara").val());
+            if(!isNaN(valor))
+            {
+                $("#otros_pesos_tara").val(valor);
+            }
+            $('#agregar_peso_valor').val("");
+
+        }
+       catch(err)
+       {
+            console.log("Fallo al agregar valores"+err);
+       }
+  });
+  
+  </script>
