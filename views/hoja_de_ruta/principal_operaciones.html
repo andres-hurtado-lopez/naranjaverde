@@ -75,7 +75,7 @@ id = request.params.get('id')
     <tbody>
         <% db.execute("""SELECT ho.`idmat`, ho.`operacion`, ho.`descripcion`,
                         format( (ho.`capacidad_kg_h` * ho.`operarios` ) ,2 ) as capacidad_kg_h, ho.`tipo`, 
-                        ho.`operarios`, ho.`fresco`, ho.`clase`,format( ifnull(t1.costo_operacion , 0) ,2 ) as costo_operacion
+                        ho.`operarios`, ho.`fresco`, ho.`clase`,format( ifnull( if(ho.tipo = 'TUR' , t1.costo_operacion * ho.operarios, t1.costo_operacion ), 0) ,2 ) as costo_operacion
                         FROM hoja_ruta_operaciones as ho
                         LEFT OUTER JOIN ( select  idmat,operacion,ifnull(sum(costo * cantidad) , 0) as costo_operacion 
                         from hoja_ruta_componentes 
