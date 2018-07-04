@@ -43,7 +43,7 @@ db = utils.ConnectDB()
     </thead>
     <tbody>
         <% db.execute(""" SELECT `idtercero`, `nombre`,ifnull( `salario` , 0) as salario, ifnull(`notas`, '') as notas, `tipo` 
-                        FROM `terceros`""",[])
+                        FROM `terceros` Order By tipo, nombre""",[])
            for row in db:
         %>
         <tr>
