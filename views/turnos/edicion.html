@@ -33,7 +33,7 @@ end
 
        
 %>
-<h2 class="ui header">{{titulo}} Turno:</h2>
+<h2 class="ui header">{{titulo}} Registro Personal:</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
@@ -42,7 +42,7 @@ end
         <div class="menu">
             <div class="item" data-value="">Menu</div>
             <div class="item" data-value="/home.html">Inicio</div>
-            <div class="item" data-value="/turnos/principal.html">Turnos</div>
+            <div class="item" data-value="/turnos/principal.html">Control Personal</div>
         </div>
     </div>  
 
@@ -50,11 +50,11 @@ end
 <br>
     <div class="two fields">
             <div class="field">
-                <label>Fecha Turno</label>
+                <label>Fecha Registro</label>
                 <input type="date" name="fecha_turno"  value="{{fecha_turno}}" required>
             </div>
             <div class="field">
-                <label>Turno</label>
+                <label>Horario Laborado</label>
                 <select name="turno" id="turno" value="{{turno}}}" required >
                 <option value=""></option>
                 <option value="1">06:00am - 02:00pm</option>
@@ -67,11 +67,11 @@ end
 
     <div class="fields">
         <div class="eight wide field">
-          <label>Desde</label>
+          <label>Inicia Laborar</label>
           <input type="datetime-local" name="desde" value="{{desde}}">
         </div>
         <div class="eight wide field">
-          <label>Hasta</label>
+          <label>Termina Laborar</label>
           <input type="datetime-local" name="hasta" value="{{hasta}}">
         </div>        
     </div>
@@ -85,6 +85,13 @@ end
         </select>
         
     </div>
+    <div class="field">
+        <label>Observaciones</label>
+        
+        <textarea name="observaciones"></textarea>
+        
+    </div>
+
 
 
     <div class="ui buttons">

@@ -13,7 +13,7 @@ q_desde = request.GET.q_desde if request.GET.q_desde else weekstart.strftime('%Y
 q_hasta = request.GET.q_hasta if request.GET.q_hasta else weekend.strftime('%Y-%m-%d')
 
 %>
-<h2 class="ui header">Control Turnos</h2>
+<h2 class="ui header">Control Personal</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
@@ -22,7 +22,7 @@ q_hasta = request.GET.q_hasta if request.GET.q_hasta else weekend.strftime('%Y-%
         <div class="menu">
             <div class="item" data-value="">Menu</div>
             <div class="item" data-value="/home.html">Inicio</div>
-            <div class="item" data-value="edicion.html">Crear Turnos</div>
+            <div class="item" data-value="edicion.html">Crear Registro Personal</div>
         </div>
     </div>  
 <br>
