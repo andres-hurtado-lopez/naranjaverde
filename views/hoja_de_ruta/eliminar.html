@@ -7,7 +7,9 @@ db = utils.ConnectDB()
 id = request.params.get('id')
 
 
-db.execute("""DELETE FROM `materiales` WHERE idmat = %s """,[ id,])
-db.execute('COMMIT WORK');
+db.execute("""DELETE FROM `hoja_ruta` WHERE idmat = %s """,[ id,])
+db.execute("""DELETE FROM `hoja_ruta_componentes` WHERE idmat = %s """,[ id,])
+db.execute("""DELETE FROM `hoja_ruta_operaciones` WHERE idmat = %s """,[ id,])
+db.execute('COMMIT WORK')
 
 redirect('principal.html')

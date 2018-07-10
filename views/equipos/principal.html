@@ -41,7 +41,7 @@ db = utils.ConnectDB()
         <th>Horno</th>
         <th>Serial</th>
         <th>Lote Fabriaci&oacute;</th>
-        <th>Informacion T&eacute;cnica</th>
+        <!-- <th>Informacion T&eacute;cnica</th> -->
         <th>Numero Activo</th>
         <th>Catalogo</th>
         <th>Foto</th>
@@ -61,7 +61,7 @@ db = utils.ConnectDB()
             <td>{{row['horno']}}</td>
             <td>{{row['serial']}}</td>
             <td>{{row['lote_fabricacion']}}</td>
-            <td>{{row['informacion_tecnica']}}</td>
+            <!-- <td>{{row['informacion_tecnica']}}</td> -->
             <td>{{row['numero_activo']}}</td>
             <td>{{row['catalogo']}}</td>
             <td><a href="foto_equipo?raw_request=true&id={{row['equipo']}}"><img class="ui avatar image" src="foto_equipo?raw_request=true&id={{row['equipo']}}" alt="{{row['equipo']}}"></a></td>
