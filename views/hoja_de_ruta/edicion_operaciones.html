@@ -9,14 +9,17 @@ id = request.GET.id
 operacion = request.GET.oper
 title = request.GET.title
 operarios = request.GET.opera
+mensaje = request.params.get('mensaje')
 
 if id and operacion:
+
     db.execute("""SELECT * FROM hoja_ruta_operaciones  WHERE idmat = %s and operacion = %s """,[id,operacion])
     vara = db.fetchone()
     locals().update(vara)
 else:
 
-db.execute("""SELECT ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco,"" as clase
+# ifnull(CONVERT(max(`operacion`)+1 , SIGNED) , 1)  as 
+db.execute("""SELECT 0 as operacion,"" as descripcion,"" as capacidad_kg_h, "" as operarios,"" as tipo ,0 as fresco,"" as clase
                 FROM `hoja_ruta_operaciones`
                 WHERE `idmat` = %s """,[id])
                 valor = db.fetchone()
@@ -46,12 +49,12 @@ end
     <br>
     <div class="two fields">
         <div class="field">
-            <label>ID</label>
+            <label>ID Material</label>
             <input type="text" name="idmat" value="{{id}}" required="" readonly>
         </div>
         <div class="field">
             <label>Operaci&oacute;n</label>
-            <input type="text"   name="operacion" value="{{operacion}}" readonly>
+            <input type="text" id="operacion"  name="operacion" value="{{operacion}}" >
         </div>
     </div>
 
@@ -84,7 +87,7 @@ end
     <div class="two fields">
         <div class="ui toggle checkbox field" style="margin-top: 2em;">            
               <input type="checkbox" name="procesamiento" id="procesamiento" value="{{fresco}}">
-              <label>Operaci&oacute;n Procesamiento en Freco</label>
+              <label>Operaci&oacute;n Procesamiento en Fresco</label>
         </div>
         <div class="field">
             <label>Clase (Agrupar datos)</label>
@@ -99,7 +102,7 @@ end
 
         
     </div>
-
+          <input type="hidden" name="title"  value="{{title}}"
     <br> <br>
     <div class="ui buttons" >
             <button class="ui button" type="submit" formaction="guardar_operaciones.html" formmethod="POST">Guardar</button>  
@@ -117,6 +120,18 @@ if( '{{fresco}}' == 0){
     $('#procesamiento').prop('checked', true); 
 }
 
+if( '{{title}}' == 'Edicion' ){
+    $("#operacion").prop('readonly', true);
+}else{
+
+    if( '{{mensaje}}' == 'guardado' )
+       $("#operacion").prop('readonly', true);
+    else
+       $("#operacion").prop('readonly', false);
+}
+
+if( '{{mensaje}}' != '' && '{{mensaje}}' != 'None' && '{{mensaje}}' != 'guardado' )
+    alert('{{mensaje}}');
 
 $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){

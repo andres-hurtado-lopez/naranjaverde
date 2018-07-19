@@ -13,6 +13,8 @@ tipo = request.params.get('tipo')
 operarios = request.params.get('operarios')
 valor = request.params.get('procesamiento')
 clase = request.params.get('clase')
+title = request.params.get('title')
+mensaje = ''
 
 if valor:
 fresco = 1
@@ -20,8 +22,36 @@ else :
 fresco = 0
 end
 
+
+if title == 'Edicion':
+
 db.execute("""REPLACE INTO `hoja_ruta_operaciones`(`idmat`, `operacion`, `descripcion`, `capacidad_kg_h`, `tipo`,`operarios`, `fresco`,clase) 
-    VALUES ( %s,%s,%s,%s,%s,%s,%s,%s )""",[ idmat, operacion, descripcion, capacidad_kg_h, tipo,operarios,fresco,clase])
+VALUES ( %s,%s,%s,%s,%s,%s,%s,%s )""",[ idmat, operacion, descripcion, capacidad_kg_h, tipo,operarios,fresco,clase])
 db.execute('COMMIT WORK');
 
-redirect('edicion_operaciones.html?id={id}&oper={oper}&title={title}&opera={operarios}'.format(id=idmat,oper=operacion,title='Edicion',operarios=operarios) )
+else :
+
+    db.execute(""" SELECT COUNT(*) as contador FROM `hoja_ruta_operaciones` WHERE `operacion` = %s and  `idmat` = %s """,[ operacion, idmat ])
+    row_cantidad = db.fetchone();
+
+    if row_cantidad['contador'] == 0 :
+
+        db.execute("""REPLACE INTO `hoja_ruta_operaciones`(`idmat`, `operacion`, `descripcion`, `capacidad_kg_h`, `tipo`,`operarios`, `fresco`,clase) 
+            VALUES ( %s,%s,%s,%s,%s,%s,%s,%s )""",[ idmat, operacion, descripcion, capacidad_kg_h, tipo,operarios,fresco,clase])
+        db.execute('COMMIT WORK');
+        mensaje = 'guardado'
+    else :
+
+         mensaje = 'La Operacion '+operacion+' ya existe para este Material '+idmat
+    
+    end
+
+end
+
+
+redirect('edicion_operaciones.html?id={id}&oper={oper}&title={title}&opera={operarios}&mensaje={mensaje}'.format(id=idmat,oper=operacion,title=title,operarios=operarios,mensaje=mensaje) )
+
+
+
+
+

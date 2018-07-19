@@ -86,8 +86,10 @@ oper = request.params.get('oper')
                         FROM  hoja_ruta_operaciones as a
                         inner join hoja_ruta_componentes as c
                         on a.operacion = c.operacion and a.idmat=c.idmat
-                        WHERE a.idmat = %s
-                        and a.operacion = %s """,[id, operaciones] )
+                        WHERE a.idmat = %s  and a.operacion = %s 
+                        order by `ordenamiento` desc """,[id, operaciones] )
+
+
            for row in db:
         %>
         <tr>

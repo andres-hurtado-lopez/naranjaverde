@@ -9,7 +9,7 @@ id = request.GET.id
 turno = request.GET.turno
 titulo= ''
 
-db.execute(""" SELECT a.idtercero , a.nombre as description FROM terceros as a """,[])
+db.execute(""" SELECT a.idtercero , a.nombre as description FROM terceros as a WHERE a.`tipo` = 'EMPL' """,[])
 
 row_tercero = db.fetchall()
 

@@ -121,8 +121,8 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 else :
                 db.execute("""SELECT 
                                 a.`fecha_inicio`, 
-                                a.`cliente`, 
-                                c.nombre,
+                                ifnull( a.`cliente` , '' ) as cliente, 
+                                ifnull( c.nombre, '' )as nombre,
                                 a.`pedido_cliente`,
                                 a.`idmat`, 
                                 b.descripcion,
@@ -147,7 +147,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 
                for row in db:
 
-                db1.execute("""select min(t1.capacidad) as capacidad 
+                db1.execute("""select ifnull( min(t1.capacidad) , '' ) as capacidad 
                                  from 
                                 (SELECT   a.capacidad_kg_h  * a.`operarios` as capacidad
                                             FROM  hoja_ruta_operaciones as a
@@ -159,8 +159,8 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
 
                 mensa = "" 
 
-                if row_register and row_register['capacidad'] != '' :
- 
+                if row_register  and  row_register['capacidad'] != '' :
+                    
                     fecha_exp =  row['fecha_inicio'] + datetime.timedelta(days = ( float(row['cantidad_kg'] )  / float(row_register['capacidad'] )) /24);
                     
                     if fecha_exp > row['fecha_fin'] :
@@ -172,7 +172,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
 
                 end
 
-                db2.execute(""" SELECT  concat('$', format( ( (hj.cif * ot.cantidad_kg )  + t1.costo ) , 0 ) )as costo_estimado,
+                db2.execute(""" SELECT   concat('$', format( ( (hj.cif * ot.cantidad_kg )  + t1.costo ) , 0 ) )as costo_estimado,
                                         concat('$', format( (ot.precio_venta -  ( (hj.cif * ot.cantidad_kg )  + t1.costo ) ) ,0  ) )  as margen_bruto , 
                                         concat('$', format(  ( (ot.precio_venta -  ( (hj.cif * ot.cantidad_kg )  + t1.costo ) ) / ot.cantidad_kg ) ,0 ) )as margen_bruto_unitario,
                                         if( 0 > (ot.precio_venta -  ( (hj.cif * ot.cantidad_kg )  + t1.costo ) ) , 1 , 0) as perdida
@@ -195,10 +195,14 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                                 WHERE ot.orden = %s """,[row['orden'] , row['orden']])
                                 
                 row_costo = db2.fetchone()
-
+                
                 fe_des =""
                 fe_ent =""
                 M_bruto  = ""
+                margen_bruto_unitario =""
+                costo_estimado = ""
+                margen_bruto = ""
+
                 if row['fecha_despacho'] == 'No asignada' :
                     fe_des = "error"
                 end
@@ -207,9 +211,18 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                      fe_ent = "error"
                 end
 
-                if row_costo['perdida'] == 1 :
-                     M_bruto = "error"
-                end
+                if row_costo != None :
+
+                 print(row['orden'])
+                    if row_costo['perdida'] == 1 :
+                         M_bruto = "error"
+                    end
+
+                    margen_bruto_unitario = row_costo['margen_bruto_unitario']
+                    costo_estimado = row_costo['costo_estimado']
+                    margen_bruto = row_costo['margen_bruto']
+                    
+                end    
             %>
             <tr>
                 <td>{{row['fecha_inicio']}}</td>
@@ -226,9 +239,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 <td class="{{fe_ent}}">{{row['fecha_entrega']}}</td>
                 <td>{{row['orden']}}</td>
                 <td>{{row['estado']}}</td>
-                <td class="{{M_bruto}}">{{ row_costo['margen_bruto_unitario'] }}</td>
-                <td>{{row_costo['costo_estimado']}}</td>
-                <td class="{{M_bruto}}">{{row_costo['margen_bruto']}}</td>
+                <td class="{{M_bruto}}">{{ margen_bruto_unitario }}</td>
+                <td>{{ costo_estimado }}</td>
+                <td class="{{M_bruto}}">{{ margen_bruto }}</td>
 
                 <td>
                     <div class="ui buttons">
