@@ -12,9 +12,37 @@ componente = request.params.get('componente')
 cantidad = request.params.get('cantidad')
 nota = request.params.get('nota')
 fecha = request.params.get('fecha')
+fecha_inicio = request.params.get('fecha_inicio')
+fecha_fin = request.params.get('fecha_fin')
+idtercero = request.params.get('idtercero')
 
-db.execute(""" UPDATE ordenes_registro set `orden` =%s , `operacion`=%s, `componente`=%s, `cantidad`=%s, `notas`=%s, `fecha`=%s where id = %s """
-,[ orden, operacion,componente,cantidad,nota,fecha,id])
+if componente == 'None' :
+
+cantidad = ( datetime.datetime.strptime(fecha_fin, '%Y-%m-%dT%H:%M:%S') - datetime.datetime.strptime(fecha_inicio, '%Y-%m-%dT%H:%M:%S') ).total_seconds() /3600
+
+componente = ''
+costos_orden = 0
+
+else :
+
+db.execute("""SELECT costo
+FROM hoja_ruta_componentes as h
+INNER JOIN ordenes as o
+ON h.idmat=o.idmat  
+WHERE h.operacion = %s and o.orden = %s
+      and componente =%s  """,[ operacion,orden,componente ])
+
+
+row_costo = db.fetchone()
+
+costos_orden = float( row_costo['costo'] ) * float(cantidad) 
+
+end
+
+
+
+db.execute(""" UPDATE ordenes_registro set `orden` =%s , `operacion`=%s, `componente`=%s, `cantidad`=%s, `notas`=%s, `fecha`=%s ,fecha_inicio =%s, fecha_fin=%s, idtercero =%s , costos =%s where id = %s """
+,[ orden, operacion,componente,cantidad,nota,fecha,fecha_inicio,fecha_fin,idtercero,costos_orden,id])
 db.execute('COMMIT WORK');
 
 

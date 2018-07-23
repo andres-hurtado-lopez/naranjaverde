@@ -7,7 +7,7 @@ db = utils.ConnectDB()
 
 id = request.params.get('id')
 
-db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, DATE_FORMAT(`fecha`,'%%Y-%%m-%%dT%%H:%%i:%%s') AS fecha
+db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, format(`cantidad`,2) as cantidad, `notas`, DATE_FORMAT(`fecha`,'%%Y-%%m-%%dT%%H:%%i:%%s') AS fecha, DATE_FORMAT(`fecha_inicio`,'%%Y-%%m-%%dT%%H:%%i:%%s') AS fecha_inicio, DATE_FORMAT(`fecha_fin`,'%%Y-%%m-%%dT%%H:%%i:%%s') AS fecha_fin, `idtercero`
 FROM `ordenes_registro` WHERE `id`= %s """,[id])
 
 
@@ -45,7 +45,9 @@ and b.estado='en proceso' """,[row_registro['orden'],row_registro['operacion'] ]
 
 row_componente = db.fetchall()
 
+db.execute(""" SELECT a.idtercero , a.nombre as description FROM terceros as a WHERE a.`tipo` = 'EMPL' """,[])
 
+row_tercero = db.fetchall()
 
 %>
 
@@ -76,7 +78,7 @@ row_componente = db.fetchall()
           <label>Orden</label>
           <select class="ui search selection dropdown" id="orden" name="orden" >
               % for row in row_ordenes :  
-              <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
+              <option value="{{row['orden']}}">{{ row['nombre'] + u' - ' + str(row['orden']) +u' - ' +row['descripcion'] + u' - '+ str(row['fecha_inicio']) +u' - '+ str(row['cantidad_kg']) }}</option>
               %end
             </select>
         </div>
@@ -85,7 +87,7 @@ row_componente = db.fetchall()
                 <label>Operaci&oacute;n</label>
                 <select class="ui search selection dropdown" id="operacion" name="operacion" >      
                         % for row in row_operacion :  
-                        <option value="{{row['operacion']}}">{{ row['operacion'] + ' - ' + str(row['descripcion'])  }}</option>
+                        <option value="{{row['operacion']}}">{{ row['operacion'] +u' - ' + row['descripcion']  }}</option>
                         %end            
                 </select>
         </div>
@@ -97,6 +99,26 @@ row_componente = db.fetchall()
                         <option value="{{row['componente']}}">{{ row['componente'] }}</option>
                         %end            
                  </select>
+        </div>
+    </div>
+
+    <div class="two fields">
+            
+        <div class="ui field">
+            <label>Operario</label>
+               <select class="ui search selection dropdown" id="operario" name="operario">
+                % for row in row_tercero : 
+                    <option value="{{row['idtercero']}}">{{ str(row['idtercero']) + ' - ' + row['description'] }}</option>  
+                %end
+            </select>
+        </div>
+        <div class="ui field">
+            <label>Fecha Inicio</label>
+            <input type="datetime-local" value="{{row_registro['fecha_inicio']}}" name="fecha_inicio" >
+         </div>
+        <div class="ui field">
+            <label>Fecha Fin</label>
+                <input type="datetime-local"  value="{{row_registro['fecha_fin']}}" name="fecha_fin"  >
         </div>
     </div>
 
@@ -126,7 +148,16 @@ row_componente = db.fetchall()
 
 $('#orden').dropdown('set selected','{{row_registro["orden"]}}');
 $('#operacion').dropdown('set selected','{{row_registro["operacion"]}}');
-$('#componente').dropdown('set selected','{{row_registro["componente"]}}');
+$('#componente').append('<option value="None">(Ninguno)</option>');
+
+if('{{row_registro["componente"]}}' == '' || '{{row_registro["componente"]}}' == 'None'){
+ 
+ $('#componente').dropdown('set selected','None');
+
+}else{
+    $('#componente').dropdown('set selected','{{row_registro["componente"]}}');
+}
+$('#operario').dropdown('set selected','{{row_registro["idtercero"]}}');
 
 $('#orden').on('change', function(){
 
@@ -152,6 +183,7 @@ $('#operacion').on('change', function() {
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=1&oper="+$('#operacion').val(), function( data ) {
 
             $('#componente').empty();
+            $('#componente').append('<option value="None">(Ninguno)</option>');
             data.results.forEach(function(element) {
                 
                 $('#componente').append('<option value="'+element.componente+'">'+element.componente+'</option>');

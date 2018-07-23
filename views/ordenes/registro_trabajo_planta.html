@@ -8,6 +8,10 @@ db = utils.ConnectDB()
 orden = request.GET.orden
 operacion = request.GET.operacion
 
+db.execute(""" SELECT a.idtercero , a.nombre as description FROM terceros as a WHERE a.`tipo` = 'EMPL' """,[])
+
+row_tercero = db.fetchall()
+
 db.execute(""" SELECT t.nombre,o.`orden`,m.descripcion,o.`fecha_inicio`,o.`cantidad_kg` 
 FROM `ordenes` as o inner join terceros  as t
 on o.cliente=t.idtercero
@@ -42,6 +46,7 @@ where o.estado='en proceso' Limit 100 """,[])
             <div class="ui field">
             <label>Orden</label>
             <select class="ui search selection dropdown" id="orden" name="orden" value={{orden}}>
+                   
                 % for row in db :  
                 <option value="{{row['orden']}}">{{ row['nombre'] + ' - ' + str(row['orden']) + ' - ' +row['descripcion'] + ' - '+ str(row['fecha_inicio']) +' - '+ str(row['cantidad_kg']) }}</option>
                 %end
@@ -50,20 +55,41 @@ where o.estado='en proceso' Limit 100 """,[])
 
             <div class="ui field">
                     <label>Operaci&oacute;n</label>
-                    <select class="ui search selection dropdown" id="operacion" name="operacion" required=""  value={{operacion}}>                  
+                    <select class="ui search selection dropdown" id="operacion" name="operacion" value={{operacion}}>                  
                     </select>
             </div>
 
             <div class="ui field">
                     <label>Componentes</label>
-                    <select class="ui search selection dropdown" id="componente" name="componente" required="" >                  
+                    <select class="ui search selection dropdown" id="componente" name="componente" >                  
                     </select>
             </div>
     </div>
+
+    <div class="two fields">
+
+        <div class="ui field">
+            <label>Operario</label>
+            <select class="ui search selection dropdown" id="operario" name="operario">
+                % for row in row_tercero : 
+                    <option value="{{row['idtercero']}}">{{ str(row['idtercero']) + ' - ' + row['description'] }}</option>  
+                %end
+            </select>
+        </div>
+        <div class="ui field">
+                <label>Fecha Inicio</label>
+                <input type="datetime-local" value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}" name="fecha_inicio" >
+        </div>
+        <div class="ui field">
+                <label>Fecha Fin</label>
+                <input type="datetime-local"  value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}" name="fecha_fin"  >
+        </div>
+    </div>
+
     <div class="two fields">
         <div class="ui field">
                 <label>Cantidad</label>
-                <input type="number" step="any" name="cantidad"  required="" >
+                <input type="number" step="any" name="cantidad"  >
         </div>
         <div class="ui field">
                 <label>Fecha y Hora</label>
@@ -100,7 +126,7 @@ where o.estado='en proceso' Limit 100 """,[])
             <th>Accion</th>
         </thead>
         <tbody>
-            <% db.execute("""SELECT `id`, `orden`, `operacion`, `componente`, `cantidad`, `notas`, `fecha` 
+            <% db.execute("""SELECT `id`, `orden`, `operacion`, ifnull(`componente` , '') as componente, format( `cantidad`, 2) as cantidad , `notas`, `fecha` 
                              FROM `ordenes_registro`
                              order by fecha  desc
             LIMIT 40""",[])
@@ -195,6 +221,8 @@ function cargar_componente(){
     $.get( "buscar_operacion_orden.json?orden="+$('#orden').val()+"&param=1&oper="+$('#operacion').val(), function( data ) {
 
             $('#componente').empty();
+            $('#componente').append('<option value="None">(Ninguno)</option>');
+
             data.results.forEach(function(element) {
                 
                 $('#componente').append('<option value="'+element.componente+'">'+element.componente+'</option>');

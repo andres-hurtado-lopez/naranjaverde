@@ -12,6 +12,12 @@ componente = request.params.get('componente')
 cantidad = request.params.get('cantidad')
 nota = request.params.get('nota')
 fecha = request.params.get('fecha')
+fecha_inicio = request.params.get('fecha_inicio')
+fecha_fin = request.params.get('fecha_fin')
+idtercero = request.params.get('idtercero')
+
+
+if componente != 'None' :
 
 db.execute("""SELECT costo
                 FROM hoja_ruta_componentes as h
@@ -25,8 +31,18 @@ row_costo = db.fetchone()
 
 costos_orden = float( row_costo['costo'] ) * float(cantidad) 
 
-db.execute("""REPLACE INTO ordenes_registro (`orden`, `operacion`, `componente`, `cantidad`, `costos`, `notas`, `fecha`) 
-value (%s,%s,%s,%s,%s,%s,%s)""",[ orden, operacion,componente,cantidad,costos_orden,nota,fecha])
+else : 
+
+cantidad = ( datetime.datetime.strptime(fecha_fin, '%Y-%m-%dT%H:%M:%S') - datetime.datetime.strptime(fecha_inicio, '%Y-%m-%dT%H:%M:%S') ).total_seconds() /3600
+
+costos_orden = 0
+componente = ''
+
+end 
+
+
+db.execute("""REPLACE INTO ordenes_registro (`orden`, `operacion`, `componente`, `cantidad`, `costos`, `notas`, `fecha`, `fecha_inicio`, `fecha_fin`, `idtercero`) 
+value (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",[ orden, operacion,componente,cantidad,costos_orden,nota,fecha,fecha_inicio,fecha_fin,idtercero])
 db.execute('COMMIT WORK')
 
 

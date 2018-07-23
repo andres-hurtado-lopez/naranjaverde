@@ -76,8 +76,8 @@ end
         </div>        
     </div>
     <div class="field">
-        <label>Operario</label>
         
+        <label>Operario</label>
         <select class="ui search selection dropdown" id="operario" name="operario">
              % for row in row_tercero : 
                  <option value="{{row['idtercero']}}">{{ str(row['idtercero']) + ' - ' + row['description'] }}</option>  
