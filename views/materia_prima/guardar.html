@@ -1,0 +1,15 @@
+<%
+import utils
+import datetime
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+idmat = request.params.get('idmat')
+
+
+db.execute(""" INSERT INTO `documentos_material`( `fecha`, `idasoc`, `idmat`, `cantidad_kg`, `lote_material_proveedor`, `factura_proveedor`, `tipo_empaque`, `dotacion_personal`, `elementos_extranos`, `est_unid_empaque`, `libre_infest_plag`, `insp_mat_prim`, `insp_mat_color`, `insp_mat_olor`, `insp_mat_sabor`, `insp_mat_elem_extra`, `insp_mat_madurez`, `insp_epm_color`, `insp_epm_olor`, `insp_epm_selle`, `insp_epm_calibre`, `insp_epm_elem_extra`, `autor`, `factura_recibida`, `producto_aprobado`, `cantidad_kg_factura`, `precio_factura`, `observaciones`, `acciones_correctivas`, `orden`, `tipo_documento`, `idalm`, `idlote`, `data_group`, `idinsumos`, `unidad`, `sub_tipo_documento`, `otros_pesos_tara`, `estado_vehiculo_piso`, `estado_vehiculo_paredes`, `estado_vehiculo_techo`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,) """,
+            [])
+
+
+redirect('principal.html')            

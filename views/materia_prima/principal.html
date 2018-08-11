@@ -1,0 +1,344 @@
+<%rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+db = utils.ConnectDB()
+
+
+db.execute("""SELECT idmat, descripcion  FROM materiales""",[])
+
+resul_material = db.fetchall()
+
+db.execute("""SELECT * FROM terceros """,[])
+
+resul_terceros = db.fetchall()
+
+db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material """,[])
+
+resul_max = db.fetchone()
+
+
+%>
+
+
+<h2 class="ui header">Registro Materia Prima</h2>
+
+<div class="ui search fluid selection dropdown optionmenu">
+        <input type="hidden" name="opciones">
+        <div class="text">Menu</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <div class="item" data-value="">Menu</div>
+            <div class="item" data-value="/home.html">Inicio</div>
+        </div>
+ </div> 
+
+ <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
+    <br>
+
+    <div class="two fields"> 
+        <div class="field">
+            <label>Tipo de Entrada</label>
+
+            <select  name="tipo" >
+                <option value="MO">Materia Prima Fresca</option>
+                <option value="MP" >Materia Prima Procesada</option>
+                <option value="IN" >Insumo</option>
+            </select>
+            
+        </div>
+        <div class="field">
+                <label>Numero de Documento</label>
+                <input type="text" value="{{resul_max['docmat']}}" readonly="" name="numero_documento">
+        </div>
+    </div>    
+    <div class="two fields">     
+        <div class="field">
+            <label>Fecha Recepcion</label>
+            <input type="date" value="" name="fecha_recepcion">
+        </div>
+        <div class="field">
+            <label>Hora Recepcion</label>
+            <input type="text" value="" name="hora_recepcion">
+        </div>
+     </div>   
+     <div class="two fields"> 
+        <div class="field">
+                <label>Producto</label>
+                <select class="ui search selection dropdown" id="producto" name="producto" required="" >
+                        <option value=""></option>
+                        % for row in resul_material :  
+                        <option value="{{row['idmat']}}">{{ row['descripcion'] }}</option>
+                        %end
+                </select>
+        </div>
+
+        <div class="field">
+                <label>Tipo de Empaque</label>
+    
+                <select  name="tipoempaque" >
+                    <option value="MO">Canastilla</option>
+                    <option value="MP" >Guacal</option>
+                    <option value="IN" >Bulto</option>
+                    <option value="IN" >Granel</option>
+                </select>
+                
+        </div>
+    </div>
+
+<h2 class="ui header">Proveedores</h2>
+
+    <br>
+
+  <div class="two fields"> 
+        <div class="field">
+                <label>Producto</label>
+                <select class="ui search selection dropdown" id="material" name="material" required="" >
+                        <option value=""></option>
+                        % for row in resul_terceros :  
+                        <option value="{{row['idtercero']}}">{{ row['nombre'] }}</option>
+                        %end
+                </select>
+        </div>
+
+        <div class="field">
+                <label>Orden de Compra</label>
+                <input type="text" value="" >
+        </div>
+   </div>
+   <div class="two fields">  
+        <div class="field">
+                <label>Factura Proveedor</label>
+                <input type="text" value="" >
+        </div>
+        <div class="field">
+                <label>Cantidad Factura</label>
+                <input type="number" value=""  step="any">
+        </div>
+        <div class="field">
+                <label>Unidad Cantidad Factura</label>
+                <input type="text" value="" >
+        </div>
+    </div>
+
+    <div class="two fields"> 
+        <div class="field">
+                <label>Diferencia Cant. Fact vs Cant. Pesada KG</label>
+                <input type="text" value="" >
+        </div>
+        <div class="field">
+                <label>Precio Factura</label>
+                <input type="number" value=""  step="any">
+        </div>
+        <div class="field">
+                <label>Lote Material Proveedor</label>
+                <input type="text" value="" >
+        </div>
+    </div>
+
+
+<h2 class="ui header">Pesos</h2>
+
+    <br>
+    <div class="two fields"> 
+        <div class="field">
+                <label>Estiba</label>
+                <input type="text" value="" >
+        </div>
+        <div class="field">
+                <label>Peso Bruto Kg</label>
+                <input type="number" value=""  step="any">
+        </div>
+        <div class="field">
+                <label>Tara Kg</label>
+                <input type="text" value="" >
+        </div>
+    </div>
+
+
+<table class="ui table">
+        <thead>
+            <th>Estiba</th>
+            <th>Bruto kg</th>
+            <th>Tara Kg</th>
+            <th>Neto Kg</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+
+                <td>
+                    <div class="ui buttons">
+                        <a class="ui vertical animated button" href="">
+                          <div class="hidden content">Eliminar</div>
+                          <div class="visible content">
+                            <i class="remove icon"></i>
+                          </div>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+<br>
+<h2 class="ui header">Inspeccion Calidad Transporte</h2>
+ 
+    <table class="ui table">
+        <thead>
+            <th></th>
+            <th>C</th>
+            <th>NC</th>
+            <th>NA</th>
+        </thead>
+        <%
+            rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
+
+            for row in rows:
+        %>
+        <tbody>
+            <tr>
+                <td>
+                     <label>{{row}}</label>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+            </tr>
+            %end
+        </tbody>
+    </table>    
+<br>
+<h2 class="ui header">Inspeccion Calidad Materia Prima</h2>
+    </table>
+        <table class="ui table">
+            <thead>
+                <th></th>
+                <th>C</th>
+                <th>NC</th>
+                <th>NA</th>
+            </thead>
+            <%
+                rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
+    
+                for row in rows:
+            %>
+            <tbody>
+                <tr>
+                    <td>
+                        <label>{{row}}</label>
+                    </td>
+                    <td> <div class="ui checkbox">
+                            <input type="checkbox" name="fun">
+                            <label></label>
+                        </div>
+                    </td>
+                    <td> <div class="ui checkbox">
+                            <input type="checkbox" name="fun">
+                            <label></label>
+                        </div>
+                    </td>
+                    <td> <div class="ui checkbox">
+                            <input type="checkbox" name="fun">
+                            <label></label>
+                        </div>
+                    </td>
+                </tr>
+                %end
+            </tbody>
+    </table>
+
+<h2 class="ui header">Inspeccion Empaque</h2>
+    </table>
+    <table class="ui table">
+        <thead>
+            <th></th>
+            <th>C</th>
+            <th>NC</th>
+            <th>NA</th>
+        </thead>
+        <%
+            rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
+
+            for row in rows:
+        %>
+        <tbody>
+            <tr>
+                <td>
+                    <label>{{row}}</label>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+                <td> <div class="ui checkbox">
+                        <input type="checkbox" name="fun">
+                        <label></label>
+                    </div>
+                </td>
+            </tr>
+            %end
+        </tbody>
+    </table>
+    <br>
+    <div class="ui buttons" >
+            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>  
+    </div>
+    <br>
+
+</form>
+
+<script type="text/javascript">
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+        window.location.href = value;
+      }
+    })
+
+    $('.ui.checkbox').on('click', function() {
+
+        var ds = this.id;
+
+        if( ds == "dotacion-1" ){
+           $(this).nextAll('.checkbox').checkbox('enable');
+           $("dotacion-2").nextAll('.checkbox').checkbox('disable');
+           $("dotacion-3").nextAll('.checkbox').checkbox('disable');
+        }
+        else if( ds == "dotacion-2" ){
+            $(this).nextAll('.checkbox').checkbox('enable');
+            $("dotacion-1").nextAll('.checkbox').checkbox('disable');
+            $("dotacion-3").nextAll('.checkbox').checkbox('disable');
+        }
+        else if( ds == "dotacion-3" ){
+            $(this).nextAll('.checkbox').checkbox('enable');
+            $("dotacion-1").nextAll('.checkbox').checkbox('disable');
+            $("dotacion-2").nextAll('.checkbox').checkbox('disable');
+        }
+        
+    })
+;
+</script>
