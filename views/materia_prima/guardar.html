@@ -5,11 +5,23 @@ from bottle import request, redirect
 
 db = utils.ConnectDB()
 
+fecha = request.params.get('fecha')
+idasoc = request.params.get('idtercero')
 idmat = request.params.get('idmat')
+cantidad_kg = 00
+lote_proveedor = request.params.get('lote_proveedor')
+factura_proveedor = request.params.get('factura_proveedor')
+tipo_empaque = request.params.get('tipo_empaque')
+
+autor = request.params.get('username')
+precio_factura = request.params.get('precio_factura')
+observacion = request.params.get('observacion')
+accion_correc = request.params.get('accion_correc')
+orden_de_compra = request.params.get('orden_de_compra')
+unidad_factura = request.params.get('unidad_factura') 
+
+db.execute(""" REPLACE INTO `documentos_material`( `fecha`, `idasoc`, `idmat`, `cantidad_kg`, `lote_material_proveedor`, `factura_proveedor`, `tipo_empaque`, `dotacion_personal`, `elementos_extranos`, `est_unid_empaque`, `libre_infest_plag`, `insp_mat_prim`, `insp_mat_color`, `insp_mat_olor`, `insp_mat_sabor`, `insp_mat_elem_extra`, `insp_mat_madurez`, `insp_epm_color`, `insp_epm_olor`, `insp_epm_selle`, `insp_epm_calibre`, `insp_epm_elem_extra`, `autor`, `factura_recibida`, `producto_aprobado`, `cantidad_kg_factura`, `precio_factura`, `observaciones`, `acciones_correctivas`, `orden`, `tipo_documento`, `idalm`, `idlote`, `data_group`, `idinsumos`, `unidad`, `sub_tipo_documento`, `otros_pesos_tara`, `estado_vehiculo_piso`, `estado_vehiculo_paredes`, `estado_vehiculo_techo`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,) """,
+            [ fecha , idasoc, idmat, cantidad_kg, lote_proveedor,factura_proveedor, tipo_empaque,     autor, precio_factura, observacion, accion_correc,orden_de_compra,      unidad_factura, ])
 
 
-db.execute(""" INSERT INTO `documentos_material`( `fecha`, `idasoc`, `idmat`, `cantidad_kg`, `lote_material_proveedor`, `factura_proveedor`, `tipo_empaque`, `dotacion_personal`, `elementos_extranos`, `est_unid_empaque`, `libre_infest_plag`, `insp_mat_prim`, `insp_mat_color`, `insp_mat_olor`, `insp_mat_sabor`, `insp_mat_elem_extra`, `insp_mat_madurez`, `insp_epm_color`, `insp_epm_olor`, `insp_epm_selle`, `insp_epm_calibre`, `insp_epm_elem_extra`, `autor`, `factura_recibida`, `producto_aprobado`, `cantidad_kg_factura`, `precio_factura`, `observaciones`, `acciones_correctivas`, `orden`, `tipo_documento`, `idalm`, `idlote`, `data_group`, `idinsumos`, `unidad`, `sub_tipo_documento`, `otros_pesos_tara`, `estado_vehiculo_piso`, `estado_vehiculo_paredes`, `estado_vehiculo_techo`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,) """,
-            [])
-
-
-redirect('principal.html')            
+redirect('principal.html')       

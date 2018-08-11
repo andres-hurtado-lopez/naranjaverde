@@ -10,7 +10,7 @@ db.execute("""SELECT idmat, descripcion  FROM materiales""",[])
 
 resul_material = db.fetchall()
 
-db.execute("""SELECT * FROM terceros """,[])
+db.execute("""SELECT * FROM terceros where `tipo` = 'PROV' """,[])
 
 resul_terceros = db.fetchall()
 
@@ -22,7 +22,7 @@ resul_max = db.fetchone()
 %>
 
 
-<h2 class="ui header">Registro Materia Prima</h2>
+<h2 class="ui header" >Registro Materia Prima</h2>
 
 <div class="ui search fluid selection dropdown optionmenu">
         <input type="hidden" name="opciones">
@@ -33,37 +33,39 @@ resul_max = db.fetchone()
             <div class="item" data-value="/home.html">Inicio</div>
         </div>
  </div> 
-
+ <br>
  <form class="ui form" method="post" enctype="multipart/form-data" acceptcharset="UTF-8">
     <br>
 
     <div class="two fields"> 
+
         <div class="field">
             <label>Tipo de Entrada</label>
 
-            <select  name="tipo" >
+            <select  name="tipo_entrada" >
                 <option value="MO">Materia Prima Fresca</option>
                 <option value="MP" >Materia Prima Procesada</option>
                 <option value="IN" >Insumo</option>
             </select>
             
         </div>
+
         <div class="field">
                 <label>Numero de Documento</label>
                 <input type="text" value="{{resul_max['docmat']}}" readonly="" name="numero_documento">
         </div>
+      <!--  <div class="field">
+                <label>Lote Material</label>
+                <input type="text" value=""  name="lote_material">
+        </div>-->
+
     </div>    
     <div class="two fields">     
-        <div class="field">
-            <label>Fecha Recepcion</label>
-            <input type="date" value="" name="fecha_recepcion">
+        <div class="ui field">
+                <label>Fecha y Hora Recepcion</label>
+                <input type="datetime-local" name="fecha" value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}"  >
         </div>
-        <div class="field">
-            <label>Hora Recepcion</label>
-            <input type="text" value="" name="hora_recepcion">
-        </div>
-     </div>   
-     <div class="two fields"> 
+
         <div class="field">
                 <label>Producto</label>
                 <select class="ui search selection dropdown" id="producto" name="producto" required="" >
@@ -77,23 +79,23 @@ resul_max = db.fetchone()
         <div class="field">
                 <label>Tipo de Empaque</label>
     
-                <select  name="tipoempaque" >
-                    <option value="MO">Canastilla</option>
-                    <option value="MP" >Guacal</option>
-                    <option value="IN" >Bulto</option>
-                    <option value="IN" >Granel</option>
+                <select  name="tipo_empaque" >
+                    <option value="canastilla">Canastilla</option>
+                    <option value="guacal" >Guacal</option>
+                    <option value="bulto" >Bulto</option>
+                    <option value="granel" >Granel</option>
                 </select>
                 
         </div>
     </div>
 
-<h2 class="ui header">Proveedores</h2>
+<h2 class="ui header"  >Proveedores:</h2>
 
     <br>
 
   <div class="two fields"> 
         <div class="field">
-                <label>Producto</label>
+                <label>Proveedor</label>
                 <select class="ui search selection dropdown" id="material" name="material" required="" >
                         <option value=""></option>
                         % for row in resul_terceros :  
@@ -104,60 +106,70 @@ resul_max = db.fetchone()
 
         <div class="field">
                 <label>Orden de Compra</label>
-                <input type="text" value="" >
+                <input type="text" value="" name="" name="orden_de_compra">
         </div>
    </div>
    <div class="two fields">  
         <div class="field">
                 <label>Factura Proveedor</label>
-                <input type="text" value="" >
+                <input type="text" value="" name="factura_proveedor" >
         </div>
         <div class="field">
                 <label>Cantidad Factura</label>
-                <input type="number" value=""  step="any">
+                <input type="number" value="" name="cantidad_factura" id="cantidad_factura"  step="any">
         </div>
         <div class="field">
                 <label>Unidad Cantidad Factura</label>
-                <input type="text" value="" >
+                <select name="unidad_factura" id="unidad_factura">
+                        <option value="kg">kg</option>
+                        <option value="un">un</option>
+                        <option value="l">l</option>
+                        <option value="m">m</option>
+                        <option value="h">h</option>
+                        <option value="ml">ml</option>
+                </select>
         </div>
     </div>
 
     <div class="two fields"> 
         <div class="field">
                 <label>Diferencia Cant. Fact vs Cant. Pesada KG</label>
-                <input type="text" value="" >
+                <input type="number" value="" name="diferencia" id="diferencia" readonly>
         </div>
         <div class="field">
                 <label>Precio Factura</label>
-                <input type="number" value=""  step="any">
+                <input type="number" value="" name="precio_factura"  step="any">
         </div>
         <div class="field">
                 <label>Lote Material Proveedor</label>
-                <input type="text" value="" >
+                <input type="text" value="" name="lote_proveedor" >
         </div>
     </div>
 
 
-<h2 class="ui header">Pesos</h2>
+<h2 class="ui header" >Pesos:</h2>
 
     <br>
     <div class="two fields"> 
         <div class="field">
                 <label>Estiba</label>
-                <input type="text" value="" >
+                <input type="text" value="" name="estiba" >
         </div>
         <div class="field">
                 <label>Peso Bruto Kg</label>
-                <input type="number" value=""  step="any">
+                <input type="number" value="" name="peso_bruto" step="any">
         </div>
         <div class="field">
                 <label>Tara Kg</label>
-                <input type="text" value="" >
+                <input type="text" value="" name="tara">
         </div>
     </div>
 
+    <div class="ui buttons" >
+            <button class="ui button" type="submit" id="agregar" >Agregar</button>  
+    </div>
 
-<table class="ui table">
+    <table class="ui table" id="tabla_peso" >
         <thead>
             <th>Estiba</th>
             <th>Bruto kg</th>
@@ -187,7 +199,7 @@ resul_max = db.fetchone()
     </table>
 
 <br>
-<h2 class="ui header">Inspeccion Calidad Transporte</h2>
+<h2 class="ui header" style="text-align: center">Inspeccion Calidad Transporte</h2>
  
     <table class="ui table">
         <thead>
@@ -197,27 +209,29 @@ resul_max = db.fetchone()
             <th>NA</th>
         </thead>
         <%
-            rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
-
+            rows =["Dotacion Personal","Estado del Vehiculo (Piso)","Estado del Vehiculo (Paredes)","Estado del Vehiculo (Techo)","Elementos Estraños","Estado Unidades Empaque","Libre Infestacion Plagas","Inspeccion Calida Materia Prima"]
+            i=0
             for row in rows:
+
+            i = i + 1
         %>
         <tbody>
             <tr>
                 <td>
                      <label>{{row}}</label>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -226,7 +240,7 @@ resul_max = db.fetchone()
         </tbody>
     </table>    
 <br>
-<h2 class="ui header">Inspeccion Calidad Materia Prima</h2>
+<h2 class="ui header" style="text-align: center">Inspeccion Calidad Materia Prima</h2>
     </table>
         <table class="ui table">
             <thead>
@@ -236,27 +250,30 @@ resul_max = db.fetchone()
                 <th>NA</th>
             </thead>
             <%
-                rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
+                rows =["Color","Olor","Sabor","Elementos Estraños"]
     
+                i=0
                 for row in rows:
+    
+                i = i + 1
             %>
             <tbody>
                 <tr>
                     <td>
                         <label>{{row}}</label>
                     </td>
-                    <td> <div class="ui checkbox">
-                            <input type="checkbox" name="fun">
+                    <td> <div class="ui radio checkbox">
+                            <input type="radio" name="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
-                    <td> <div class="ui checkbox">
-                            <input type="checkbox" name="fun">
+                    <td> <div class="ui radio checkbox">
+                            <input type="radio" name="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
-                    <td> <div class="ui checkbox">
-                            <input type="checkbox" name="fun">
+                    <td> <div class="ui radio checkbox">
+                            <input type="radio" name="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
@@ -265,7 +282,7 @@ resul_max = db.fetchone()
             </tbody>
     </table>
 
-<h2 class="ui header">Inspeccion Empaque</h2>
+<h2 class="ui header" style="text-align: center">Inspeccion Empaque</h2>
     </table>
     <table class="ui table">
         <thead>
@@ -275,27 +292,30 @@ resul_max = db.fetchone()
             <th>NA</th>
         </thead>
         <%
-            rows =["Dotacion Personal","Estado del Vehiculo (Piso)"]
+            rows =["Color","Olor","Selle","Calibre","Elementos Estraños"]
 
+            i=0
             for row in rows:
+
+            i = i + 1
         %>
         <tbody>
             <tr>
                 <td>
                     <label>{{row}}</label>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
-                <td> <div class="ui checkbox">
-                        <input type="checkbox" name="fun">
+                <td> <div class="ui radio checkbox">
+                        <input type="radio" name="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -304,14 +324,30 @@ resul_max = db.fetchone()
         </tbody>
     </table>
     <br>
+
+    <div class="field">
+        <label>Observaciones</label>
+        <textarea name="observacion"></textarea>
+    </div>
+    <div class="field">
+        <label>Acciones Correctivas</label>
+        <textarea name="accion_correc"></textarea>
+    </div>
+
     <div class="ui buttons" >
             <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>  
     </div>
-    <br>
+
 
 </form>
 
 <script type="text/javascript">
+
+   
+   $('#cantidad_factura').on('keyup', function(event){
+
+       $('#diferencia').val( $('#cantidad_factura').val() );
+   });
 
     $('.ui.dropdown.optionmenu').dropdown({
       action:function(text, value){
@@ -319,7 +355,17 @@ resul_max = db.fetchone()
       }
     })
 
-    $('.ui.checkbox').on('click', function() {
+    var resulttable_peso = $('#tabla_peso tbody');
+    resulttable_peso.empty();
+
+    $('#agregar').click( function(){
+
+        
+        resulttable_peso.append('<tr><td>'+'dfddf'+'</td><td>'+'ddd'+'</td><td>'+'fssf'+'</td><td>'+'safe'+'</td></tr>');
+
+
+    });
+ /*   $('.ui.checkbox').on('click', function() {
 
         var ds = this.id;
 
@@ -339,6 +385,6 @@ resul_max = db.fetchone()
             $("dotacion-2").nextAll('.checkbox').checkbox('disable');
         }
         
-    })
-;
+    })*/
+
 </script>
