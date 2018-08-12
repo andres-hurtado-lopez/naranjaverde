@@ -110,7 +110,7 @@ def root_POST(*args,**kwargs):
     if request.params.get('raw_request','') == 'true':
         loc = {}
         glob = {}
-        execfile('./views/'+path,glob, loc )
+        execfile('./views/'+kwargs['path'],glob, loc )
         response.content_type = loc['content_type']
         return loc.get('raw_output')
     if os.path.isfile('./views/'+kwargs['path']):

@@ -6,15 +6,15 @@ from bottle import request
 db = utils.ConnectDB()
 
 
-db.execute("""SELECT idmat, descripcion  FROM materiales""",[])
+db.execute("""SELECT idmat, descripcion  FROM materiales limit 5""",[])
 
 resul_material = db.fetchall()
 
-db.execute("""SELECT * FROM terceros where `tipo` = 'PROV' """,[])
+db.execute("""SELECT * FROM terceros where `tipo` = 'PROV' limit 5""",[])
 
 resul_terceros = db.fetchall()
 
-db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material """,[])
+db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material limit 5""",[])
 
 resul_max = db.fetchone()
 
@@ -216,12 +216,12 @@ resul_max = db.fetchone()
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="trans-{{i}}" id="trans-{{i}}">
+                        <input type="radio" name="trans-{{i}}" id="transp-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="trans-{{i}}" id="trans-{{i}}">
+                        <input type="radio" name="trans-{{i}}" id="transpo-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -242,7 +242,7 @@ resul_max = db.fetchone()
             <%
                 rows =["Color","Olor","Sabor","Elementos Estraños"]
     
-                i=0
+                i=8
                 for row in rows:
     
                 i = i + 1
@@ -253,12 +253,12 @@ resul_max = db.fetchone()
                         <label>{{row}}</label>
                     </td>
                     <td> <div class="ui radio checkbox">
-                            <input type="radio" name="calidad-{{i}}" id="calidad-{{i}}">
+                            <input type="radio" name="calidad-{{i}}" id="calid-{{i}}">
                             <label></label>
                         </div>
                     </td>
                     <td> <div class="ui radio checkbox">
-                            <input type="radio" name="calidad-{{i}}" id="calidad-{{i}}">
+                            <input type="radio" name="calidad-{{i}}" id="calida-{{i}}">
                             <label></label>
                         </div>
                     </td>
@@ -300,7 +300,7 @@ resul_max = db.fetchone()
         <%
             rows =["Color","Olor","Selle","Calibre","Elementos Estraños"]
 
-            i=0
+            i=12
             for row in rows:
 
             i = i + 1
@@ -311,12 +311,12 @@ resul_max = db.fetchone()
                     <label>{{row}}</label>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="empaque-{{i}}" id="empaque-{{i}}">
+                        <input type="radio" name="empaque-{{i}}" id="empaq-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="empaque-{{i}}" id="empaque-{{i}}">
+                        <input type="radio" name="empaque-{{i}}" id="empaqu-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -507,90 +507,129 @@ resul_max = db.fetchone()
            var value_radio = "";
            var contador =1;
 
-           for(var i = 1; i <=4 ; i++ ){
+           for(var i = 1; i < 18 ; i++ ){
 
-                var tex = "";
+            var tex0 = "";
+            var tex1 = "";
+            var tex2 = "";
+              
+             if( i < 9){
+               tex0 = "#trans-"+i;
+               tex1 = "#transp-"+i;
+               tex2 = "#transpo-"+i;
+             }
+             else if( i < 13){
+               tex0 = "#calid-"+i;
+               tex1 = "#calida-"+i;
+               tex2 = "#calidad-"+i;
+             }
+             else {
+               tex0 = "#empaq-"+i;
+               tex1 = "#empaqu-"+i;
+               tex2 = "#empaque-"+i;
+             }
 
-                if( contador < 25)
-                    tex = "#trans-"+contador;
-                else if( contador < 37)   
-                    tex = "#calidad-"+contador;
-                else if( contador < 52)   
-                    tex = "#empaque-"+contador;
-                else if( contador == 52)
-                    i = 5;
-
-                if( $(tex).is(':checked')) {  
-                    
-                    if( i == 1){
+                    if( $(tex0).is(':checked')) {  
                         value_radio = "C";
-                    }else if( i==2 ){
+                    }
+                    if( $(tex1).is(':checked')) {  
                         value_radio = "N";
-                    }else if( i==3 ){
+                    }
+                    if( $(tex2).is(':checked')) {  
                         value_radio = "A";
                     }
 
-                    if( contador < 4 )
+                    if(value_radio != ""){
+
+                        if( i == 1 )
                         dotacion_personal = value_radio;
-                    else if( contador < 7)
-                        estado_vehiculo_piso = value_radio;
-                    else if( contador < 10)
-                        estado_vehiculo_paredes = value_radio;
-                    else if( contador < 13)
-                        estado_vehiculo_techo = value_radio;
-                    else if( contador < 16)    
-                        elementos_extranos = value_radio;
-                    else if( contador < 19)
-                        est_unid_empaque = value_radio;
-                    else if( contador < 22)
-                        libre_infest_plag = value_radio;
-                    else if( contador < 25)
-                        insp_mat_prim = value_radio;
-                    else if( contador < 28)                        
-                        insp_mat_color = value_radio;
-                    else if( contador < 31)    
-                        insp_mat_olor = value_radio;
-                    else if( contador < 34)
-                        insp_mat_sabor = value_radio;
-                    else if( contador < 37)    
-                        insp_mat_elem_extra = value_radio;
-                    else if( contador < 40)      
-                        insp_epm_color = value_radio;
-                    else if( contador < 43)
-                        insp_epm_olor = value_radio;
-                    else if( contador < 46)
-                        insp_epm_selle = value_radio;
-                    else if( contador < 49)
-                        insp_epm_calibre = value_radio;
-                    else if( contador < 52)
-                        insp_epm_elem_extra = value_radio;
+                        else if( i == 2)
+                            estado_vehiculo_piso = value_radio;
+                        else if( i == 3)
+                            estado_vehiculo_paredes = value_radio;
+                        else if( i == 4)
+                            estado_vehiculo_techo = value_radio;
+                        else if( i == 5)    
+                            elementos_extranos = value_radio;
+                        else if( i == 6)
+                            est_unid_empaque = value_radio;
+                        else if( i == 7)
+                            libre_infest_plag = value_radio;
+                        else if( i == 8)
+                            insp_mat_prim = value_radio;
+                        else if( i == 9)                        
+                            insp_mat_color = value_radio;
+                        else if( i == 10)    
+                            insp_mat_olor = value_radio;
+                        else if( i == 11)
+                            insp_mat_sabor = value_radio;
+                        else if( i == 12)    
+                            insp_mat_elem_extra = value_radio;
+                        else if( i == 13)      
+                            insp_epm_color = value_radio;
+                        else if( i == 14)
+                            insp_epm_olor = value_radio;
+                        else if( i == 15)
+                            insp_epm_selle = value_radio;
+                        else if( i == 16)
+                            insp_epm_calibre = value_radio;
+                        else if( i == 17)
+                            insp_epm_elem_extra = value_radio;
 
+                        value_radio="";
+                    }else{
 
-                    i=0;
-                    
+                        alert('se debe ingresar todas las calificaciones.');
+                        return;
+
+                    }
+
                 }
-                contador++;
-               /* if( i== 4 ){
-                    alert('se debe ingresar todas las calificaciones.');
-                    return;
-                }*/
+                    var array_documento =
+                                {'fecha':$('#fecha').val(),
+                                'idtercero':$('#idtercero').val(),
+                                'idmat':$('#idmat').val(),                                
+                                'lote_proveedor':$('#lote_proveedor').val(),
+                                'factura_proveedor':$('#factura_proveedor').val(),                                
+                                'tipo_empaque':$('#tipo_empaque').val(),
+                                'precio_factura':$('#precio_factura').val(),                                
+                                'observacion':$('#observacion').text(),
+                                'accion_correc':$('#accion_correc').text(),                                
+                                'orden_de_compra':$('#orden_de_compra').val(),
+                                'unidad_factura':$('#unidad_factura').val(),                                
+                                'cantidad_factura':$('#cantidad_factura').val(),
+                                'insp_mat_madurez':$('#madurez').val(),                                
+                                'dotacion_personal':dotacion_personal,
+                                'elementos_extranos':elementos_extranos,
+                                'est_unid_empaque':est_unid_empaque,                                
+                                'libre_infest_plag':libre_infest_plag,
+                                'insp_mat_prim':insp_mat_prim,
+                                'estado_vehiculo_piso':estado_vehiculo_piso,     
+                                'estado_vehiculo_paredes':estado_vehiculo_paredes,
+                                'estado_vehiculo_techo':estado_vehiculo_techo,
+                                'insp_mat_color':insp_mat_color,    
+                                'insp_mat_olor':insp_mat_olor,
+                                'insp_mat_sabor':insp_mat_sabor,
+                                'insp_mat_elem_extra':insp_mat_elem_extra,        
+                                'insp_epm_color':insp_epm_color,
+                                'insp_epm_olor':insp_epm_olor,          
+                                'insp_epm_selle':insp_epm_selle,
+                                'insp_epm_calibre':insp_epm_calibre,
+                                'insp_epm_elem_extra':insp_epm_elem_extra,
+                                'array_peso':total_array,
+                                'docmat':$('#numero_documento').val() } ;
 
-           }
-
-          
-           document.location = 'guardar.html?docmat='+$('#numero_documento').val()+'&array_peso='+total_array+
-                                '&fecha='+$('#fecha').val()+'&idtercero='+$('#idtercero').val()+'&idmat='+$('#idmat').val()+
-                                '&lote_proveedor='+$('#lote_proveedor').val()+'&factura_proveedor='+$('#factura_proveedor').val()+
-                                '&tipo_empaque='+$('#tipo_empaque').val()+'&precio_factura='+$('#precio_factura').val()+
-                                '&observacion='+$('#observacion').text()+'&accion_correc='+$('#accion_correc').text()+
-                                '&orden_de_compra='+$('#orden_de_compra').val()+'&unidad_factura='+$('#unidad_factura').val()+
-                                '&cantidad_factura='+$('#cantidad_factura').val()+'&insp_mat_madurez='+$('#madurez').val()+
-                                '&dotacion_personal='+ dotacion_personal+'&elementos_extranos='+ elementos_extranos+'&est_unid_empaque='+ est_unid_empaque+     
-                                '&libre_infest_plag='+ libre_infest_plag+'&insp_mat_prim='+ insp_mat_prim+'&estado_vehiculo_piso='+ estado_vehiculo_piso+    
-                                '&estado_vehiculo_paredes='+ estado_vehiculo_paredes+'&estado_vehiculo_techo='+ estado_vehiculo_techo+'&insp_mat_color='+ insp_mat_color+    
-                                '&insp_mat_olor='+ insp_mat_olor+'&insp_mat_sabor='+ insp_mat_sabor+'&insp_mat_elem_extra='+ insp_mat_elem_extra+    
-                                '&insp_epm_color='+ insp_epm_color+'&insp_epm_olor='+ insp_epm_olor+     
-                                '&insp_epm_selle='+ insp_epm_selle+'&insp_epm_calibre='+ insp_epm_calibre+'&insp_epm_elem_extra='+ insp_epm_elem_extra; 
+                    $.ajax({ type: "POST",
+                             url: "/materia_prima/guardar.html?raw_request=true", 
+                             data: JSON.stringify(array_documento), 
+                             contentType: "application/json; charset=utf-8",  
+                             success: function(data){
+                                 document.location='principal.html';
+                             }, 
+                             failure: function(errMsg){ 
+                                 alert(errMsg); 
+                             }
+                     });   
 
         }
     };

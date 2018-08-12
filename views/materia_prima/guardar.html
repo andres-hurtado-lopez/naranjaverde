@@ -1,55 +1,69 @@
-<%
+
 import utils
 import datetime
+import json
 from bottle import request, redirect
 
 db = utils.ConnectDB()
 
-docmat = request.params.get('docmat')
-array_peso = request.params.get('array_peso') 
-fecha = request.params.get('fecha')
-idtercero = request.params.get('idtercero')
-idmat = request.params.get('idmat')
-lote_proveedor = request.params.get('lote_proveedor')
-factura_proveedor = request.params.get('factura_proveedor')
-tipo_empaque = request.params.get('tipo_empaque')
-precio_factura = request.params.get('precio_factura')
-observacion = request.params.get('observacion')
-accion_correc = request.params.get('accion_correc')
-orden_de_compra = request.params.get('orden_de_compra')
-unidad_factura = request.params.get('unidad_factura') 
-cantidad_factura = request.params.get('cantidad_factura') 
+arreglo_documento = request.json
 
-insp_mat_madurez = request.params.get('insp_mat_madurez') 
+docmat = arreglo_documento['docmat']
+array_peso = arreglo_documento['array_peso']
 
-dotacion_personal = request.params.get('dotacion_personal')        
-elementos_extranos = request.params.get('elementos_extranos')        
-est_unid_empaque = request.params.get('est_unid_empaque')        
-libre_infest_plag = request.params.get('libre_infest_plag')       
-insp_mat_prim = request.params.get('insp_mat_prim')       
-estado_vehiculo_piso = request.params.get('estado_vehiculo_piso')       
-estado_vehiculo_paredes = request.params.get('estado_vehiculo_paredes')       
-estado_vehiculo_techo = request.params.get('estado_vehiculo_techo')       
+fecha = arreglo_documento['fecha']
+idtercero = arreglo_documento['idtercero']
+idmat = arreglo_documento['idmat']
+lote_proveedor = arreglo_documento['lote_proveedor']
+factura_proveedor = arreglo_documento['factura_proveedor']
+tipo_empaque = arreglo_documento['tipo_empaque']
+precio_factura = arreglo_documento['precio_factura']
+observacion = arreglo_documento['observacion']
+accion_correc = arreglo_documento['accion_correc']
+orden_de_compra = arreglo_documento['orden_de_compra']
+unidad_factura = arreglo_documento['unidad_factura'] 
+cantidad_factura = arreglo_documento['cantidad_factura'] 
+insp_mat_madurez = arreglo_documento['insp_mat_madurez'] 
 
-insp_mat_color = request.params.get('insp_mat_color')        
-insp_mat_olor = request.params.get('insp_mat_olor')        
-insp_mat_sabor = request.params.get('insp_mat_sabor')        
-insp_mat_elem_extra = request.params.get('insp_mat_elem_extra')             
+dotacion_personal = arreglo_documento['dotacion_personal']        
+elementos_extranos = arreglo_documento['elementos_extranos']        
+est_unid_empaque = arreglo_documento['est_unid_empaque']        
+libre_infest_plag = arreglo_documento['libre_infest_plag']       
+insp_mat_prim = arreglo_documento['insp_mat_prim']       
+estado_vehiculo_piso = arreglo_documento['estado_vehiculo_piso']       
+estado_vehiculo_paredes = arreglo_documento['estado_vehiculo_paredes']       
+estado_vehiculo_techo = arreglo_documento['estado_vehiculo_techo']       
 
-insp_epm_color = request.params.get('insp_epm_color')        
-insp_epm_olor = request.params.get('insp_epm_olor')        
-insp_epm_selle = request.params.get('insp_epm_selle')        
-insp_epm_calibre = request.params.get('insp_epm_calibre')        
-insp_epm_elem_extra = request.params.get('insp_epm_elem_extra')        
+insp_mat_color = arreglo_documento['insp_mat_color']        
+insp_mat_olor = arreglo_documento['insp_mat_olor']        
+insp_mat_sabor = arreglo_documento['insp_mat_sabor']        
+insp_mat_elem_extra = arreglo_documento['insp_mat_elem_extra']             
 
-autor = request.params.get('username')
+insp_epm_color = arreglo_documento['insp_epm_color']        
+insp_epm_olor = arreglo_documento['insp_epm_olor']        
+insp_epm_selle = arreglo_documento['insp_epm_selle']        
+insp_epm_calibre = arreglo_documento['insp_epm_calibre']        
+insp_epm_elem_extra = arreglo_documento['insp_epm_elem_extra']        
+
+
+
+db.execute(""" SELECT `user`  FROM `users` WHERE `session_key` = %s """,[ request.cookies["token"] ])
+
+usuario = db.fetchone()
 
 
 db.execute("""REPLACE INTO `documentos_material`( `fecha`, `idasoc`, `idmat`, `cantidad_kg`, `lote_material_proveedor`, `factura_proveedor`, `tipo_empaque`, `dotacion_personal`, `elementos_extranos`, `est_unid_empaque`, `libre_infest_plag`, `insp_mat_prim`, `insp_mat_color`, `insp_mat_olor`, `insp_mat_sabor`, `insp_mat_elem_extra`, `insp_mat_madurez`, `insp_epm_color`, `insp_epm_olor`, `insp_epm_selle`, `insp_epm_calibre`, `insp_epm_elem_extra`,`autor`, `factura_recibida`, `producto_aprobado`, `cantidad_kg_factura`, `precio_factura`, `observaciones`, `acciones_correctivas`, `orden`,`tipo_documento`, `idalm`, `idlote`, `data_group`, `idinsumos`, `unidad`, `sub_tipo_documento`, `otros_pesos_tara`, `estado_vehiculo_piso`, `estado_vehiculo_paredes`, `estado_vehiculo_techo`) 
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """,
-            [ fecha , idtercero, idmat, 0, lote_proveedor,factura_proveedor, tipo_empaque, dotacion_personal, elementos_extranos,est_unid_empaque,libre_infest_plag,insp_mat_prim,insp_mat_color,insp_mat_olor,insp_mat_sabor,insp_mat_elem_extra,insp_mat_madurez,insp_epm_color,insp_epm_olor,insp_epm_selle,insp_epm_calibre,insp_epm_elem_extra, autor,'','',cantidad_factura,precio_factura, observacion, accion_correc,orden_de_compra, '','','','','', unidad_factura, '',0,estado_vehiculo_piso,estado_vehiculo_paredes,estado_vehiculo_techo ])
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) """,
+            [ fecha , idtercero, idmat, 0, lote_proveedor,factura_proveedor, tipo_empaque, dotacion_personal, elementos_extranos,est_unid_empaque,libre_infest_plag,insp_mat_prim,insp_mat_color,insp_mat_olor,insp_mat_sabor,insp_mat_elem_extra,insp_mat_madurez,insp_epm_color,insp_epm_olor,insp_epm_selle,insp_epm_calibre,insp_epm_elem_extra, usuario['user'],'','',cantidad_factura,precio_factura, observacion, accion_correc,orden_de_compra, '','','','','', unidad_factura, '',0,estado_vehiculo_piso,estado_vehiculo_paredes,estado_vehiculo_techo ])
 
-#db.execute('COMMIT WORK');
 
-#redirect('principal.html')
-redirect('guardar_materia_pesos.html?docmat={docmat}&array_peso={array_peso}' .format(docmat=docmat,array_peso=array_peso) )       
+
+for row  in array_peso:
+    db.execute(""" REPLACE INTO `documentos_material_pesos`(`docmat`, `estiba`, `bruto`, `tara`) VALUES (%s,%s,%s,%s) """,
+               [ int(docmat), row[0], float(row[1]), float(row[2]) ])
+ 
+
+db.execute('COMMIT WORK');
+
+content_type = "application/json; charset=utf-8"
+raw_output = json.dumps({ "result":"exito"})
