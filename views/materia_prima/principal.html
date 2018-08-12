@@ -42,9 +42,9 @@ resul_max = db.fetchone()
         <div class="field">
             <label>Tipo de Entrada</label>
 
-            <select  name="tipo_entrada" >
-                <option value="MO">Materia Prima Fresca</option>
-                <option value="MP" >Materia Prima Procesada</option>
+            <select  name="tipo_entrada" id="tipo_entrada" >
+                <option value="MPF">Materia Prima Fresca</option>
+                <option value="MPP" >Materia Prima Procesada</option>
                 <option value="IN" >Insumo</option>
             </select>
             
@@ -52,7 +52,7 @@ resul_max = db.fetchone()
 
         <div class="field">
                 <label>Numero de Documento</label>
-                <input type="text" value="{{resul_max['docmat']}}" readonly="" name="numero_documento">
+                <input type="text" value="{{resul_max['docmat']}}" readonly="" name="numero_documento" id="numero_documento" >
         </div>
       <!--  <div class="field">
                 <label>Lote Material</label>
@@ -63,12 +63,12 @@ resul_max = db.fetchone()
     <div class="two fields">     
         <div class="ui field">
                 <label>Fecha y Hora Recepcion</label>
-                <input type="datetime-local" name="fecha" value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}"  >
+                <input type="datetime-local" name="fecha" id="fecha"value="{{ datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S') }}"  >
         </div>
 
         <div class="field">
                 <label>Producto</label>
-                <select class="ui search selection dropdown" id="producto" name="producto" required="" >
+                <select class="ui search selection dropdown" id="idmat" name="idmat" required="" >
                         <option value=""></option>
                         % for row in resul_material :  
                         <option value="{{row['idmat']}}">{{ row['descripcion'] }}</option>
@@ -79,7 +79,7 @@ resul_max = db.fetchone()
         <div class="field">
                 <label>Tipo de Empaque</label>
     
-                <select  name="tipo_empaque" >
+                <select  name="tipo_empaque" id="tipo_empaque" >
                     <option value="canastilla">Canastilla</option>
                     <option value="guacal" >Guacal</option>
                     <option value="bulto" >Bulto</option>
@@ -96,7 +96,7 @@ resul_max = db.fetchone()
   <div class="two fields"> 
         <div class="field">
                 <label>Proveedor</label>
-                <select class="ui search selection dropdown" id="material" name="material" required="" >
+                <select class="ui search selection dropdown" id="idtercero" name="idtercero" required="" >
                         <option value=""></option>
                         % for row in resul_terceros :  
                         <option value="{{row['idtercero']}}">{{ row['nombre'] }}</option>
@@ -106,13 +106,13 @@ resul_max = db.fetchone()
 
         <div class="field">
                 <label>Orden de Compra</label>
-                <input type="text" value="" name="" name="orden_de_compra">
+                <input type="text" value="" name="orden_de_compra" id="orden_de_compra">
         </div>
    </div>
    <div class="two fields">  
         <div class="field">
                 <label>Factura Proveedor</label>
-                <input type="text" value="" name="factura_proveedor" >
+                <input type="text" value="" name="factura_proveedor" id="factura_proveedor" >
         </div>
         <div class="field">
                 <label>Cantidad Factura</label>
@@ -138,11 +138,11 @@ resul_max = db.fetchone()
         </div>
         <div class="field">
                 <label>Precio Factura</label>
-                <input type="number" value="" name="precio_factura"  step="any">
+                <input type="number" value="" name="precio_factura" id="precio_factura" step="any">
         </div>
         <div class="field">
                 <label>Lote Material Proveedor</label>
-                <input type="text" value="" name="lote_proveedor" >
+                <input type="text" value="" name="lote_proveedor" id="lote_proveedor">
         </div>
     </div>
 
@@ -153,15 +153,15 @@ resul_max = db.fetchone()
     <div class="two fields"> 
         <div class="field">
                 <label>Estiba</label>
-                <input type="text" value="" name="estiba" >
+                <input type="text" value="" name="estiba"  id="estiba">
         </div>
         <div class="field">
                 <label>Peso Bruto Kg</label>
-                <input type="number" value="" name="peso_bruto" step="any">
+                <input type="number" value="" name="peso_bruto" id="peso_bruto"  step="any">
         </div>
         <div class="field">
                 <label>Tara Kg</label>
-                <input type="text" value="" name="tara">
+                <input type="text" value="" name="tara" id="tara">
         </div>
     </div>
 
@@ -182,17 +182,7 @@ resul_max = db.fetchone()
                 <td></td>
                 <td></td>
                 <td></td>
-
-                <td>
-                    <div class="ui buttons">
-                        <a class="ui vertical animated button" href="">
-                          <div class="hidden content">Eliminar</div>
-                          <div class="visible content">
-                            <i class="remove icon"></i>
-                          </div>
-                        </a>
-                    </div>
-                </td>
+                <td></td>
             </tr>
 
         </tbody>
@@ -221,17 +211,17 @@ resul_max = db.fetchone()
                      <label>{{row}}</label>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="trans-{{i}}">
+                        <input type="radio"  name="trans-{{i}}" id="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="trans-{{i}}">
+                        <input type="radio" name="trans-{{i}}" id="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="trans-{{i}}">
+                        <input type="radio" name="trans-{{i}}" id="trans-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -263,25 +253,41 @@ resul_max = db.fetchone()
                         <label>{{row}}</label>
                     </td>
                     <td> <div class="ui radio checkbox">
-                            <input type="radio" name="calidad-{{i}}">
+                            <input type="radio" name="calidad-{{i}}" id="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
                     <td> <div class="ui radio checkbox">
-                            <input type="radio" name="calidad-{{i}}">
+                            <input type="radio" name="calidad-{{i}}" id="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
                     <td> <div class="ui radio checkbox">
-                            <input type="radio" name="calidad-{{i}}">
+                            <input type="radio" name="calidad-{{i}}" id="calidad-{{i}}">
                             <label></label>
                         </div>
                     </td>
                 </tr>
                 %end
+    
             </tbody>
     </table>
 
+    <div class="two fields" > 
+        <div class="field">
+               <label>Madurez</label>
+        </div>
+        <div class="field">
+            <select name="madurez" id="madurez">
+                <option value="verde">verde</option>
+                <option value="pintona">pintona</option>
+                <option value="madura">madura</option>
+                <option value="sobre madura">sobre madura</option>
+           </select>
+        </div>
+    </div>
+    
+    <br>
 <h2 class="ui header" style="text-align: center">Inspeccion Empaque</h2>
     </table>
     <table class="ui table">
@@ -305,17 +311,17 @@ resul_max = db.fetchone()
                     <label>{{row}}</label>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="empaque-{{i}}">
+                        <input type="radio" name="empaque-{{i}}" id="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="empaque-{{i}}">
+                        <input type="radio" name="empaque-{{i}}" id="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
                 <td> <div class="ui radio checkbox">
-                        <input type="radio" name="empaque-{{i}}">
+                        <input type="radio" name="empaque-{{i}}" id="empaque-{{i}}">
                         <label></label>
                     </div>
                 </td>
@@ -325,17 +331,18 @@ resul_max = db.fetchone()
     </table>
     <br>
 
-    <div class="field">
-        <label>Observaciones</label>
-        <textarea name="observacion"></textarea>
+    <div class="two fields"> 
+        <div class="field">
+            <label>Observaciones</label>
+            <textarea name="observacion" id="observacion"></textarea>
+        </div>
+        <div class="field">
+            <label>Acciones Correctivas</label>
+            <textarea name="accion_correc" id="accion_correc"></textarea>
+        </div>
     </div>
-    <div class="field">
-        <label>Acciones Correctivas</label>
-        <textarea name="accion_correc"></textarea>
-    </div>
-
     <div class="ui buttons" >
-            <button class="ui button" type="submit" formaction="guardar.html" formmethod="POST">Guardar</button>  
+            <button class="ui button" type="submit" onclick="confirmar()" >Guardar</button>  
     </div>
 
 
@@ -343,10 +350,42 @@ resul_max = db.fetchone()
 
 <script type="text/javascript">
 
+    var arra = [];
+    var total_array = new Array();
+    var resulttable_peso = $('#tabla_peso tbody');
+    resulttable_peso.empty();
    
    $('#cantidad_factura').on('keyup', function(event){
 
-       $('#diferencia').val( $('#cantidad_factura').val() );
+
+        if(total_array.length > 0 ){
+
+            var total_valor = 0;
+            var conunt = 0;
+            for(var i=0 ; i< total_array.length ; i++){
+
+                var data = total_array[i][3]; 
+                total_valor = total_valor + parseInt( total_array[i][3] );
+                conunt++;
+            }
+            
+
+            var time = setInterval( function(){
+            
+                if( total_array.length == conunt){
+
+                    clearInterval(time);
+                    total_valor  = $('#cantidad_factura').val() - total_valor;
+                    $('#diferencia').val( total_valor );
+
+                }
+
+            },500);
+            
+        }else{
+            $('#diferencia').val( $('#cantidad_factura').val() );
+        }
+       
    });
 
     $('.ui.dropdown.optionmenu').dropdown({
@@ -355,36 +394,205 @@ resul_max = db.fetchone()
       }
     })
 
-    var resulttable_peso = $('#tabla_peso tbody');
-    resulttable_peso.empty();
-
+    contador = 0;
     $('#agregar').click( function(){
 
+      var resultado = parseInt( $('#peso_bruto').val() ) - parseInt( $('#tara').val());
         
-        resulttable_peso.append('<tr><td>'+'dfddf'+'</td><td>'+'ddd'+'</td><td>'+'fssf'+'</td><td>'+'safe'+'</td></tr>');
+       var valor_tex = $('#diferencia').val();
+       if(valor_tex != ""){
 
+            valor_tex = parseInt(valor_tex) - parseInt(resultado);
+            $('#diferencia').val( valor_tex );
+        
+            resulttable_peso.append('<tr><td>'+$('#estiba').val()+'</td><td>'+$('#peso_bruto').val()+'</td><td>'+$('#tara').val()+'</td><td>'+resultado+'</td><td><div class="ui buttons" onclick="delete_('+contador+')"  ><a class="ui vertical animated button"  ><div class="hidden content">Eliminar</div><div class="visible content"><i class="remove icon"></i></div></a></div></td></tr>');
+            arra =[  $('#estiba').val(),$('#peso_bruto').val(),$('#tara').val(), resultado  ];
 
+            total_array.push(arra);
+            $('#estiba').val('');
+            $('#peso_bruto').val('');
+            $('#tara').val('');
+           
+        }
+        else{
+            alert('No existe ningun valor en (Diferencia Cant. Fact vs Cant. Pesada KG)  debido a esto no se puede calcular.'); 
+        }
+        contador++;
+        return false;
     });
- /*   $('.ui.checkbox').on('click', function() {
 
-        var ds = this.id;
 
-        if( ds == "dotacion-1" ){
-           $(this).nextAll('.checkbox').checkbox('enable');
-           $("dotacion-2").nextAll('.checkbox').checkbox('disable');
-           $("dotacion-3").nextAll('.checkbox').checkbox('disable');
+    function delete_(event){
+           
+        var conunt = 0;
+        var arraynuevo = [];
+        var total_valor = 0;
+
+        for(var i=0 ; i< total_array.length ; i++){
+
+            if (event != 'undefined'){
+                if( event != i){
+
+                    arra =[ total_array[i][0],total_array[i][1],total_array[i][2],total_array[i][3] ];
+                    arraynuevo.push(arra);
+                    var data = total_array[i][3]; 
+                    total_valor = total_valor + parseInt( total_array[i][3] );
+                } 
+            }
+            conunt++;
         }
-        else if( ds == "dotacion-2" ){
-            $(this).nextAll('.checkbox').checkbox('enable');
-            $("dotacion-1").nextAll('.checkbox').checkbox('disable');
-            $("dotacion-3").nextAll('.checkbox').checkbox('disable');
+
+        var time = setInterval( function(){
+            if( total_array.length == conunt){
+
+                clearInterval(time);
+                resulttable_peso.empty();               
+                total_array = [];
+                total_array = arraynuevo;
+                total_valor  = $('#cantidad_factura').val() - total_valor;
+                $('#diferencia').val( total_valor );
+                contador =0;
+                for(var i=0 ; i< total_array.length ; i++){
+                    resulttable_peso.append('<tr><td>'+total_array[i][0]+'</td><td>'+total_array[i][1]+'</td><td>'+total_array[i][2]+'</td><td>'+total_array[i][3]+'</td><td><div class="ui buttons" onclick="delete_('+contador+')" ><a class="ui vertical animated button" ><div class="hidden content">Eliminar</div><div class="visible content"><i class="remove icon"></i></div></a></div></td></tr>');
+                    contador++;
+                }
+            }
+
+        },500);
+
+    }
+
+    function confirmar()
+    {
+        if (confirm("¿ Desea registrar estos datos. ?"))
+        {
+
+
+         /*  var d = $('#numero_documento').val();
+           var s = total_array;
+           var g = $('#fecha').val();
+           var h = $('#idtercero').val();
+           var j = $('#idmat').val();
+           var k = $('#lote_proveedor').val();
+           var l = $('#factura_proveedor').val();
+           var z = $('#tipo_empaque').val();
+           var x = $('#precio_factura').val();
+           var c = $('#observacion').val();
+           var v = $('#accion_correc').val();
+           var b = $('#orden_de_compra').val();
+           var n = $('#unidad_factura').val();
+           var m = $('#cantidad_factura').val(); */
+            
+           var dotacion_personal = "";
+           var elementos_extranos =""; 
+           var est_unid_empaque =""; 
+           var libre_infest_plag ="";
+           var insp_mat_prim ="";
+           var estado_vehiculo_piso ="";
+           var estado_vehiculo_paredes ="";
+           var estado_vehiculo_techo ="";
+
+           var insp_mat_color = "";
+           var insp_mat_olor = "";
+           var insp_mat_sabor = "";
+           var insp_mat_elem_extra = "";
+           var insp_mat_madurez = "";
+
+           var insp_epm_color = "";
+           var insp_epm_olor = "";
+           var insp_epm_selle = "";
+           var insp_epm_calibre = "";
+           var insp_epm_elem_extra = "";
+
+           var value_radio = "";
+           var contador =1;
+
+           for(var i = 1; i <=4 ; i++ ){
+
+                var tex = "";
+
+                if( contador < 25)
+                    tex = "#trans-"+contador;
+                else if( contador < 37)   
+                    tex = "#calidad-"+contador;
+                else if( contador < 52)   
+                    tex = "#empaque-"+contador;
+                else if( contador == 52)
+                    i = 5;
+
+                if( $(tex).is(':checked')) {  
+                    
+                    if( i == 1){
+                        value_radio = "C";
+                    }else if( i==2 ){
+                        value_radio = "N";
+                    }else if( i==3 ){
+                        value_radio = "A";
+                    }
+
+                    if( contador < 4 )
+                        dotacion_personal = value_radio;
+                    else if( contador < 7)
+                        estado_vehiculo_piso = value_radio;
+                    else if( contador < 10)
+                        estado_vehiculo_paredes = value_radio;
+                    else if( contador < 13)
+                        estado_vehiculo_techo = value_radio;
+                    else if( contador < 16)    
+                        elementos_extranos = value_radio;
+                    else if( contador < 19)
+                        est_unid_empaque = value_radio;
+                    else if( contador < 22)
+                        libre_infest_plag = value_radio;
+                    else if( contador < 25)
+                        insp_mat_prim = value_radio;
+                    else if( contador < 28)                        
+                        insp_mat_color = value_radio;
+                    else if( contador < 31)    
+                        insp_mat_olor = value_radio;
+                    else if( contador < 34)
+                        insp_mat_sabor = value_radio;
+                    else if( contador < 37)    
+                        insp_mat_elem_extra = value_radio;
+                    else if( contador < 40)      
+                        insp_epm_color = value_radio;
+                    else if( contador < 43)
+                        insp_epm_olor = value_radio;
+                    else if( contador < 46)
+                        insp_epm_selle = value_radio;
+                    else if( contador < 49)
+                        insp_epm_calibre = value_radio;
+                    else if( contador < 52)
+                        insp_epm_elem_extra = value_radio;
+
+
+                    i=0;
+                    
+                }
+                contador++;
+               /* if( i== 4 ){
+                    alert('se debe ingresar todas las calificaciones.');
+                    return;
+                }*/
+
+           }
+
+          
+           document.location = 'guardar.html?docmat='+$('#numero_documento').val()+'&array_peso='+total_array+
+                                '&fecha='+$('#fecha').val()+'&idtercero='+$('#idtercero').val()+'&idmat='+$('#idmat').val()+
+                                '&lote_proveedor='+$('#lote_proveedor').val()+'&factura_proveedor='+$('#factura_proveedor').val()+
+                                '&tipo_empaque='+$('#tipo_empaque').val()+'&precio_factura='+$('#precio_factura').val()+
+                                '&observacion='+$('#observacion').text()+'&accion_correc='+$('#accion_correc').text()+
+                                '&orden_de_compra='+$('#orden_de_compra').val()+'&unidad_factura='+$('#unidad_factura').val()+
+                                '&cantidad_factura='+$('#cantidad_factura').val()+'&insp_mat_madurez='+$('#madurez').val()+
+                                '&dotacion_personal='+ dotacion_personal+'&elementos_extranos='+ elementos_extranos+'&est_unid_empaque='+ est_unid_empaque+     
+                                '&libre_infest_plag='+ libre_infest_plag+'&insp_mat_prim='+ insp_mat_prim+'&estado_vehiculo_piso='+ estado_vehiculo_piso+    
+                                '&estado_vehiculo_paredes='+ estado_vehiculo_paredes+'&estado_vehiculo_techo='+ estado_vehiculo_techo+'&insp_mat_color='+ insp_mat_color+    
+                                '&insp_mat_olor='+ insp_mat_olor+'&insp_mat_sabor='+ insp_mat_sabor+'&insp_mat_elem_extra='+ insp_mat_elem_extra+    
+                                '&insp_epm_color='+ insp_epm_color+'&insp_epm_olor='+ insp_epm_olor+     
+                                '&insp_epm_selle='+ insp_epm_selle+'&insp_epm_calibre='+ insp_epm_calibre+'&insp_epm_elem_extra='+ insp_epm_elem_extra; 
+
         }
-        else if( ds == "dotacion-3" ){
-            $(this).nextAll('.checkbox').checkbox('enable');
-            $("dotacion-1").nextAll('.checkbox').checkbox('disable');
-            $("dotacion-2").nextAll('.checkbox').checkbox('disable');
-        }
-        
-    })*/
+    };
 
 </script>

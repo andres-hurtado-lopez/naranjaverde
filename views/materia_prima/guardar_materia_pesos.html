@@ -1,0 +1,47 @@
+<%
+import utils
+import datetime
+import array
+from bottle import request, redirect
+
+
+db = utils.ConnectDB()
+
+docmat = request.params.get('docmat')
+array_peso = request.params.get('array_peso') 
+
+
+
+array_peso = array_peso.split(',')
+i = 0
+for row  in array_peso:
+
+  if i < 3 :
+    print(row) 
+    if i == 0:
+       estiba = row
+
+    elif  i == 1:
+       bruto = row
+
+    elif  i == 2:  
+      tara = row
+    end 
+    i = i+1
+  else :
+
+    db.execute(""" REPLACE INTO `documentos_material_pesos`(`docmat`, `estiba`, `bruto`, `tara`) VALUES (%s,%s,%s,%s) """,
+               [ int(docmat), estiba, float(bruto), float(tara) ])
+
+    db.execute('COMMIT WORK');
+
+    i =0
+     
+
+  end 
+
+end
+
+
+redirect('principal.html') 
+
