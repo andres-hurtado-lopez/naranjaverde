@@ -506,6 +506,7 @@ resul_max = db.fetchone()
 
            var value_radio = "";
            var contador =1;
+           var confirmacion = "";
 
            for(var i = 1; i < 18 ; i++ ){
 
@@ -579,12 +580,15 @@ resul_max = db.fetchone()
                         value_radio="";
                     }else{
 
+                        confirmacion ="ERROR";
                         alert('se debe ingresar todas las calificaciones.');
-                        return;
-
+                        break;
                     }
 
                 }
+
+                if( confirmacion != "ERROR" ){
+
                     var array_documento =
                                 {'fecha':$('#fecha').val(),
                                 'idtercero':$('#idtercero').val(),
@@ -593,8 +597,8 @@ resul_max = db.fetchone()
                                 'factura_proveedor':$('#factura_proveedor').val(),                                
                                 'tipo_empaque':$('#tipo_empaque').val(),
                                 'precio_factura':$('#precio_factura').val(),                                
-                                'observacion':$('#observacion').text(),
-                                'accion_correc':$('#accion_correc').text(),                                
+                                'observacion':$('#observacion').val(),
+                                'accion_correc':$('#accion_correc').val(),                                
                                 'orden_de_compra':$('#orden_de_compra').val(),
                                 'unidad_factura':$('#unidad_factura').val(),                                
                                 'cantidad_factura':$('#cantidad_factura').val(),
@@ -630,7 +634,7 @@ resul_max = db.fetchone()
                                  alert(errMsg); 
                              }
                      });   
-
+                }
         }
     };
 
