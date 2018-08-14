@@ -6,15 +6,15 @@ from bottle import request
 db = utils.ConnectDB()
 
 
-db.execute("""SELECT idmat, descripcion  FROM materiales limit 5""",[])
+db.execute("""SELECT idmat, descripcion  FROM materiales  """,[])
 
 resul_material = db.fetchall()
 
-db.execute("""SELECT * FROM terceros where `tipo` = 'PROV' limit 5""",[])
+db.execute("""SELECT * FROM terceros where `tipo` = 'PROV'  """,[])
 
 resul_terceros = db.fetchall()
 
-db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material limit 5""",[])
+db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material  """,[])
 
 resul_max = db.fetchone()
 
