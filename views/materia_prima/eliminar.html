@@ -1,0 +1,13 @@
+<%
+import utils
+from bottle import request, redirect
+
+db = utils.ConnectDB()
+
+id = request.params.get('id')
+
+
+db.execute("""DELETE FROM `documentos_material` WHERE docmat = %s """,[ id ])
+db.execute('COMMIT WORK');
+
+redirect('resumen.html')

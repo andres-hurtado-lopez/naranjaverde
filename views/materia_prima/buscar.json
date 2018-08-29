@@ -1,0 +1,22 @@
+<% import utils
+import datetime
+from bottle import request
+import json
+
+db = utils.ConnectDB()
+
+query = request.GET.query
+query = '%' + str(query) + '%'
+
+
+if query:
+	db.execute("""SELECT a.orden as value, concat(a.orden,' - ', b.nombre ) as name from ordenes as a INNER JOIN terceros as b ON a.`cliente` = b.idtercero INNER JOIN materiales as c	ON c.idmat = a.idmat WHERE a.orden like %s or b.nombre like  %s or c.descripcion like %s  """,
+ 				[ query, query, query] )
+	rows = db.fetchall()
+end
+
+
+results = {'results':rows}
+output = json.dumps(results)
+%>
+{{!output}}  

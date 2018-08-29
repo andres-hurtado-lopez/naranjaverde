@@ -53,7 +53,7 @@ else :
     cantidad = 0
     material = 0
     fecha_entrega = 0
-
+	row_registro = []
 end
 
 
@@ -311,7 +311,8 @@ $('#consultar').on('click', function(){
  });  
 
 
-
+if( '{{len(row_registro)}}' == '0' || '{{len(row_registro)}}' == 'None' )
+    alert('No se encontro ninguna orden en Proceso.');
 
 
 $('.ui.dropdown.optionmenu').dropdown({

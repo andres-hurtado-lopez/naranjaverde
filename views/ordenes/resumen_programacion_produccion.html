@@ -149,7 +149,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 
                for row in db:
 
-                db1.execute("""select min(t1.capacidad) as capacidad 
+                db1.execute("""select ifnull( min(t1.capacidad), '') as capacidad 
                                  from 
                                 (SELECT   a.capacidad_kg_h  * a.`operarios` as capacidad
                                             FROM  hoja_ruta_operaciones as a
@@ -195,9 +195,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                                 where o.orden= %s ) as t1
                                 ON ot.orden = t1.orden
                                 WHERE ot.orden = %s """,[row['orden'] , row['orden']])
-                                
+                       
                 row_costo = db2.fetchone()
-
+		
                 fe_des =""
                 fe_ent =""
                 M_bruto  = ""
@@ -208,9 +208,17 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 if row['fecha_entrega'] == 'No asignada' :
                      fe_ent = "error"
                 end
-
-                if row_costo['perdida'] == 1 :
-                     M_bruto = "error"
+				
+				if row_costo != None:
+				
+				    row_costo_def = row_costo
+	                if row_costo['perdida'] == 1 :
+	                     M_bruto = "error"
+	                end
+	           # else:
+	           
+	                #row_costo_def =  [ "margen_bruto_unitario" = "",  "margen_bruto"  ] 
+	                
                 end
             %>
             <tr>
@@ -228,9 +236,9 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
                 <td class="{{fe_ent}}">{{row['fecha_entrega']}}</td>
                 <td>{{row['orden']}}</td>
                 <td>{{row['estado']}}</td>
-                <td class="{{M_bruto}}">{{ row_costo['margen_bruto_unitario'] }}</td>
-                <td>{{row_costo['costo_estimado']}}</td>
-                <td class="{{M_bruto}}">{{row_costo['margen_bruto']}}</td>
+                <td class="{{M_bruto}}">{{ row_costo_def['margen_bruto_unitario'] }}</td>
+                <td>{{row_costo_def['costo_estimado']}}</td>
+                <td class="{{M_bruto}}">{{ row_costo_def['margen_bruto']}}</td>
 
                 <td>
                     <div class="ui buttons">
@@ -258,6 +266,7 @@ q_estado = request.GET.q_estado if request.GET.q_estado else 'en proceso'
 
 
 <script type="text/javascript">
+
 
 
 $('.ui.dropdown.opciones').dropdown();

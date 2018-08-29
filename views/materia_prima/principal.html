@@ -18,7 +18,6 @@ db.execute("""SELECT max(docmat)+1 as docmat  FROM documentos_material  """,[])
 
 resul_max = db.fetchone()
 
-
 %>
 
 
@@ -105,8 +104,11 @@ resul_max = db.fetchone()
         </div>
 
         <div class="field">
-                <label>Orden de Compra</label>
-                <input type="text" value="" name="orden_de_compra" id="orden_de_compra">
+             <label>Orden de Compra</label>
+             <select class="ui search selection dropdown" name="orden_de_compra" id="orden_de_compra" required=""> 
+					<option value="">""</option>
+             </select>
+
         </div>
    </div>
    <div class="two fields">  
@@ -355,6 +357,7 @@ resul_max = db.fetchone()
     var resulttable_peso = $('#tabla_peso tbody');
     resulttable_peso.empty();
    
+    
    $('#cantidad_factura').on('keyup', function(event){
 
 
@@ -599,7 +602,7 @@ resul_max = db.fetchone()
                                 'precio_factura':$('#precio_factura').val(),                                
                                 'observacion':$('#observacion').val(),
                                 'accion_correc':$('#accion_correc').val(),                                
-                                'orden_de_compra':$('#orden_de_compra').val(),
+                                'orden_de_compra':$('#orden_de_compra').val().split(' - ')[0],
                                 'unidad_factura':$('#unidad_factura').val(),                                
                                 'cantidad_factura':$('#cantidad_factura').val(),
                                 'insp_mat_madurez':$('#madurez').val(),                                
@@ -634,8 +637,19 @@ resul_max = db.fetchone()
                                  alert(errMsg); 
                              }
                      });   
+                }else{
+                	return false;
                 }
         }
     };
+    
+    $('#orden_de_compra').dropdown({
+        apiSettings: {
+          url: '/materia_prima/buscar.json?query={query}'
+        }
+    });
+  
+    $('#orden_de_compra').dropdown('set value','');
+    $('#orden_de_compra').dropdown('set text','');
 
 </script>

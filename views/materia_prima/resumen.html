@@ -1,0 +1,205 @@
+<% rebase('base.html',title="Control Producción")
+import utils
+import datetime
+from bottle import request
+
+weekstart = datetime.datetime.now() - datetime.timedelta(days=datetime.datetime.now().weekday())
+weekend = weekstart + datetime.timedelta(days=6)
+
+db = utils.ConnectDB()
+
+q_desde = request.GET.q_desde if request.GET.q_desde else weekstart.strftime('%Y-%m-%d')
+q_hasta = request.GET.q_hasta if request.GET.q_hasta else weekend.strftime('%Y-%m-%d')
+producto = request.GET.producto if request.GET.producto else '%'
+proveedor = request.GET.proveedor if request.GET.proveedor else '%'
+id_documt = request.GET.id_documt if request.GET.id_documt else '%'
+
+db.execute("""SELECT * FROM terceros where `tipo` = 'PROV'  """,[])
+
+resul_terceros = db.fetchall()
+
+db.execute("""SELECT idmat, descripcion  FROM materiales  """,[])
+
+resul_material = db.fetchall()
+
+
+
+%>
+<h2 class="ui header">Resumen Recepci&oacute;n Material</h2>
+
+<div class="ui fluid search selection dropdown optionmenu">
+    <input type="hidden" name="opciones">
+    <div class="text">Menu</div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+        <div class="item" data-value="">Menu</div>
+        <div class="item" data-value="/home.html">Inicio</div>
+    </div>
+</div>
+<br>
+<form class="ui form" action="resumen.html" method="get" accept-charset="utf-8">
+    <div class="two fields">
+
+        <div class="ui field">
+          <label>Desde</label>
+          <input type="date" name="q_desde" value="{{ q_desde }}">
+        </div>
+
+        <div class="ui field">
+          <label>Hasta</label>
+          <input type="date" name="q_hasta" value="{{ q_hasta }}">
+        </div>
+    
+        <div class="ui field">
+          <label>Proveedor</label>
+            <select class="ui search selection dropdown" id="proveedor" name="proveedor"  value="{{proveedor}}" >
+                    <option value=""></option>
+                    % for row in resul_terceros :  
+                    <option value="{{row['idtercero']}}">{{ row['nombre'] }}</option>
+                    %end
+            </select>
+        </div>
+
+        <div class="ui field">
+            <div class="field">
+                <label>Producto</label>
+                <select class="ui search selection dropdown" id="producto" name="producto" value="{{producto}}"  >
+                        <option value=""></option>
+                        % for row in resul_material :  
+                        <option value="{{row['idmat']}}">{{ row['descripcion'] }}</option>
+                        %end
+                </select>
+        	</div>
+        </div>
+
+		<div class="ui field">
+          	<label>Numero Documento</label>
+          	<input type="number" name="id_documt" id="id_documt"  value="{{id_documt}}">
+        </div>
+    </div>
+    
+     <div class="two fields">
+            <div class="ui field">
+            <label>&nbsp;</label>
+            <button class="ui button fluid buscar">Buscar</button>
+        </div>
+        <div class="ui field">
+            <label>&nbsp;</label>
+            <a class="ui button fluid buscar" href="resumen.html">Limpiar</a>
+        </div>
+    </div>    
+</form>
+
+<br>
+<div class="ui container" style="overflow: auto; height: 23em;">
+    <table class="ui table">
+        <thead>
+        	<th>Numero Documento</th>
+            <th>Fecha</th>
+            <th colspan="2" style="text-align:  center;">Proveedor</th>
+            <th>Cantidad Kg</th>
+            <th colspan="2" style="text-align:  center;">Producto</th>
+            <th>Lote Material Proveedor</th>
+            <th>Factura Proveedor</th>
+            <th>Tipo Empaque</th>
+            <th>Inspeccion Material</th>
+            <th>#Orden</th>
+            <th>Precio Factura</th>
+            <th>Cantidad (Kg) Factura</th>
+            <th>Unidad</th>
+            <th>Acción</th>
+        </thead>
+        <tbody>
+            <% 
+            	
+	            db.execute("""SELECT d.*,m.descripcion,t.nombre  FROM documentos_material as d inner join materiales as m on d.idmat=m.idmat INNER JOIN terceros as t 
+							   on d.idasoc=t.idtercero  where  d.fecha between %s and %s and ( d.idmat like %s and d.idasoc like %s and d.docmat like %s ) LIMIT 40""",
+							   [ q_desde, q_hasta, producto, proveedor, id_documt ])
+	
+				resul_material = db.fetchall()
+				
+
+		    #if len(resul_material) != 0 :
+				
+				
+			 for row in resul_material:
+				 
+            %>
+            <tr>
+                <td>{{row['docmat']}}</td>
+                <td>{{row['fecha']}}</td>
+                <td>{{row['idasoc']}}</td>
+                <td>{{row['nombre'] }}</td>
+                <td>{{row['cantidad_kg']}}</td>
+                <td>{{row['idmat']}}</td>
+                <td>{{row['descripcion']}}</td>
+                <td>{{row['lote_material_proveedor']}}</td>
+                <td>{{row['factura_proveedor']}}</td>
+                <td>{{row['tipo_empaque']}}</td>
+                <td>{{row['insp_mat_madurez']}}</td>
+                <td>{{row['orden']}}</td>
+                <td>{{row['precio_factura']}}</td>
+                <td>{{row['cantidad_kg_factura']}}</td>
+                <td>{{row['unidad']}}</td>
+
+                <td>
+                   <div class="ui buttons">
+                    <a class="ui vertical animated button" href="javascript: confirmar_borrado('{{row['docmat']}}')">
+                      <div class="hidden content">Eliminar</div>
+                      <div class="visible content">
+                        <i class="remove icon"></i>
+                      </div>
+                    </a>
+                    <a class="ui vertical animated button" href="">
+                      <div class="hidden content">Editar</div>
+                      <div class="visible content">
+                        <i class="edit icon"></i>
+                      </div>
+                    </a>
+                  </div>
+                </td>
+            </tr>
+            %end
+        </tbody>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+$('.ui.dropdown.opciones').dropdown();
+
+    function confirmar_borrado(id)
+    {
+        if (confirm("¿ Desea borrar este registro ?"))
+        {
+            document.location = 'eliminar.html?id='+id;
+        }
+    };
+
+    $('.ui.dropdown.optionmenu').dropdown({
+      action:function(text, value){
+
+            window.location.href = value;    
+        
+      }
+    })
+
+	% if id_documt:
+    $('#id_documt').val('{{id_documt}}');
+    %end
+    
+    % if producto:
+    $('#producto').val('{{producto}}');
+    %end
+    
+    % if proveedor:
+    $('#proveedor').val('{{proveedor}}');
+    %end
+    
+    
+    
+    
+</script>    
